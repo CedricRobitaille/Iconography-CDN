@@ -2,9 +2,27 @@
 
 </script>
 
+
+
 <template>
-<h1>Editor</h1>
+<!-- Left Modal -->
+<section id="project-details">
+
+</section>
+
+<!-- Main Artboard -->
+<main id="artboard">
+
+</main>
+
+<!-- Right Modal -->
+<section>
+
+</section>
+
 </template>
+
+
 
 <style scoped>
 
