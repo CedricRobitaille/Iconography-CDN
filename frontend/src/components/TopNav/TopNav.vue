@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue"
+import { RouterLink } from "vue-router";
+
 
 const lightmode = ref<boolean>(false)
 </script>
@@ -7,12 +9,12 @@ const lightmode = ref<boolean>(false)
 <template>
   <nav>
     <div>
-      <button id="home">
+      <RouterLink id="home" to="/" >
         <svg viewBox="0 0 24 24" width="24" height="24">
           <path d="M20 10v10h-5.68v-2.97c0-1.28-1.04-2.32-2.32-2.32s-2.32 1.04-2.32 2.32V20H4V10l8-6 8 6z"
             class="cls-1" />
         </svg>
-      </button>
+      </RouterLink>
     </div>
     <ul>
       <li>
@@ -36,7 +38,9 @@ const lightmode = ref<boolean>(false)
               class="cls-3" />
           </svg>
         </button>
-
+      </li>
+      
+      <li>
         <button id="settings-btn">
           <svg id="settings-icon" viewBox="0 0 24 24" width="20" height="20">
             <circle cx="12" cy="11.98" r="3" class="cls-3" />
@@ -45,7 +49,9 @@ const lightmode = ref<boolean>(false)
               class="cls-3" />
           </svg>
         </button>
+      </li>
 
+      <li>
         <button id="profile-btn">
           <img src="" alt="" class="profile-picture">
         </button>

@@ -23,6 +23,9 @@ button {
   cursor: pointer;
 }
 
-h1, h2, h3, h4, h5, h6, p, li, ul, span, label, fieldset, legend {
+h1, h2, h3, h4, h5, h6, p, li, ul, span, label, fieldset, legend, a {
+  padding: 0;
+  text-decoration: none;
   list-style: none;
+  display: block;
 }
