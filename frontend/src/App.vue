@@ -10,8 +10,4 @@
 </template>
 
 <style scoped>
-  .greeting {
-    color: #fff;
-    font-weight: 800;
-  }
 </style>
