@@ -1,0 +1,28 @@
+:root {
+  --bg: #1e1e1e;
+  --border: #585C61;
+  --black-30: #444649;
+  --black-20: #38393B;
+  --black-10: #2C2D2E;
+  --black-0: #1e1e1e;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  background-color: var(--bg);
+}
+
+button {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+h1, h2, h3, h4, h5, h6, p, li, ul, span, label, fieldset, legend {
+  list-style: none;
+}
