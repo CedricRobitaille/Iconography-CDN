@@ -25,15 +25,18 @@ const companyName = "General Assembly"
 }
 
 .user {
-  font-size: 1.25rem;
-  font-weight: 800;
+  font-size: 1.45rem;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .role {
-  font-size: .65rem;
+  font-size: .75rem;
   font-weight: 700;
   color: var(--bg);
-  padding: .4rem .75rem .35rem;
+  padding: .34rem .75rem .3rem;
   width: fit-content;
   background-color: var(--accent);
   border-radius: 1rem;
@@ -42,8 +45,11 @@ const companyName = "General Assembly"
 
 .company {
   font-size: 1rem;
-  font-weight: 600;
-  color: var(--text-30)
+  font-weight: 400;
+  color: var(--text-30);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 </style>

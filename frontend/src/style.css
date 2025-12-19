@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap');
+
 :root {
   --border: #585C61;
   --bg-40: #444649;
@@ -34,10 +36,26 @@
   box-sizing: border-box;
   padding: 0;
   margin: 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
 }
 
 html {
   background-color: var(--bg);
+}
+
+h1, h2, h3, h4, h5, h6, p, li, ul, span, label, fieldset, legend, a, button, input {
+  padding: 0;
+  text-decoration: none;
+  list-style: none;
+  display: block;
+  color: var(--text-10);
+
+  font-family: sans-serif;
+  font-family: "Figtree", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+  letter-spacing: .025em;
 }
 
 button {
@@ -45,18 +63,28 @@ button {
   background: transparent;
   cursor: pointer;
 }
+input {
+  background-color: var(--bg-30);
+  border: .5px solid var(--border);
+  padding: .5rem .75rem;
+  width: 100%;
+  border-radius: .5rem;
+  color: var(--text);
+}
 
-h1, h2, h3, h4, h5, h6, p, li, ul, span, label, fieldset, legend, a, button {
-  padding: 0;
-  text-decoration: none;
-  list-style: none;
-  display: block;
-  color: var(--text-10);
+input:focus {
+  outline: 1.5px solid var(--text-40);
 
-  font-family: sans-serif
 }
 
 #app {
   height: 100vh;
   overflow-y: hidden;
 }
+
+::-webkit-scrollbar-track {
+  border-left: .5px solid var(--border);
+}
+
+
+
