@@ -1,8 +1,8 @@
 <script setup lang="ts">
+  import Controls from './Controls/Controls.vue';
   import ActiveUser from '../../components/ActiveUser/ActiveUser.vue';
-  import SectionCaption from '../../components/SectionCaption/SectionCaption.vue';
   import SearchBar from '../SearchBar/SearchBar.vue';
-
+  import Layers from './Layers/Layers.vue';
 </script>
 
 
@@ -10,27 +10,11 @@
 <template>
   <section id="project">
     
-    <ul id="controls"> <!-- Controls -->
-      <li>
-        <button>File</button>
-      </li>
-      <li>
-        <button>Edit</button>
-      </li>
-      <li>
-        <button>View</button>
-      </li>
-    </ul>
-
-    
-    <ActiveUser /> <!-- Current User -->
+    <Controls />
+    <ActiveUser />
     <SearchBar placeholder="Layer"/>
-
-    <!-- Layers -->
-    <section id="layers">
-      <SectionCaption text="Layers" />
-    </section>
-
+    <Layers />
+    
   </section>
 </template>
 
@@ -47,33 +31,4 @@
     grid-template-rows: auto auto auto 1fr auto;
     border-right: .5px solid var(--border);
   }
-
-  #controls {
-    display: flex;
-    flex-direction: row;
-    padding: .5rem .75rem;
-    border-bottom: .5px solid var(--border)
-  }
-
-  #controls li {
-    padding: .35rem .5rem .4rem .5rem;
-  }
-
-  #controls button {
-    color: var(--text-20);
-    transition: .0625s;
-    font-weight: 500;
-  }
-
-  #controls li:hover button {
-    color: var(--text)
-  }
-
-  #layers {
-    height: 100%;
-    overflow-y: scroll;
-    padding: 1rem;
-  }
-
-
 </style>
