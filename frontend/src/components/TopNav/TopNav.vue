@@ -2,8 +2,8 @@
 import { ref } from "vue"
 import { RouterLink } from "vue-router";
 
-
-const lightmode = ref<boolean>(false)
+import { darkMode } from "../../stores/darkMode";
+const { toggleDarkMode, globalDarkMode } = darkMode()
 </script>
 
 <template>
@@ -18,8 +18,8 @@ const lightmode = ref<boolean>(false)
     </div>
     <ul>
       <li>
-        <button @click="lightmode = !lightmode" class="mode-toggle">
-          <svg v-if="lightmode" id="light-mode-icon" viewBox="0 0 24 24" width="20" height="20">
+        <button @click="toggleDarkMode" class="mode-toggle">
+          <svg v-if="!globalDarkMode" id="light-mode-icon" viewBox="0 0 24 24" width="20" height="20">
             <g>
               <line x1="17.66" x2="19.07" y1="6.34" y2="4.93" class="cls-2" />
               <line x1="4.93" x2="6.34" y1="19.07" y2="17.66" class="cls-2" />
