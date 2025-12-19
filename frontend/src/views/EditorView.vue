@@ -1,5 +1,9 @@
 <script setup lang="ts">
 
+import ActiveUser from '../components/ActiveUser/ActiveUser.vue';
+
+
+
 </script>
 
 
@@ -20,6 +24,7 @@
         </li>
       </ul>
 
+      <ActiveUser />
       
     </section>
 

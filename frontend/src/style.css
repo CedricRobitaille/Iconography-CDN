@@ -11,6 +11,8 @@
   --text-20: #B1B1B1;
   --text-10: #D9D9D9;
   --text: #fff;
+
+  --accent: #56b3ff;
 }
 
 :root.dark-mode {
@@ -50,6 +52,8 @@ h1, h2, h3, h4, h5, h6, p, li, ul, span, label, fieldset, legend, a, button {
   list-style: none;
   display: block;
   color: var(--text-10);
+
+  font-family: sans-serif
 }
 
 #app {
