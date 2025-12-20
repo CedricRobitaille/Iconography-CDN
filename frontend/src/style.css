@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
 :root {
   --border: #585C61;
@@ -51,8 +51,7 @@ h1, h2, h3, h4, h5, h6, p, li, ul, span, label, fieldset, legend, a, button, inp
   display: block;
   color: var(--text-10);
 
-  font-family: sans-serif;
-  font-family: "Figtree", sans-serif;
+  font-family: "Inter", sans-serif;
   font-optical-sizing: auto;
   font-style: normal;
   letter-spacing: .025em;

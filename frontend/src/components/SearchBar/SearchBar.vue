@@ -1,6 +1,12 @@
 <script setup lang="ts">
   import { ref } from 'vue';
 
+  interface Props {
+    placeholder: string;
+  }
+
+  const props = defineProps<Props>()
+
   interface Inputs {
     search: string;
   }
@@ -18,7 +24,7 @@
 <template>
   <form @submit.prevent="handleSearch">
     <div class="search">
-      <input type="search" v-model="formData.search" required>
+      <input type="search" v-model="formData.search" :placeholder="props.placeholder" required>
     </div>
   </form>
 </template>

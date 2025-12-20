@@ -2,15 +2,28 @@ import { createWebHistory, createRouter } from "vue-router"
 
 import HomeView from "../views/HomeView.vue";
 import EditorView from "../views/EditorView.vue";
+import CollectionsView from "../views/CollectionsView.vue";
+import LibraryView from "../views/LibraryView.vue";
 import User from "../views/UserView.vue"
 import NotFound from "../views/NotFound.vue";
 
 
+
 const routes  = [
-  { 
-    path: "/editor", 
+  {
+    path: "/editor",
     name: "editor",
-    component: EditorView ,
+    component: EditorView,
+  },
+  {
+    path: "/collections",
+    name: "collections",
+    component: CollectionsView,
+  },
+  {
+    path: "/library",
+    name: "library",
+    component: LibraryView,
   },
   {
     path: "/user/:id",

@@ -8,7 +8,7 @@ const { toggleDarkMode, globalDarkMode } = darkMode()
 <template>
   <nav>
     <div>
-      <RouterLink id="home" to="/editor" >
+      <RouterLink id="home" to="/library" >
         <svg viewBox="0 0 24 24" width="24" height="24">
           <path d="M20 10v10h-5.68v-2.97c0-1.28-1.04-2.32-2.32-2.32s-2.32 1.04-2.32 2.32V20H4V10l8-6 8 6z"
             class="cls-1" />
