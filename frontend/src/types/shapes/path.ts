@@ -1,82 +1,4 @@
 /**
- * w = Width
- * h = Height
- * x = xPos
- * y = yPos
- * rx = Corner Radius X
- * ry = Corner Radius Y
- */
-type Rectangle = {
-  w: number;
-  h: number;
-  x: number;
-  y: number;
-  rx: number;
-  ry: number;
-}
-
-/**
- * r = Radius
- * cx = Center X
- * cy = Center Y
- */
-type Circle = {
-  r: number;
-  cx: number;
-  cy: number;
-}
-
-/**
- * rx = Corner Radius X
- * ry = Corner Radius Y
- * cx = Center X
- * cy = Center Y
- */
-type Ellipse = {
-  rx: number;
-  ry: number;
-  cx: number;
-  cy: number;
-}
-
-/**
- * x1 = X Start
- * y2 = Y Start
- * x2 = X End
- * y2 = Y End
- */
-type Line = {
-  x1: number;
-  y1: number;
-  x2: number;
-  x2: number;
-}
-
-/**
- * points = List of X,Y coordinates
- * ie: [22,33, 55,66, 88,99]
- *     [ x,y    x,y    x,y ]
- */    
-type Polyline = {
-  points: [];
-}
-
-/**
- * points = List of X,Y coordinates
- * ie: [22,33, 55,66, 88,99]
- *     [ x,y    x,y    x,y ]
- */
-type Polygon = {
-  points: [];
-}
-
-
-
-
-
-
-
-/**
  * Move to
  * xPos
  * yPos
@@ -208,12 +130,12 @@ type PathAction =
  * d = [aX Y]
  * ie: [M120 30, l320 160]
  */
-type Path = {
+export interface Path {
   d: PathAction[]
 }
 
 // Example Path
-const thisPath: Path = {
+const examplePath: Path = {
   d: [
     {
       type: "Q",
