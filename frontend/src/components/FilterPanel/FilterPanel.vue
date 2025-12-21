@@ -3,17 +3,8 @@
   import ActiveUser from '../ActiveUser/ActiveUser.vue';
   import SearchBar from '../SearchBar/SearchBar.vue';
   import Filters from './Filters/Filters.vue';
+  import type { FilterGroup } from '../../types';
 
-  interface FilterItem {
-    icon: string;
-    name: string;
-    qty: number;
-  }
-
-  interface FilterGroup {
-    theme: string;
-    items: FilterItem[]
-  }
 
   const filters: FilterGroup[] = [
     {

@@ -1,13 +1,9 @@
 <script setup lang="ts">
   import { ref } from 'vue';
+  import type { FilterItem } from '../../../types';
 
   const activeFilters = ref<string[]>([])
 
-  interface FilterItem {
-    icon: string;
-    name: string;
-    qty: number;
-  }
   const {items} = defineProps<{
     items: FilterItem[]
   }>()
