@@ -1,11 +1,10 @@
 <script setup lang="ts">
   import { ref } from 'vue';
 
-  interface Props {
+  const {placeholder} = defineProps<{
     placeholder: string;
-  }
+  }>()
 
-  const props = defineProps<Props>()
 
   interface Inputs {
     search: string;
@@ -24,7 +23,7 @@
 <template>
   <form @submit.prevent="handleSearch">
     <div class="search">
-      <input type="search" v-model="formData.search" :placeholder="props.placeholder" required>
+      <input type="search" v-model="formData.search" :placeholder="placeholder" required>
     </div>
   </form>
 </template>
@@ -32,10 +31,6 @@
 
 
 <style scoped>
-  form {
-    padding: 1rem;
-    border-bottom: .5px solid var(--border)
-  }
 
   ::-webkit-search-cancel-button {
     -webkit-appearance: none;

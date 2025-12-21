@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import SectionCaption from '../../../components/SectionCaption/SectionCaption.vue';
 
 type TreeNode = {
   id: number;
@@ -107,7 +106,6 @@ const projectTree = ref(flattenTree(tree))
 
 <template>
   <section id="layers">
-    <SectionCaption text="Layers" />
     <ul>
       <li v-for="(value, index) in projectTree" :key="index" :class="{ [value.depth]: true }">
         <!-- Icon -->

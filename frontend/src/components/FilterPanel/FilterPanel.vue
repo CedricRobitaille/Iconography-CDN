@@ -1,14 +1,15 @@
 <script setup lang="ts">
-import ActiveUser from '../ActiveUser/ActiveUser.vue';
-import SearchBar from '../SearchBar/SearchBar.vue';
+  import PanelContainer from '../PanelContainer/PanelContainer.vue';
+  import ActiveUser from '../ActiveUser/ActiveUser.vue';
+  import SearchBar from '../SearchBar/SearchBar.vue';
 
 
 </script>
 
 <template>
   <section id="filter-panel">
-    <ActiveUser />
-    <SearchBar placeholder="Icon Name" />
+    <PanelContainer :component="ActiveUser" />
+    <PanelContainer title="Search" :component="SearchBar" :context="{ placeholder: 'Icon Name'}"/>
   </section>
   
 </template>

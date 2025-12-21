@@ -22,8 +22,6 @@
 #controls {
   display: flex;
   flex-direction: row;
-  padding: .5rem .75rem;
-  border-bottom: .5px solid var(--border)
 }
 
 #controls li {

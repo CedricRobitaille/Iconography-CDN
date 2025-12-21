@@ -17,11 +17,10 @@ const companyName = "General Assembly"
 <style scoped>
 
 #active-user {
-  padding: 1.5rem 1rem;
+  padding: .5rem .25rem;
   display: flex;
   flex-direction: column;
   gap: .25rem;
-  border-bottom: .5px solid var(--border);
 }
 
 .user {
