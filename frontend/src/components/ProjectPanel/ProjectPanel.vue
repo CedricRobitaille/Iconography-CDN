@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import PanelContainer from '../PanelContainer/PanelContainer.vue';
   import Controls from './Controls/Controls.vue';
-  import ActiveUser from '../../components/ActiveUser/ActiveUser.vue';
+  import ActiveUser from '../ActiveUser/ActiveUser.vue';
   import SearchBar from '../SearchBar/SearchBar.vue';
   import Layers from './Layers/Layers.vue';
 </script>
@@ -14,7 +14,7 @@
     <PanelContainer :component="Controls" :compact="true" />
     <PanelContainer :component="ActiveUser" />
     <PanelContainer :component="SearchBar" :context="{placeholder: 'Layer'}" />
-    <Layers />
+    <PanelContainer :component="Layers" title="Layers" />
     
   </section>
 </template>

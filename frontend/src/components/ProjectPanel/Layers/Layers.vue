@@ -105,37 +105,33 @@ const projectTree = ref(flattenTree(tree))
 
 
 <template>
-  <section id="layers">
-    <ul>
-      <li v-for="(value, index) in projectTree" :key="index" :class="{ [value.depth]: true }">
-        <!-- Icon -->
-        <p v-if="value.type === 'folder'">Folder</p>
-        <p v-if="value.type === 'shape'">Shape</p>
-        <p v-if="value.type === 'path'">Path</p>
+  <ul>
+    <li v-for="(value, index) in projectTree" :key="index" :class="{ [value.depth]: true }">
+      <!-- Icon -->
+      <p v-if="value.type === 'folder'">Folder</p>
+      <p v-if="value.type === 'shape'">Shape</p>
+      <p v-if="value.type === 'path'">Path</p>
 
-        <!-- Name -->
-        <p class="title">{{ value.name }}</p> 
+      <!-- Name -->
+      <p class="title">{{ value.name }}</p> 
 
-        <!-- Lock Button -->
-        <button>
-          {{ value.locked }}
-        </button>
+      <!-- Lock Button -->
+      <button>
+        {{ value.locked }}
+      </button>
 
-        <!-- Visibility Button -->
-        <button>
-          {{ value.visible }}
-        </button>
-      </li>
-    </ul>
-  </section>
+      <!-- Visibility Button -->
+      <button>
+        {{ value.visible }}
+      </button>
+    </li>
+  </ul>
 </template>
 
 
 <style scoped>
   #layers {
     height: 100%;
-    padding: 1rem;
-    padding-right: 0;
     display: grid;
     grid-template-rows: auto 1fr;
     gap: 1rem;
@@ -146,7 +142,6 @@ const projectTree = ref(flattenTree(tree))
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    padding-right: 1rem;
   }
 
   li {

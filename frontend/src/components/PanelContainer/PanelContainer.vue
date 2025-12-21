@@ -3,25 +3,23 @@
   import type { Component } from 'vue';
   import SectionCaption from './SectionCaption/SectionCaption.vue';
   
-
-
   const {title, component, context, compact} = defineProps<{
     title?: string;
     component: Component;
-    context?: string | any;
+    context?: Record<string, any>;
     compact?: boolean;
   }>();
 </script>
 
 <template>
-  <section :class="[compact ? 'compact' : '']">
+  <section class="panel-container" :class="[compact ? 'compact' : '']">
     <SectionCaption v-if="title" :text="title" />
     <component :is="component" v-bind="context" />
   </section>
 </template>
 
 <style scoped>
-  section {
+  .panel-container {
     padding : 1rem .75rem;
     border-bottom: .5px solid var(--border);
 

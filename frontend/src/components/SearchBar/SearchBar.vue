@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import { ref } from 'vue';
+  import type { Ref } from 'vue';
 
   const {placeholder} = defineProps<{
     placeholder: string;
@@ -9,7 +10,7 @@
   interface Inputs {
     search: string;
   }
-  const formData: Inputs = ref({
+  const formData: Ref<Inputs> = ref({
     search: "",
   })
 
@@ -46,7 +47,7 @@
   input[type="search"] {
     appearance: none;
     position: relative;
-    padding-left: 2.5rem;
+    padding-left: 2.25rem;
   }
 
   .search {
@@ -56,7 +57,7 @@
   .search::before {
     content: "";
     position: absolute;
-    left: .75rem;
+    left: .625rem;
     top: 50%;
     transform: translateY(-50%);
     width: 1.25rem;
