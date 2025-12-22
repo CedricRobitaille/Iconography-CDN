@@ -22,6 +22,7 @@ builder.Services.AddSwaggerGen(); // Generates the swagger json
 
 var app = builder.Build();  // Builds the application
 
+// Create tables if non-existing
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<MyDbContext>();
