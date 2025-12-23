@@ -21,7 +21,7 @@ public class Company
 
   // UserId FK
   public int UserId { get; set; }
-  [JsonIgnore] // Needed, otherwise, t
+  [JsonIgnore] // Needed, otherwise, it appears in the response
   public virtual User? User { get; set; } = null!;
   
 

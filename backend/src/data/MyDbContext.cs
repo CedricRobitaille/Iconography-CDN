@@ -11,7 +11,7 @@ namespace Backend.Data
     // Each DbSet is a new table in the DB 
     public DbSet<User> Users => Set<User>();
     public DbSet<Company> Companies => Set<Company>();
-    public DbSet<Company_Members> Company_Members => Set<Company_Members>();
+    public DbSet<Company_Member> Company_Members => Set<Company_Member>();
     public DbSet<Icon> Icons => Set<Icon>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -26,14 +26,14 @@ namespace Backend.Data
           .OnDelete(DeleteBehavior.Cascade);
 
       // User / Company_Members relationship
-      modelBuilder.Entity<Company_Members>()
+      modelBuilder.Entity<Company_Member>()
           .HasOne(cm => cm.User)
           .WithMany()
           .HasForeignKey(cm => cm.UserId)
           .OnDelete(DeleteBehavior.Cascade);
 
       // Company / Company_Members relationship
-      modelBuilder.Entity<Company_Members>()
+      modelBuilder.Entity<Company_Member>()
           .HasOne(cm => cm.Company)
           .WithMany()
           .HasForeignKey(cm => cm.CompanyId)

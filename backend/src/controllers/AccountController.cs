@@ -73,15 +73,17 @@ namespace Backend.Controllers
 
 
       // Create a initial Company_Member (Assign as Owner)
-      var member = new Company_Members
+      var member = new Company_Member
       {
         UserId = user.Id,
         CompanyId = company.Id,
-        Type =  Company_Members.MemberRoles.Owner,
+        Type =  Company_Member.MemberRoles.Owner,
       };
 
       _context.Company_Members.Add(member);
       await _context.SaveChangesAsync();
+
+
 
       return Ok(new // HTTP 200 status code
       {

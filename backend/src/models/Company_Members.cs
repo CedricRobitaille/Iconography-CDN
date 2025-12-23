@@ -2,10 +2,11 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace Backend.Models;
 
-public class Company_Members
+public class Company_Member
 {
   // Id
   public int Id { get; set; }
@@ -17,15 +18,17 @@ public class Company_Members
 
 
   // UserId FK
-  [Required, ForeignKey("UserId")]
-  public virtual User User { get; set; } = null!;
+  [Required]
   public int UserId { get; set; }
-
+  [JsonIgnore]
+  public virtual User User { get; set; } = null!;
+  
 
   // CompanyId FK
-  [Required, ForeignKey("CompanyId")]
-  public virtual Company Company { get; set; } = null!;
+  [Required]
   public int CompanyId { get; set; }
+  [JsonIgnore]
+  public virtual Company Company { get; set; } = null!; 
 
 
   // Created_At
