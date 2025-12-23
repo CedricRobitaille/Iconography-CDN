@@ -17,10 +17,14 @@ namespace Backend.Controllers
       _context = context;
     }
 
+
+
     //  GET '/api/user'
     [HttpGet]
     public async Task<ActionResult<IEnumerable<User>>> GetAll()
       => await _context.Users.ToListAsync();
+
+
 
     //  GET '/api/user/id'
     [HttpGet("{id}")]
@@ -31,14 +35,7 @@ namespace Backend.Controllers
       return user;
     }
 
-    //  POST '/api/user/'
-    [HttpPost]
-    public async Task<ActionResult<User>> Create(User user)
-    {
-      _context.Users.Add(user);
-      await _context.SaveChangesAsync();
-      return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
-    } 
+
 
     //  PUT '/api/user/id'
     [HttpPut("{id}")]
@@ -49,6 +46,8 @@ namespace Backend.Controllers
       await _context.SaveChangesAsync();
       return NoContent();
     }
+
+
 
     //  DELETE '/api/user/id'
     [HttpDelete("{id}")]

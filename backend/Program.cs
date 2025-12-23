@@ -16,9 +16,11 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<MyDbContext>(options => // Enables UserController from MyDbContext
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))); // Tell SF which DB to use and server version
 
+
 builder.Services.AddControllers(); // MVC Controller Support
 builder.Services.AddEndpointsApiExplorer(); // Metadata for API endpoints for swagger
 builder.Services.AddSwaggerGen(); // Generates the swagger json
+
 
 var app = builder.Build();  // Builds the application
 
@@ -26,7 +28,7 @@ var app = builder.Build();  // Builds the application
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<MyDbContext>();
-    db.Database.EnsureCreated();
+    db.Database.Migrate();
 }
 
 // Swagger middleware to give the API a frontend.
