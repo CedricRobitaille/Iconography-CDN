@@ -9,5 +9,5 @@ public class Icon
   public string Name { get; set; } = string.Empty;
 
   [Required]
-  public string svg { get; set; } = string.Empty;
+  public string Svg { get; set; } = string.Empty;
 }
