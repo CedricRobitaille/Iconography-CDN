@@ -16,7 +16,7 @@
 
 public class IconCreationDto
 {
-  public OwnerDto Company { get; set; } = null!;
+  // public OwnerDto Company { get; set; } = null!;
   public AuthorDto User { get; set; } = null!;
   public IconDto Icon { get; set; } = null!;
 }

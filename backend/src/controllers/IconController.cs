@@ -18,8 +18,8 @@ namespace Backend.Controllers
 
 
     // Post Handling for '/api/icon' (New Icon)
-    [HttpPost]
-    public async Task<ActionResult<Icon>> Create([FromBody] IconCreationDto dto)
+    [HttpPost("{companyId}")]
+    public async Task<ActionResult<Icon>> Create(int companyId, [FromBody] IconCreationDto dto)
     {
       // Data comes in as follows:
       // {
@@ -27,13 +27,19 @@ namespace Backend.Controllers
       //     "Name": string,
       //     "Svg": string
       //   },
-      //   "Company": {
-      //     "Id": int
-      //   },
       //   "Author": {
       //     "Id": int
       //   }
       // }
+
+      // Ensure Company Exists
+      var companyExists = await _context.Companies.AnyAsync(c => c.Id == companyId);
+      if (!companyExists)
+        return NotFound($"Company {companyId} does not exist.");
+
+      var authorExists = await _context.Users.AnyAsync(u => u.Id == dto.User.Id);
+      if (!authorExists)
+        return NotFound($"User {dto.User.Id} does not exist.");
 
       // Create a new Icon
       var icon = new Icon
@@ -49,8 +55,8 @@ namespace Backend.Controllers
       var owner = new Company_Icon
       {
         IconId = icon.Id,
-        CompanyId = dto.Company.Id,
-        AuthorId = dto.User.Id,
+        CompanyId = companyId,
+        UserId = dto.User.Id,
       };
 
       _context.Company_Icons.Add(owner);

@@ -2,6 +2,13 @@
 // 1. `dotnet build
 // 2. `dotnet run
 
+
+// To migrate db
+// dotnet restore
+// dotnet ef migrations add <migration description>
+// dotnet ef migrations update
+
+
 using Microsoft.EntityFrameworkCore; // Import EF for UseMySql, AddDbContext, and DbContextOptions
 using Backend.Data; // Import the namespace where the DbContext resides
 using DotNetEnv;
