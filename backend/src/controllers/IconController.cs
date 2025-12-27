@@ -71,6 +71,8 @@ namespace Backend.Controllers
     }
 
 
-
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<Icon>>> GetAll()
+      => await _context.Icons.ToListAsync();
   }
 }
