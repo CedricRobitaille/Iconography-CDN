@@ -21,6 +21,7 @@ public class AccountCreationDto
 }
 
 
+
 // Data Transfer Object for Creating a new Member of a Company
 
 // When a user wants to join a team, a Post request comes in like:

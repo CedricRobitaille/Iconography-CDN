@@ -13,7 +13,7 @@ public class Company
   public int Id { get; set; }
 
   // Name
-  [Required, StringLength(32)]
+  [StringLength(32)]
   public string Name { get; set; } = string.Empty;
 
 

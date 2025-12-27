@@ -143,7 +143,7 @@ namespace Backend.Controllers
       {
         UserId = user.Id,
         CompanyId = dto.Company.Id,
-        Type = (Company_Member.MemberRoles)dto.Company_Member.Type,
+        Type = (Company_Member.MemberRoles)dto.Company_Member.Type, // specific value of the enum
       };
 
       _context.Company_Members.Add(member);
