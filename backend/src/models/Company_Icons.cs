@@ -27,7 +27,7 @@ public class Company_Icon
 
   // AuthorId FK (User)
   [Required]
-  public int AuthorId { get; set; }
+  public int UserId { get; set; }
   [JsonIgnore]
   public virtual User User { get; set; } = null!;
 

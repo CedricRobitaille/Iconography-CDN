@@ -41,19 +41,27 @@ namespace Backend.Data
           .HasForeignKey(cm => cm.CompanyId)
           .OnDelete(DeleteBehavior.Cascade);
 
-      // Icon / Company_Icons Relationship
-      modelBuilder.Entity<Company_Icon>()
-          .HasOne(ci => ci.Icon)
-          .WithMany()
-          .HasForeignKey(ci => ci.CompanyId)
-          .OnDelete(DeleteBehavior.Cascade);
+      // Icon Relationships
+      modelBuilder.Entity<Company_Icon>(entity =>
+      {
+        // Company → Company_Icon (unidirectional, cascade)
+        entity.HasOne(ci => ci.Company)
+            .WithMany()
+            .HasForeignKey(ci => ci.CompanyId)
+            .OnDelete(DeleteBehavior.Cascade);
 
-      // Company / Company_Icons relationship
-      modelBuilder.Entity<Company_Icon>()
-          .HasOne(ci => ci.Company)
-          .WithMany()
-          .HasForeignKey(ci => ci.CompanyId)
-          .OnDelete(DeleteBehavior.Cascade);
+        // Icon → Company_Icon (unidirectional, cascade)
+        entity.HasOne(ci => ci.Icon)
+            .WithMany() // no navigation on Icon either
+            .HasForeignKey(ci => ci.IconId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // User → Company_Icon (no cascade)
+        entity.HasOne(ci => ci.User)
+            .WithMany()
+            .HasForeignKey(ci => ci.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
+      });
     }
   }
 }
