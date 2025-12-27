@@ -41,5 +41,5 @@ public class AuthorDto // User
 public class IconDto // Icon
 {
   public string Name { get; set; } = string.Empty;
-  public int Svg { get; set; }
+  public string Svg { get; set; } = string.Empty;
 }
