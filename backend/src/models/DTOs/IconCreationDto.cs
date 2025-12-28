@@ -3,6 +3,10 @@
 //   "Icon": {
 //     "Name": string,
 //     "Svg": string
+//     "Style": string,
+//     "Type": string,
+//     "Category": string,
+//     "Tags": array[]
 //   },
 //   "Company": {
 //     "Id": int
@@ -22,24 +26,21 @@ public class IconCreationDto
 }
 
 
-
-
-
-
 // Models for the DTOs set above
 
-public class OwnerDto // Company
+public class IconDto // Icon
 {
-  public int Id { get; set; }
+  public string Name { get; set; } = string.Empty;
+  public string Svg { get; set; } = string.Empty;
+  public string Style { get; set; } = string.Empty;
+  public string Type { get; set; } = string.Empty;
+  public string Category { get; set; } = string.Empty;
+  public string[] Tags { get; set; } = Array.Empty<string>();
 }
+
 
 public class AuthorDto // User
 {
   public int Id { get; set; }
 }
 
-public class IconDto // Icon
-{
-  public string Name { get; set; } = string.Empty;
-  public string Svg { get; set; } = string.Empty;
-}

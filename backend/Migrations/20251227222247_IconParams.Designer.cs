@@ -3,6 +3,7 @@ using System;
 using Backend.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace backend.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    partial class MyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251227222247_IconParams")]
+    partial class IconParams
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -140,43 +143,6 @@ namespace backend.Migrations
                     b.ToTable("Icons");
                 });
 
-            modelBuilder.Entity("Backend.Models.Icon_Tag", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<int>("IconId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TagId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("IconId");
-
-                    b.HasIndex("TagId");
-
-                    b.ToTable("Icon_Tags");
-                });
-
-            modelBuilder.Entity("Backend.Models.Tag", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("varchar(128)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Tags");
-                });
-
             modelBuilder.Entity("Backend.Models.User", b =>
                 {
                     b.Property<int>("Id")
@@ -261,30 +227,6 @@ namespace backend.Migrations
                     b.Navigation("Company");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Backend.Models.Icon_Tag", b =>
-                {
-                    b.HasOne("Backend.Models.Icon", "Icon")
-                        .WithMany("Icon_Tags")
-                        .HasForeignKey("IconId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Backend.Models.Tag", "Tag")
-                        .WithMany()
-                        .HasForeignKey("TagId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Icon");
-
-                    b.Navigation("Tag");
-                });
-
-            modelBuilder.Entity("Backend.Models.Icon", b =>
-                {
-                    b.Navigation("Icon_Tags");
                 });
 #pragma warning restore 612, 618
         }

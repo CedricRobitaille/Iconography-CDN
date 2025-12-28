@@ -13,8 +13,16 @@ namespace Backend.Data
     public DbSet<User> Users => Set<User>();
     public DbSet<Company> Companies => Set<Company>();
     public DbSet<Company_Member> Company_Members => Set<Company_Member>();
+
+
     public DbSet<Icon> Icons => Set<Icon>();
     public DbSet<Company_Icon> Company_Icons => Set<Company_Icon>();
+
+
+    public DbSet<Tag> Tags => Set<Tag>();
+    public DbSet<Icon_Tag> Icon_Tags => Set<Icon_Tag>();
+
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

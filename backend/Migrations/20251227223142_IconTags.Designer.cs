@@ -3,6 +3,7 @@ using System;
 using Backend.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace backend.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    partial class MyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251227223142_IconTags")]
+    partial class IconTags
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -140,7 +143,7 @@ namespace backend.Migrations
                     b.ToTable("Icons");
                 });
 
-            modelBuilder.Entity("Backend.Models.Icon_Tag", b =>
+            modelBuilder.Entity("Backend.Models.Icon_Tags", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -263,10 +266,10 @@ namespace backend.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Backend.Models.Icon_Tag", b =>
+            modelBuilder.Entity("Backend.Models.Icon_Tags", b =>
                 {
                     b.HasOne("Backend.Models.Icon", "Icon")
-                        .WithMany("Icon_Tags")
+                        .WithMany()
                         .HasForeignKey("IconId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -280,11 +283,6 @@ namespace backend.Migrations
                     b.Navigation("Icon");
 
                     b.Navigation("Tag");
-                });
-
-            modelBuilder.Entity("Backend.Models.Icon", b =>
-                {
-                    b.Navigation("Icon_Tags");
                 });
 #pragma warning restore 612, 618
         }
