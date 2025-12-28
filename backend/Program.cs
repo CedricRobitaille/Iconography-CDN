@@ -6,7 +6,7 @@
 // To migrate db
 // dotnet restore
 // dotnet ef migrations add <migration description>
-// dotnet ef migrations update
+// dotnet ef database update
 
 
 using Microsoft.EntityFrameworkCore; // Import EF for UseMySql, AddDbContext, and DbContextOptions

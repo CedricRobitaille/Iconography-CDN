@@ -1,13 +1,15 @@
 using System.ComponentModel.DataAnnotations;
 
+
 namespace Backend.Models;
-public class Icon
+
+public class Tag
 {
+  // Id
+  [Key]
   public int Id { get; set; }
 
-  [Required, StringLength(64)]
+  // Name
+  [StringLength(128), Required]
   public string Name { get; set; } = string.Empty;
-
-  [Required]
-  public string Svg { get; set; } = string.Empty;
 }
