@@ -17,7 +17,9 @@ namespace Backend.Controllers
     }
 
 
+    // ============================
     // Post Handling for '/api/icon' (New Icon)
+    // ============================
     [HttpPost("{companyId}")]
     public async Task<ActionResult<Icon>> Create(int companyId, [FromBody] IconCreationDto dto)
     {
@@ -48,24 +50,27 @@ namespace Backend.Controllers
       // Create a new Icon
       var icon = new Icon
       {
-        Name = dto.Icon.Name,
-        Svg = dto.Icon.Svg,
-        Style = dto.Icon.Style,
-        Type = dto.Icon.Type,
-        Category = dto.Icon.Category
+        Name = dto.Icon.Name,         // Name
+        Svg = dto.Icon.Svg,           // SVG
+        Style = dto.Icon.Style,       // Style
+        Type = dto.Icon.Type,         // Type
+        Category = dto.Icon.Category  // Category
       };
 
+      // Set the new icon into context
       _context.Icons.Add(icon);
       await _context.SaveChangesAsync();
+
 
       // Create a new Company_Icon
       var owner = new Company_Icon
       {
-        IconId = icon.Id,
-        CompanyId = companyId,
-        UserId = dto.User.Id,
+        IconId = icon.Id,       // Icon ID
+        CompanyId = companyId,  // Company Id
+        UserId = dto.User.Id,   // Author's User Id
       };
 
+      // Set the Icon/Company relationship into context
       _context.Company_Icons.Add(owner);
       await _context.SaveChangesAsync();
 
@@ -75,26 +80,23 @@ namespace Backend.Controllers
         // Check if the Tag already exists
         var tag = await _context.Tags.FirstOrDefaultAsync(t => t.Name == tagName);
 
-        if (tag == null)
+        if (tag == null) // Create a new tag ONLY if it doesn't already exist
         {
-          // Create a new tag ONLY if it doesn't already exist
-          tag = new Tag
-          {
-            Name = tagName,
-          };
-          _context.Tags.Add(tag);
-          await _context.SaveChangesAsync();
+          tag = new Tag { Name = tagName }; // Create the Tag
+          _context.Tags.Add(tag); // Add the Tag into context
+          await _context.SaveChangesAsync();  // Save the tag into the DB
         }
 
+        // Create the Icon/Tag Relationship
         var iconTag = new Icon_Tag
         {
-          IconId = icon.Id,
-          TagId = tag.Id
+          IconId = icon.Id, // Icon ID
+          TagId = tag.Id    // Tag ID
         };
 
-        _context.Icon_Tags.Add(iconTag);
+        _context.Icon_Tags.Add(iconTag);  // Add the tag into context
       }
-      await _context.SaveChangesAsync();
+      await _context.SaveChangesAsync();  // Save all Tag contexts into the DB
 
 
       return Ok(new //HTTP 200 Status Code)
@@ -105,7 +107,9 @@ namespace Backend.Controllers
     }
 
 
+    // ============================
     // Get all icons
+    // ============================
     [HttpGet] 
     public async Task<ActionResult<IEnumerable<Icon>>> GetAll(
       [FromQuery] string? name,
@@ -117,30 +121,35 @@ namespace Backend.Controllers
     {
       IQueryable<Icon> query = _context.Icons;
 
+      // Query for /icon?name=string
       if (!string.IsNullOrEmpty(name))
         query = query.Where(i => EF.Functions.Like(i.Name, $"%{name}%"));
 
+      // Query for /icon?style=string
       if (!string.IsNullOrEmpty(style))
         query = query.Where(i => EF.Functions.Like(i.Style, $"%{style}%"));
 
+      // Query for /icon?type=string
       if (!string.IsNullOrEmpty(type))
         query = query.Where(i => EF.Functions.Like(i.Type, $"%{type}%"));
 
+      // Query for /icon?category=string
       if (!string.IsNullOrEmpty(category))
         query = query.Where(i => EF.Functions.Like(i.Category, $"%{category}%"));
 
+      // Query for /icon?tags=string
       if (!string.IsNullOrEmpty(tags))
       {
         // Convert "tags=1,2,3,4" -> [1,2,3,4]
         var tagList = tags.Split(',').Select(t => t.Trim()).ToList();
-  
+        // Filter in Tags where Icon_Tags contains a TagName found in the TagList
         query = query.Where(i => i.Icon_Tags.Any(it => tagList.Contains(it.Tag.Name)));
-      }
+      } 
 
-      var results = await query
+      var results = await query // Final filter on icons
         .Include(i => i.Icon_Tags)
           .ThenInclude(it => it.Tag)
-        .Select(i => new
+        .Select(i => new 
         {
           i.Id,
           i.Name,
@@ -148,11 +157,11 @@ namespace Backend.Controllers
           i.Type,
           i.Category,
           i.Svg,
-          Tags = i.Icon_Tags.Select(it => new
+          Tags = i.Icon_Tags.Select(it => new // List out all tags
           {
-            it.Tag.Id,
-            it.Tag.Name
-          }).ToList()
+            it.Tag.Id,  // Tag ID
+            it.Tag.Name // Tag Name
+          }).ToList() // Convert to list/Array
         })
         .ToListAsync();
 
@@ -162,7 +171,10 @@ namespace Backend.Controllers
       return Ok(results);
     }
 
+
+    // ============================
     // Get company's icons
+    // ============================
     [HttpGet("{companyId}")]
     public async Task<ActionResult<IEnumerable<Icon>>> GetByCompanyId(int companyId)
     {
@@ -177,7 +189,9 @@ namespace Backend.Controllers
     }
 
 
-    //Get Icons by companyId AND iconId
+    // ============================
+    // Get Icons by companyId AND iconId
+    // ============================
     [HttpGet("{companyId}/{iconId}")]
     public async Task<ActionResult<Icon>> GetByIconId(int companyId, int iconId)
     {
