@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Backend.Models;
-using System.Security.Authentication;
 
 namespace Backend.Data
 {
@@ -12,7 +11,6 @@ namespace Backend.Data
     // Each DbSet is a new table in the DB 
     public DbSet<User> Users => Set<User>();
     public DbSet<Company> Companies => Set<Company>();
-    public DbSet<Company_Member> Company_Members => Set<Company_Member>();
 
 
     public DbSet<Icon> Icons => Set<Icon>();
@@ -28,25 +26,18 @@ namespace Backend.Data
     {
       base.OnModelCreating(modelBuilder);
 
-      // User / Company relationship
+      // Company / User relationship
       modelBuilder.Entity<Company>()
-          .HasOne(c => c.User)
+          .HasOne(c => c.Owner)
           .WithMany()
-          .HasForeignKey(c => c.UserId)
-          .OnDelete(DeleteBehavior.Cascade);
+          .HasForeignKey(c => c.OwnerId)
+          .OnDelete(DeleteBehavior.Restrict);
 
-      // User / Company_Members relationship
-      modelBuilder.Entity<Company_Member>()
-          .HasOne(cm => cm.User)
-          .WithMany()
-          .HasForeignKey(cm => cm.UserId)
-          .OnDelete(DeleteBehavior.Cascade);
-
-      // Company / Company_Members relationship
-      modelBuilder.Entity<Company_Member>()
-          .HasOne(cm => cm.Company)
-          .WithMany()
-          .HasForeignKey(cm => cm.CompanyId)
+      // User / Company relationship
+      modelBuilder.Entity<User>()
+          .HasOne(u => u.Company)
+          .WithMany(c => c.Employees)
+          .HasForeignKey(u => u.CompanyId)
           .OnDelete(DeleteBehavior.Cascade);
 
       // Icon Relationships

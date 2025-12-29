@@ -1,9 +1,9 @@
 # Stores
-## Application state (Pinia / Vuex)
+## Application state (Pinia)
 
 ### What goes here
 
-- App-wide state=
+- App-wide state
 - Business logic
 - Cross-feature coordination
 - Persistence / caching

@@ -18,6 +18,8 @@ namespace Backend.Controllers
     }
 
 
+
+
     // Post Handling for '/api/account/register' (New Company)
     [HttpPost("register")]
     public async Task<ActionResult<Company>> Create([FromBody] AccountCreationDto dto) // Bind the request body to the client
@@ -33,62 +35,74 @@ namespace Backend.Controllers
       //   "Company": {
       //     "Name": string,
       //     "Type": int,
-      //     "UserId": int,
       //   }
       // }
 
-      // Distinct Emails Only
-      if (await _context.Users.AnyAsync(user => user.Email == dto.User.Email))
+      // Initialize the Transaction
+      using var transaction = await _context.Database.BeginTransactionAsync();
+
+      try
       {
-        return BadRequest("Email is already in use.");
+
+        // Distinct Emails Only
+        if (await _context.Users.AnyAsync(user => user.Email == dto.User.Email))
+        {
+          return BadRequest("Email is already in use.");
+        }
+
+        // Hash password
+        string passwordHash = HashPassword(dto.User.Password);
+
+
+        // Create a new User
+        var user = new User
+        {
+          Name = dto.User.Name,
+          Email = dto.User.Email,
+          Password_Hash = passwordHash,
+          Role = Models.User.MemberRoles.Owner, // Assign as Owner by default
+          CompanyId = null
+        };
+
+        _context.Users.Add(user);
+        await _context.SaveChangesAsync(); // user.Id generated
+
+        // Create a new Company
+        var company = new Company
+        {
+          Name = dto.Company.Name,
+          Type = (Company.CompanyTypes)dto.Company.Type,
+          OwnerId = user.Id,
+        };
+
+        _context.Companies.Add(company);
+        await _context.SaveChangesAsync(); // company.Id generated
+
+
+
+        // Update user with companyId
+
+        user.CompanyId = company.Id;
+        _context.Users.Update(user);
+        await _context.SaveChangesAsync();
+
+
+        // Once all have changes went through, commit the transaction.
+        await transaction.CommitAsync();
+
+
+        return Ok(new // HTTP 200 status code
+        {
+          Message = "Account successfully created",
+          UserId = user.Id,
+          CompanyId = company.Id
+        });
       }
-
-      // Hash password
-      string passwordHash = HashPassword(dto.User.Password);
-
-      // Create a new User
-      var user = new User
+      catch
       {
-        Name = dto.User.Name,
-        Email = dto.User.Email,
-        Password_Hash = passwordHash,
-      };
-
-      _context.Users.Add(user);
-      await _context.SaveChangesAsync(); // Insert user into DB, Generate the Id, Insert Id back into user
-
-
-      // Create a new Company
-      var company = new Company
-      {
-        Name = dto.Company.Name,
-        Type = (Company.CompanyTypes)dto.Company.Type,
-        UserId = user.Id,
-      };
-
-      _context.Companies.Add(company);
-      await _context.SaveChangesAsync(); // Insert Company into DB, Generate the Id, Insert Id back into Company
-
-
-      // Create a initial Company_Member (Assign as Owner)
-      var member = new Company_Member
-      {
-        UserId = user.Id,
-        CompanyId = company.Id,
-        Type = Company_Member.MemberRoles.Owner,
-      };
-
-      _context.Company_Members.Add(member);
-      await _context.SaveChangesAsync();
-
-
-
-      return Ok(new // HTTP 200 status code
-      {
-        Message = "Account successfully created",
-        UserId = user.Id,
-        CompanyId = company.Id
-      });
+        await transaction.RollbackAsync();
+        throw;
+      }
     }
 
 
@@ -98,7 +112,7 @@ namespace Backend.Controllers
 
     // Post Handling for '/api/account/join' (New Member)
     [HttpPost("join")]
-    public async Task<ActionResult<Company>> Create([FromBody] MemberCreationDto dto) // Bind the request body to the client
+    public async Task<ActionResult<Company>> Join([FromBody] CompanyJoinDto dto) // Bind the request body to the client
     {
 
       // Data comes in as follows:
@@ -107,56 +121,64 @@ namespace Backend.Controllers
       //     "Name": string,
       //     "Email": string,
       //     "Password": string,
-      //   }, 
-      //   "Company": {
-      //     "Id": int,
-      //   }
-      //   "Member": {
-      //     "type": int,
+      //     "CompanyId": int,
+      //     "Role": int,
       //   }
       // }
 
-      // Distinct Emails Only
-      if (await _context.Users.AnyAsync(user => user.Email == dto.User.Email))
+      using var transaction = await _context.Database.BeginTransactionAsync();
+
+      try
       {
-        return BadRequest("Email is already in use.");
+
+        var company = await _context.Companies
+          .Include(c => c.Employees)
+          .FirstOrDefaultAsync(c => c.Id == dto.User.CompanyId);
+
+        if (company == null) 
+        {
+          return NotFound("Company not found");
+        }
+
+        // Distinct Emails Only
+        if (await _context.Users.AnyAsync(user => user.Email == dto.User.Email))
+        {
+          return BadRequest("Email is already in use.");
+        }
+
+        // Hash password
+        string passwordHash = HashPassword(dto.User.Password);
+
+        // Create a new User
+        var user = new User
+        {
+          Name = dto.User.Name,
+          Email = dto.User.Email,
+          Password_Hash = passwordHash,
+          CompanyId = dto.User.CompanyId,
+          Role = (User.MemberRoles)dto.User.Role,
+        };
+
+        company.Employees.Add(user);
+
+        _context.Users.Add(user);
+        await _context.SaveChangesAsync(); // Insert user into DB, Generate the Id, Insert Id back into user
+
+        // Once all have changes went through, commit the transaction.
+        await transaction.CommitAsync();
+
+        return Ok(new // HTTP 200 status code
+        {
+          Message = "Account successfully created",
+          User = user,
+          CompanyId = user.CompanyId
+        });
       }
-
-      // Hash password
-      string passwordHash = HashPassword(dto.User.Password);
-
-      // Create a new User
-      var user = new User
+      catch
       {
-        Name = dto.User.Name,
-        Email = dto.User.Email,
-        Password_Hash = passwordHash,
-      };
-
-      _context.Users.Add(user);
-      await _context.SaveChangesAsync(); // Insert user into DB, Generate the Id, Insert Id back into user
-
-
-
-      // Add user to company (Assign as Owner)
-      var member = new Company_Member
-      {
-        UserId = user.Id,
-        CompanyId = dto.Company.Id,
-        Type = (Company_Member.MemberRoles)dto.Company_Member.Type, // specific value of the enum
-      };
-
-      _context.Company_Members.Add(member);
-      await _context.SaveChangesAsync();
-
-
-
-      return Ok(new // HTTP 200 status code
-      {
-        Message = "Account successfully created",
-        UserId = user.Id,
-        CompanyMemberId = member.Id
-      });
+        await transaction.RollbackAsync();
+        throw;
+      }
     }
 
 
