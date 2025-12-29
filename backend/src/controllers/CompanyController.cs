@@ -34,6 +34,47 @@ namespace Backend.Controllers
     }
 
 
+    //  PUT '/api/company/id'
+    [HttpPut("{id}")]
+    public async Task<ActionResult<Company>> Patch(int id, [FromBody] CompanyPutDto dto)
+    {
+      var company = await _context.Companies.FindAsync(id);
+      if (company == null) return NotFound();
+
+      company.Name = dto.Name;
+      company.OwnerId = dto.OwnerId;
+      company.Type = (Company.CompanyTypes)dto.Type;
+
+      await _context.SaveChangesAsync();
+      return company;
+    }
+
+
+    // PATCH '/api/company/id'
+    [HttpPatch("{id}")]
+    public async Task<ActionResult<Company>> Put(int id, [FromBody] CompanyPatchDto dto)
+    {
+      var company = await _context.Companies.FindAsync(id);
+      if (company == null) return NotFound();
+
+      // Only update fields that are provided
+      if (!string.IsNullOrWhiteSpace(dto.Name))
+        company.Name = dto.Name;
+
+      if (dto.OwnerId.HasValue)
+        company.OwnerId = dto.OwnerId;
+
+      if (dto.Type.HasValue)
+        company.Type = (Company.CompanyTypes)dto.Type;
+
+      // Mark the entity as modified
+      _context.Companies.Update(company);
+      await _context.SaveChangesAsync();
+
+      return company;
+    }
+
+
     //  DELETE '/api/company/id'
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)

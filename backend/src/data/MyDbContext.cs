@@ -31,7 +31,7 @@ namespace Backend.Data
           .HasOne(c => c.Owner)
           .WithMany()
           .HasForeignKey(c => c.OwnerId)
-          .OnDelete(DeleteBehavior.Restrict);
+          .OnDelete(DeleteBehavior.Cascade);
 
       // User / Company relationship
       modelBuilder.Entity<User>()

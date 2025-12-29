@@ -37,17 +37,7 @@ namespace Backend.Controllers
 
 
 
-    // //  PUT '/api/user/id'
-    // [HttpPut("{id}")]
-    // public async Task<IActionResult> Update(int id, User user)
-    // {
-    //   if (id != user.Id) return BadRequest();
-    //   _context.Entry(user).State = EntityState.Modified;
-    //   await _context.SaveChangesAsync();
-    //   return NoContent();
-    // }
-
-
+    // PUT '/api/user/id'
     [HttpPut("{id}")]
     public async Task<ActionResult<User>> Patch(int id, [FromBody] UserPutDto dto)
     {
