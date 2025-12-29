@@ -37,16 +37,60 @@ namespace Backend.Controllers
 
 
 
-    //  PUT '/api/user/id'
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, User user)
-    {
-      if (id != user.Id) return BadRequest();
-      _context.Entry(user).State = EntityState.Modified;
-      await _context.SaveChangesAsync();
-      return NoContent();
-    }
+    // //  PUT '/api/user/id'
+    // [HttpPut("{id}")]
+    // public async Task<IActionResult> Update(int id, User user)
+    // {
+    //   if (id != user.Id) return BadRequest();
+    //   _context.Entry(user).State = EntityState.Modified;
+    //   await _context.SaveChangesAsync();
+    //   return NoContent();
+    // }
 
+
+    [HttpPut("{id}")]
+    public async Task<ActionResult<User>> Patch(int id, [FromBody] UserPutDto dto)
+    {
+      var user = await _context.Users.FindAsync(id);
+      if (user == null) return NotFound();
+
+      user.Name = dto.Name;
+      user.Email = dto.Email;
+      user.Password_Hash = HashPassword(dto.Password);
+      user.Role = (User.MemberRoles)dto.Role;
+
+      await _context.SaveChangesAsync();
+      return user;
+    }
+    
+
+
+    // PATCH '/api/user/id'
+    [HttpPatch("{id}")]
+    public async Task<ActionResult<User>> Put(int id, [FromBody] UserPatchDto dto)
+    {
+      var user = await _context.Users.FindAsync(id);
+      if (user == null) return NotFound();
+
+      // Only update fields that are provided
+      if (!string.IsNullOrWhiteSpace(dto.Name))
+        user.Name = dto.Name;
+
+      if (!string.IsNullOrWhiteSpace(dto.Email))
+        user.Email = dto.Email;
+
+      if (!string.IsNullOrWhiteSpace(dto.Password))
+        user.Password_Hash = HashPassword(dto.Password);
+
+      if (dto.Role.HasValue)
+        user.Role = (User.MemberRoles)dto.Role;
+
+      // Mark the entity as modified
+      _context.Users.Update(user);
+      await _context.SaveChangesAsync();
+
+      return user;
+    }
 
 
     //  DELETE '/api/user/id'
@@ -58,6 +102,14 @@ namespace Backend.Controllers
       _context.Users.Remove(user);
       await _context.SaveChangesAsync();
       return NoContent();
+    }
+
+
+    // Function to hash passwords with BCrypt
+    private string HashPassword(string password)
+    {
+      // BCrypt password hasher, provided password and salt amnt
+      return BCrypt.Net.BCrypt.HashPassword(password, workFactor: 12);
     }
   }
 }

@@ -40,7 +40,7 @@ public class User
   // CompanyId FK
   public int? CompanyId { get; set; }
   [JsonIgnore]
-  public virtual Company Company { get; set; } = null!;
+  public virtual Company Company { get; protected set; } = null!;
 
 
   // Role
