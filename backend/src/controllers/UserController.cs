@@ -39,7 +39,7 @@ namespace Backend.Controllers
 
     // PUT '/api/user/id'
     [HttpPut("{id}")]
-    public async Task<ActionResult<User>> Patch(int id, [FromBody] UserPutDto dto)
+    public async Task<ActionResult<User>> Put(int id, [FromBody] UserPutDto dto)
     {
       var user = await _context.Users.FindAsync(id);
       if (user == null) return NotFound();
@@ -57,7 +57,7 @@ namespace Backend.Controllers
 
     // PATCH '/api/user/id'
     [HttpPatch("{id}")]
-    public async Task<ActionResult<User>> Put(int id, [FromBody] UserPatchDto dto)
+    public async Task<ActionResult<User>> Patch(int id, [FromBody] UserPatchDto dto)
     {
       var user = await _context.Users.FindAsync(id);
       if (user == null) return NotFound();

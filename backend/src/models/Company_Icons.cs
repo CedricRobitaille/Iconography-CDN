@@ -8,6 +8,7 @@ namespace Backend.Models;
 public class Company_Icon
 {
   // Id
+  [Key]
   public int Id { get; set; }
 
 
@@ -33,10 +34,10 @@ public class Company_Icon
 
 
   // Created_At
-  public DateTime Created_At { get; protected set; } = DateTime.UtcNow;
+  public DateTime CreatedAt { get; protected set; } = DateTime.UtcNow;
 
 
   // Updated_At
-  public DateTime Updated_At { get; set; } = DateTime.UtcNow;
+  public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
 }

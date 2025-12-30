@@ -18,13 +18,12 @@ public class Collection
   [Key]
   public int Id { get; set; }
 
-
   // CompanyId 
   public int CompanyId { get; set; }
   [JsonIgnore]
   public virtual Company Company { get; set; } = null!;
 
-  [StringLength(32)]
+  [Required, StringLength(32)]
   public string Name { get; set; } = null!;
 
   public int IconCount { get; set; }

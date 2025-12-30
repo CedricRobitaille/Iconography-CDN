@@ -21,6 +21,10 @@ namespace Backend.Data
     public DbSet<Icon_Tag> Icon_Tags => Set<Icon_Tag>();
 
 
+    public DbSet<Collection> Collections => Set<Collection>();
+    public DbSet<Collection_Icon> Collection_Icons => Set<Collection_Icon>();
+
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -43,19 +47,19 @@ namespace Backend.Data
       // Icon Relationships
       modelBuilder.Entity<Company_Icon>(entity =>
       {
-        // Company → Company_Icon (unidirectional, cascade)
+        // Company -> Company_Icon
         entity.HasOne(ci => ci.Company)
             .WithMany()
             .HasForeignKey(ci => ci.CompanyId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // Icon → Company_Icon (unidirectional, cascade)
+        // Icon -> Company_Icon
         entity.HasOne(ci => ci.Icon)
             .WithMany() // no navigation on Icon either
             .HasForeignKey(ci => ci.IconId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // User → Company_Icon (no cascade)
+        // User -> Company_Icon (no cascade)
         entity.HasOne(ci => ci.User)
             .WithMany()
             .HasForeignKey(ci => ci.UserId)
