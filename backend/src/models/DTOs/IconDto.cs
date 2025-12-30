@@ -21,8 +21,20 @@
 public class IconCreationDto
 {
   // public OwnerDto Company { get; set; } = null!;
-  public AuthorDto User { get; set; } = null!;
+  public IconAuthorDto User { get; set; } = null!;
   public IconDto Icon { get; set; } = null!;
+  public IconOwnerDto Company { get; set; } = null!;
+}
+
+public class IconReadDto
+{
+  public int Id { get; set; }
+  public string Name { get; set; } = string.Empty;
+  public string Svg { get; set; } = string.Empty;
+  public string Style { get; set; } = string.Empty;
+  public string Type { get; set; } = string.Empty;
+  public string Category { get; set; } = string.Empty;
+  public List<IconTagDto> Tags { get; set; } = new();
 }
 
 
@@ -39,8 +51,18 @@ public class IconDto // Icon
 }
 
 
-public class AuthorDto // User
+public class IconAuthorDto // User
 {
   public int Id { get; set; }
 }
 
+public class IconOwnerDto // Company
+{
+  public int Id { get; set; }
+}
+
+public class IconTagDto
+{
+  public int Id { get; set; }
+  public string Name { get; set; } = string.Empty;
+}

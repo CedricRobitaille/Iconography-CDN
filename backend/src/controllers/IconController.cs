@@ -21,7 +21,7 @@ namespace Backend.Controllers
     // ============================
     // Post Handling for '/api/icon' (New Icon)
     // ============================
-    [HttpPost("{companyId}")]
+    [HttpPost]
     public async Task<ActionResult<Icon>> Create(int companyId, [FromBody] IconCreationDto dto)
     {
       // Data comes in as follows:
@@ -34,18 +34,21 @@ namespace Backend.Controllers
       //     "Category": string,
       //     "Tags": array[]
       //   },
-      //   "Author": {
+      //   "User": {
       //     "Id": int
+      //   }
+      //   "Company": {
+      //     "Id": 3
       //   }
       // }
 
       // Ensure Company Exists
-      var companyExists = await _context.Companies.AnyAsync(c => c.Id == companyId);
-      if (!companyExists)
+      var company = await _context.Companies.FindAsync(dto.Company.Id);
+      if (company == null)
         return NotFound($"Company {companyId} does not exist.");
 
-      var authorExists = await _context.Users.AnyAsync(u => u.Id == dto.User.Id);
-      if (!authorExists)
+      var author = await _context.Users.FindAsync(dto.User.Id);
+      if (author == null)
         return NotFound($"User {dto.User.Id} does not exist.");
 
       // Create a new Icon
@@ -67,8 +70,8 @@ namespace Backend.Controllers
       var owner = new Company_Icon
       {
         IconId = icon.Id,       // Icon ID
-        CompanyId = companyId,  // Company Id
-        UserId = dto.User.Id,   // Author's User Id
+        CompanyId = company.Id,  // Company Id
+        UserId = author.Id,   // Author's User Id
       };
 
       // Set the Icon/Company relationship into context
@@ -176,36 +179,33 @@ namespace Backend.Controllers
     // ============================
     // Get company's icons
     // ============================
-    [HttpGet("{companyId}")]
-    public async Task<ActionResult<IEnumerable<Icon>>> GetByCompanyId(int companyId)
+    [HttpGet("{id}")]
+    public async Task<ActionResult<IconReadDto>> GetById(int id)
     {
-      // We need to query the `Company_Icons` table to find where companyId match, and return the icon
-      var icons = await _context.Company_Icons
-        .Where(ci => ci.CompanyId == companyId)
-        .Select(ci => ci.Icon)
-        .ToListAsync();
+      var icon = await _context.Icons
+        .Where(i => i.Id == id)
+        .Select(i => new IconReadDto
+        {
+          Id = i.Id,
+          Name = i.Name,
+          Style = i.Style,
+          Type = i.Type,
+          Category = i.Category,
+          Svg = i.Svg,
+          Tags = i.Icon_Tags
+            .Select(it => new IconTagDto
+            {
+              Id = it.Tag.Id,
+              Name = it.Tag.Name
+            })
+          .ToList()
+        })
+        .FirstOrDefaultAsync();
 
-      if (icons.Count == 0) return NotFound();
-      return icons;
+      if (icon == null)
+        return NotFound($"Icon {id} does not exist");
+
+      return Ok(icon);
     }
-
-
-    // ============================
-    // Get Icons by companyId AND iconId
-    // ============================
-    [HttpGet("{companyId}/{iconId}")]
-    public async Task<ActionResult<Icon>> GetByIconId(int companyId, int iconId)
-    {
-      var icon = await _context.Company_Icons
-        .Where(ci => ci.CompanyId == companyId)
-        .Where(ci => ci.IconId == iconId)
-        .Select(ci => ci.Icon)
-        .SingleOrDefaultAsync();
-
-        if (icon == null) return NotFound();
-        return icon;
-    }
-
-
   }
 }
