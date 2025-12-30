@@ -158,5 +158,19 @@ namespace Backend.Controllers
 
       return collection;
     }
+
+
+
+    // Delete '/api/collection/id
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+      var collection = await _context.Collections.FindAsync(id);
+      if (collection == null) return NotFound($"Collection {id} does not exist");
+
+      _context.Collections.Remove(collection);
+      await _context.SaveChangesAsync();
+      return NoContent();
+    }
   }
 }
