@@ -207,5 +207,123 @@ namespace Backend.Controllers
 
       return Ok(icon);
     }
+
+
+
+    [HttpPut("{id}")]
+    public async Task<ActionResult<Icon>> Put(int id, [FromBody] IconPutDto dto)
+    {
+      var icon = await _context.Icons
+        .Include(i => i.Icon_Tags)
+        .FirstOrDefaultAsync(i => i.Id == id);
+
+      if (icon == null) return NotFound($"Icon {id} does not exist");
+
+      // Tags must be included else, error
+      if (dto.TagIds == null) return BadRequest("TagIds must be provided.");
+
+      // Set icon props
+      icon.Name = dto.Name;
+      icon.Svg = dto.Svg;
+      icon.Style = dto.Style;
+      icon.Type = dto.Type;
+      icon.Category = dto.Category;
+
+      // Get all existing tags
+      var existingTagIds = icon.Icon_Tags
+        .Select(it => it.TagId)
+        .ToList();
+
+      // Get Incoming tags
+      var incomingTagIds = dto.TagIds.Distinct().ToList();
+
+      // Compare Existing to Incoming
+      var toRemove = icon.Icon_Tags
+        .Where(it => !incomingTagIds.Contains(it.TagId))
+        .ToList();
+
+      // If incoming doesn't include existing, remove it.
+      _context.Icon_Tags.RemoveRange(toRemove);
+
+      // Add incoming that isn't in existing 
+      var toAdd = incomingTagIds
+        .Where(id => !existingTagIds.Contains(id))
+        .Select(id => new Icon_Tag
+          {
+            IconId = icon.Id,
+            TagId = id
+          });
+
+      // Add new icons to context
+      await _context.Icon_Tags.AddRangeAsync(toAdd);
+
+      await _context.SaveChangesAsync();
+
+      return icon;
+    }
+
+
+    [HttpPatch("{id}")]
+    public async Task<ActionResult<Icon>> Patch(int id, [FromBody] IconPatchDto dto)
+    {
+      var icon = await _context.Icons
+          .Include(i => i.Icon_Tags)
+          .FirstOrDefaultAsync(i => i.Id == id);
+
+      if (icon == null)
+        return NotFound($"Icon {id} does not exist");
+
+      // Update props ONLY when provided
+      if (dto.Name != null) icon.Name = dto.Name;
+      if (dto.Svg != null) icon.Svg = dto.Svg;
+      if (dto.Style != null) icon.Style = dto.Style;
+      if (dto.Type != null) icon.Type = dto.Type;
+      if (dto.Category != null) icon.Category = dto.Category;
+
+      // Update Tags if the user included them.
+      if (dto.TagIds != null)
+      {
+        var existingTagIds = icon.Icon_Tags
+          .Select(it => it.TagId)
+          .ToList();
+
+        var incomingTagIds = dto.TagIds
+          .Distinct()
+          .ToList();
+
+        var toRemove = icon.Icon_Tags
+          .Where(it => !incomingTagIds.Contains(it.TagId))
+          .ToList();
+
+        _context.Icon_Tags.RemoveRange(toRemove);
+
+        var toAdd = incomingTagIds
+          .Where(id => !existingTagIds.Contains(id))
+          .Select(id => new Icon_Tag
+          {
+            IconId = icon.Id,
+            TagId = id
+          });
+
+        await _context.Icon_Tags.AddRangeAsync(toAdd);
+      }
+
+      await _context.SaveChangesAsync();
+
+      return icon;
+    }
+
+
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+      var icon = await _context.Icons.FindAsync(id);
+      if (icon == null) return NotFound($"Icon {id} does not exist");
+
+      _context.Icons.Remove(icon);
+      await _context.SaveChangesAsync();
+      return NoContent();
+    }
   }
 }

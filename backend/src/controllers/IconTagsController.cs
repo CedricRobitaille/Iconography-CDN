@@ -20,5 +20,13 @@ namespace Backend.Controllers
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Icon_Tag>>> GetAll()
       => await _context.Icon_Tags.ToListAsync();
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Icon_Tag>> GetById(int id)
+    {
+      var iconTag = await _context.Icon_Tags.FindAsync(id);
+      if (iconTag == null) return NotFound($"Icon Tag RL {id} does not exist");
+      return iconTag;
+    }
   }
 }

@@ -11,7 +11,7 @@
 //   "Company": {
 //     "Id": int
 //   },
-//   "Author": {
+//   "User": {
 //     "Id": int
 //   }
 // }
@@ -26,6 +26,32 @@ public class IconCreationDto
   public IconOwnerDto Company { get; set; } = null!;
 }
 
+public class IconPutDto
+{
+  public string Name { get; set; } = null!;
+  public string Svg { get; set; } = null!;
+  public string Style { get; set; } = null!;
+  public string Type { get; set; } = null!;
+  public string Category { get; set; } = null!;
+  public List<int> TagIds { get; set; } = new();
+}
+
+
+public class IconPatchDto
+{
+  public string? Name { get; set; }
+  public string? Svg { get; set; }
+  public string? Style { get; set; }
+  public string? Type { get; set; }
+  public string? Category { get; set; }
+
+  // Optional: only processed if present
+  public List<int>? TagIds { get; set; }
+}
+
+
+
+
 public class IconReadDto
 {
   public int Id { get; set; }
@@ -36,7 +62,6 @@ public class IconReadDto
   public string Category { get; set; } = string.Empty;
   public List<IconTagDto> Tags { get; set; } = new();
 }
-
 
 // Models for the DTOs set above
 
