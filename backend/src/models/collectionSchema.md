@@ -1,94 +1,65 @@
-✅ Recommended Design (Efficient & Scalable)
-1. Companies
-companies
-- id (PK)
-- name
+# Collection Relationship Models
 
-2. Icons
-icons
-- id (PK)
-- company_id (FK → companies.id)
-- name
-- file_path
-
-3. Collections
-collections
-- id (PK)
-- company_id (FK → companies.id)
-- name
-
-4. Collection ↔ Icon (Join Table)
-collection_icons
-- collection_id (FK → collections.id)
-- icon_id (FK → icons.id)
-- sort_order (INT)
-- added_at
-PRIMARY KEY (collection_id, icon_id)
-
-Why This Is the Best Approach
-✔ Performance
-
-Indexed lookups
-
-Fast joins
-
-Works with millions of rows
-
-✔ Flexibility
-
-Icons can belong to multiple collections
-
-Easy reordering via sort_order
-
-Easy future features (tags, favorites, etc.)
-
-✔ Clean Queries
-
-Get all icons in a collection (ordered):
-
-SELECT i.*
-FROM icons i
-JOIN collection_icons ci ON ci.icon_id = i.id
-WHERE ci.collection_id = ?
-ORDER BY ci.sort_order;
+## Overview
+Every Collection belongs to a company.<br>
+Every collection contains many icons.<br>
+Every icon can belong to many collections.
 
 
-Add an icon to a collection:
 
-INSERT INTO collection_icons (collection_id, icon_id, sort_order)
-VALUES (?, ?, ?);
+## Database Schema
 
-Optional Enhancements (Very Common)
-Enforce Company Isolation
+### Collections
+```SQL
+Id INT PRIMARY KEY,
 
-If icons and collections must belong to the same company:
+CONSTRAINT Company_Id
+  FOREIGN KEY (Id) 
+  REFERENCES Companies (Id)
 
-Enforce in application logic or
+Name VARCHAR(32),
 
-Add a composite constraint via triggers (MySQL limitation)
+IconCount INT,
 
-Soft Deletes
+MonthlyUses INT,
 
-Add:
+UpdatedAt DATE,
 
-deleted_at DATETIME NULL
+Created_at DATE,
+```
 
 
-to icons and collections
+### Collection_Icons
+```SQL
+Id PRIMARY KEY,
 
-Unique Collection Names Per Company
-UNIQUE (company_id, name)
+CONSTRAINT Icon_Id
+  FOREIGN KEY (Id) 
+  REFERENCES Icons (Id)
 
-Rule of Thumb (Worth Remembering)
+CONSTRAINT Collection_Id
+  FOREIGN KEY (Id) 
+  REFERENCES Collection (Id)
+```
 
-If you feel tempted to create tables dynamically, you almost always want rows instead.
 
-If you want, I can:
+## Icon Creation
 
-Optimize this for very large icon libraries
+Upon creating an Collection, the following JSON data would be provided:
 
-Design it for multi-tenant SaaS
+```json
+{
+    "Name" : "MyFirstCollection",
+    "CompanyId": 1,
+    "IconId": 1 (Optional)
+}
+```
 
-Show how to implement this cleanly in an ORM (Prisma, Sequelize, Eloquent, etc.)
-
-Just tell me 👍
+With that information, there are a few relationships that must be set.
+1. Create an Collection
+  - Set the Name, SVG File, Style, Type, and Category
+2. If an icon is provided by default
+  - Create a Collection <-> Icon Relationship
+3. When an Icon is added to an existing Collection
+  1. Increment iconCount variable
+  2. Create a Collection <-> Icon Relationship

@@ -156,6 +156,7 @@ namespace Backend.Controllers
     // ============================
     [HttpGet] 
     public async Task<ActionResult<IEnumerable<Icon>>> GetAll(
+      // Icon DTO
       [FromQuery] string? name,
       [FromQuery] string? style,
       [FromQuery] string? type,

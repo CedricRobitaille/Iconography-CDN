@@ -80,6 +80,11 @@ Upon creating an icon, the following JSON data would be provided:
   },
   "User": {
     "Id": 1
+  },
+  {
+    "Company": {
+      "Id": 1
+    }
   }
 }
 ```
@@ -98,9 +103,6 @@ With that information, there are a few relationships that must be set.
 
 ### Get all icons
 
-```
-
-```
 
 ### Get icons by Company
 
