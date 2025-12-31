@@ -18,6 +18,11 @@ public class CollectionPostDto
   public int? MonthlyUses { get; set; }
 }
 
+public class CollectionIconDto
+{
+  public int IconId { get; set; }
+}
+
 public class CollectionPutDto
 {
   public int CompanyId { get; set; }

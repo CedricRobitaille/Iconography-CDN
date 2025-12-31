@@ -119,22 +119,7 @@ namespace Backend.Controllers
         // Finally, we map it to a responseIcon so that we can see the tags combined.
         var responseIcon = await _context.Icons
           .Where(i => i.Id == icon.Id)
-          .Select(i => new IconReadDto
-          {
-            Id = i.Id,
-            Name = i.Name,
-            Svg = i.Svg,
-            Style = i.Style,
-            Type = i.Type,
-            Category = i.Category,
-            Tags = i.Icon_Tags
-                  .Select(it => new IconTagDto
-                  {
-                    Id = it.Tag.Id,
-                    Name = it.Tag.Name
-                  })
-                  .ToList()
-          })
+          .Select(IconProjections.ToIconDisplayDto())
           .FirstAsync();
 
         return CreatedAtAction(
@@ -196,7 +181,7 @@ namespace Backend.Controllers
             EF.Functions.Like(i.Category, $"%{category}%"));
       }
 
-      // /icon?tags=ui,solid,arrow
+      // /icon?tags=string,string,string
       if (!string.IsNullOrWhiteSpace(tags))
       {
         var tagList = tags
@@ -210,20 +195,7 @@ namespace Backend.Controllers
       }
 
       var results = await query
-          .Select(i => new
-          {
-            i.Id,
-            i.Name,
-            i.Style,
-            i.Type,
-            i.Category,
-            i.Svg,
-            Tags = i.Icon_Tags.Select(it => new
-            {
-              it.Tag.Id,
-              it.Tag.Name
-            }).ToList()
-          })
+          .Select(IconProjections.ToIconDisplayDto()) // Projection to Add the Tags
           .ToListAsync();
 
       if (results.Count == 0)
@@ -234,29 +206,14 @@ namespace Backend.Controllers
 
 
     // ============================
-    // Get company's icons
+    // Get Icon By Id
     // ============================
     [HttpGet("{id}")]
     public async Task<ActionResult<IconReadDto>> GetById(int id)
     {
       var icon = await _context.Icons
         .Where(i => i.Id == id)
-        .Select(i => new IconReadDto
-        {
-          Id = i.Id,
-          Name = i.Name,
-          Style = i.Style,
-          Type = i.Type,
-          Category = i.Category,
-          Svg = i.Svg,
-          Tags = i.Icon_Tags
-            .Select(it => new IconTagDto
-            {
-              Id = it.Tag.Id,
-              Name = it.Tag.Name
-            })
-          .ToList()
-        })
+        .Select(IconProjections.ToIconDisplayDto())
         .FirstOrDefaultAsync();
 
       if (icon == null) 

@@ -52,28 +52,30 @@ namespace Backend.Controllers
         _context.Collections.Add(collection);
         await _context.SaveChangesAsync();
 
-        // Confirm icon exists
-        if (dto.IconId.HasValue)
+        // Search for Icon in DB
+        var icon = await _context.Icons.FindAsync(dto.IconId);
+        if (icon == null)
         {
-          var icon = await _context.Icons.FindAsync(dto.IconId);
-          if (icon == null)
-          {
-            await transaction.RollbackAsync();
-            return NotFound($"Icon {dto.IconId} does not exist");
-          }
-          // Increment IconCount on collection
-          collection.IconCount = 1;
-
-          // Connect the icon to the collection
-          var collection_icon = new Collection_Icon
-          {
-            IconId = icon.Id,
-            CollectionId = collection.Id
-          };
-
-          _context.Collection_Icons.Add(collection_icon);
-          await _context.SaveChangesAsync();
+          await transaction.RollbackAsync();
+          return NotFound($"Icon {dto.IconId} does not exist");
         }
+
+        // Increment IconCount on collection
+        collection.IconCount = 1;
+
+        _context.Collections.Add(collection);
+        await _context.SaveChangesAsync();
+
+        // Connect the icon to the collection
+        var collection_icon = new Collection_Icon
+        {
+          IconId = icon.Id,
+          CollectionId = collection.Id
+        };
+
+        _context.Collection_Icons.Add(collection_icon);
+        await _context.SaveChangesAsync();
+        
 
         await transaction.CommitAsync();
 
@@ -92,10 +94,7 @@ namespace Backend.Controllers
     }
 
 
-
-
-
-
+    
     //  GET '/api/collection'
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Collection>>> GetAll()
@@ -217,5 +216,122 @@ namespace Backend.Controllers
       await _context.SaveChangesAsync();
       return NoContent();
     }
+
+
+
+
+
+
+
+    [HttpGet("{collectionId}/icons")]
+    public async Task<ActionResult<IEnumerable<IconReadDto>>> GetCollectionIcons(int collectionId)
+    {
+      var icons = await _context.Collection_Icons
+        .Where(ci => ci.CollectionId == collectionId)
+        .Select(ci => ci.Icon)
+        .Select(IconProjections.ToIconDisplayDto())
+        .ToListAsync();
+
+      if (!icons.Any())
+        return NotFound($"No icons found in Collection {collectionId}");
+
+      return Ok(icons);
+    }
+
+
+    // Add an icon to the collection
+    // POST '/api/collection/collectionId'
+    [HttpPost("{collectionId}")]
+    public async Task<ActionResult<Collection>> AddIcon(int collectionId, [FromBody] CollectionIconDto dto)
+    {
+      // Json Data comes in as:
+      // {
+      //   "IconId": int
+      // }
+
+      using var transaction = await _context.Database.BeginTransactionAsync();
+
+      try
+      {
+        var collection = await _context.Collections.FindAsync(collectionId);
+        if (collection == null)
+        {
+          await transaction.RollbackAsync();
+          return NotFound($"Collection {collectionId} does not exist");
+        }
+
+        var icon = await _context.Icons.FindAsync(dto.IconId);
+        if (icon == null)
+        {
+          await transaction.RollbackAsync();
+          return NotFound($"Icon {dto.IconId} does not exist");
+        }
+
+        // Prevent duplicate icons
+        bool alreadyExists = await _context.Collection_Icons
+            .AnyAsync(ci =>
+                ci.CollectionId == collectionId &&
+                ci.IconId == dto.IconId);
+
+        if (alreadyExists)
+        {
+          await transaction.RollbackAsync();
+          return NotFound($"Icon {dto.IconId} is already in the collection");
+        }
+
+        // Increment IconCount on collection
+        collection.IconCount += 1;
+
+        // Connect the icon to the collection
+        var collection_icon = new Collection_Icon
+        {
+          IconId = icon.Id,
+          CollectionId = collection.Id
+        };
+
+        _context.Collection_Icons.Add(collection_icon);
+        await _context.SaveChangesAsync();
+
+        await transaction.CommitAsync();
+
+        return CreatedAtAction(
+          nameof(GetById),                            // Pointer to URL
+          new { id = collection.Id },                 // URI
+          new { Collection_Icon = collection_icon }   // Json Body Data
+        );
+      }
+      catch
+      {
+        await transaction.RollbackAsync();
+        throw;
+      }
+    }
+
+
+    // Delete an icon from a collection
+    // POST '/api/collection/collectionId/iconId'
+    [HttpDelete("{collectionId}/{iconId}")]
+    public async Task<ActionResult<Collection>> RemoveIcon(int collectionId, int iconId)
+    {
+      var collection = await _context.Collections.FindAsync(collectionId);
+      if (collection == null) return NotFound($"Collection {collectionId} does not exist");
+
+      var collectionIcon = await _context.Collection_Icons
+        .FirstOrDefaultAsync(ci =>
+            ci.CollectionId == collectionId &&
+            ci.IconId == iconId);
+
+      if (collectionIcon == null) return NotFound($"Icon {iconId} does not exist in the Collection {collectionId}");
+
+      _context.Collection_Icons.Remove(collectionIcon);
+
+      if (collection.IconCount > 0)
+        collection.IconCount -= 1;
+
+      await _context.SaveChangesAsync();
+      return NoContent();
+    }
+
+
   }
 }

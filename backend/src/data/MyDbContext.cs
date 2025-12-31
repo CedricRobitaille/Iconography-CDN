@@ -44,7 +44,7 @@ namespace Backend.Data
           .HasForeignKey(u => u.CompanyId)
           .OnDelete(DeleteBehavior.Cascade);
 
-      // Icon Relationships
+      // Company / Icon Relationships
       modelBuilder.Entity<Company_Icon>(entity =>
       {
         // Company -> Company_Icon

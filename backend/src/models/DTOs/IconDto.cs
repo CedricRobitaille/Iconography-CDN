@@ -60,7 +60,7 @@ public class IconReadDto
   public string Style { get; set; } = string.Empty;
   public string Type { get; set; } = string.Empty;
   public string Category { get; set; } = string.Empty;
-  public List<IconTagDto> Tags { get; set; } = new();
+  public IEnumerable<IconTagDto> Tags { get; set; } = new List<IconTagDto>();
 }
 
 // Models for the DTOs set above
