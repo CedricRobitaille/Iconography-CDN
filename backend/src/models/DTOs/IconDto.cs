@@ -33,7 +33,7 @@ public class IconPutDto
   public string Style { get; set; } = null!;
   public string Type { get; set; } = null!;
   public string Category { get; set; } = null!;
-  public List<int> TagIds { get; set; } = new();
+  public List<string> Tags { get; set; } = new List<string>();
 }
 
 
@@ -46,7 +46,7 @@ public class IconPatchDto
   public string? Category { get; set; }
 
   // Optional: only processed if present
-  public List<int>? TagIds { get; set; }
+  public List<string> Tags { get; set; } = new List<string>();
 }
 
 

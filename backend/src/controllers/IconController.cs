@@ -42,72 +42,112 @@ namespace Backend.Controllers
       //   }
       // }
 
-      // Ensure Company Exists
-      var company = await _context.Companies.FindAsync(dto.Company.Id);
-      if (company == null)
-        return NotFound($"Company {companyId} does not exist.");
+      using var transaction = await _context.Database.BeginTransactionAsync();
 
-      var author = await _context.Users.FindAsync(dto.User.Id);
-      if (author == null)
-        return NotFound($"User {dto.User.Id} does not exist.");
-
-      // Create a new Icon
-      var icon = new Icon
+      try
       {
-        Name = dto.Icon.Name,         // Name
-        Svg = dto.Icon.Svg,           // SVG
-        Style = dto.Icon.Style,       // Style
-        Type = dto.Icon.Type,         // Type
-        Category = dto.Icon.Category  // Category
-      };
 
-      // Set the new icon into context
-      _context.Icons.Add(icon);
-      await _context.SaveChangesAsync();
-
-
-      // Create a new Company_Icon
-      var owner = new Company_Icon
-      {
-        IconId = icon.Id,       // Icon ID
-        CompanyId = company.Id,  // Company Id
-        UserId = author.Id,   // Author's User Id
-      };
-
-      // Set the Icon/Company relationship into context
-      _context.Company_Icons.Add(owner);
-      await _context.SaveChangesAsync();
-
-      // Create every tag
-      foreach (string tagName in dto.Icon.Tags)
-      {
-        // Check if the Tag already exists
-        var tag = await _context.Tags.FirstOrDefaultAsync(t => t.Name == tagName);
-
-        if (tag == null) // Create a new tag ONLY if it doesn't already exist
+        // Ensure Company Exists
+        var company = await _context.Companies.FindAsync(dto.Company.Id);
+        if (company == null)
         {
-          tag = new Tag { Name = tagName }; // Create the Tag
-          _context.Tags.Add(tag); // Add the Tag into context
-          await _context.SaveChangesAsync();  // Save the tag into the DB
+          await transaction.RollbackAsync();
+          return NotFound($"Company {companyId} does not exist.");
         }
+          
 
-        // Create the Icon/Tag Relationship
-        var iconTag = new Icon_Tag
+        var author = await _context.Users.FindAsync(dto.User.Id);
+        if (author == null)
         {
-          IconId = icon.Id, // Icon ID
-          TagId = tag.Id    // Tag ID
+          await transaction.RollbackAsync();
+          return NotFound($"User {dto.User.Id} does not exist.");
+        }
+          
+
+        // Create a new Icon
+        var icon = new Icon
+        {
+          Name = dto.Icon.Name,         // Name
+          Svg = dto.Icon.Svg,           // SVG
+          Style = dto.Icon.Style,       // Style
+          Type = dto.Icon.Type,         // Type
+          Category = dto.Icon.Category  // Category
         };
 
-        _context.Icon_Tags.Add(iconTag);  // Add the tag into context
+        // Set the new icon into context
+        _context.Icons.Add(icon);
+        await _context.SaveChangesAsync();
+
+
+        // Create a new Company_Icon
+        var owner = new Company_Icon
+        {
+          IconId = icon.Id,       // Icon ID
+          CompanyId = company.Id,  // Company Id
+          UserId = author.Id,   // Author's User Id
+        };
+
+        // Set the Icon/Company relationship into context
+        _context.Company_Icons.Add(owner);
+        await _context.SaveChangesAsync();
+
+        // Create every tag
+        foreach (string tagName in dto.Icon.Tags)
+        {
+          // Check if the Tag already exists
+          var tag = await _context.Tags.FirstOrDefaultAsync(t => t.Name == tagName);
+
+          if (tag == null) // Create a new tag ONLY if it doesn't already exist
+          {
+            tag = new Tag { Name = tagName }; // Create the Tag
+            _context.Tags.Add(tag); // Add the Tag into context
+            await _context.SaveChangesAsync();  // Save the tag into the DB
+          }
+
+          // Create the Icon/Tag Relationship
+          var iconTag = new Icon_Tag
+          {
+            IconId = icon.Id, // Icon ID
+            TagId = tag.Id    // Tag ID
+          };
+
+          _context.Icon_Tags.Add(iconTag);  // Add the tag into context
+        }
+        await _context.SaveChangesAsync();  // Save all Tag contexts into the DB
+        await transaction.CommitAsync();
+
+        // Finally, we map it to a responseIcon so that we can see the tags combined.
+        var responseIcon = await _context.Icons
+          .Where(i => i.Id == icon.Id)
+          .Select(i => new IconReadDto
+          {
+            Id = i.Id,
+            Name = i.Name,
+            Svg = i.Svg,
+            Style = i.Style,
+            Type = i.Type,
+            Category = i.Category,
+            Tags = i.Icon_Tags
+                  .Select(it => new IconTagDto
+                  {
+                    Id = it.Tag.Id,
+                    Name = it.Tag.Name
+                  })
+                  .ToList()
+          })
+          .FirstAsync();
+
+        return CreatedAtAction(
+          nameof(GetById),
+          new { id = icon.Id },
+          new { Icon = responseIcon }
+        );
       }
-      await _context.SaveChangesAsync();  // Save all Tag contexts into the DB
-
-
-      return Ok(new //HTTP 200 Status Code)
+      catch
       {
-        Message = "Icon successfully created",
-        IconId = icon.Id,
-      });
+        await transaction.RollbackAsync();
+        throw;
+      }
     }
 
 
@@ -123,54 +163,70 @@ namespace Backend.Controllers
       [FromQuery] string? tags
     )
     {
-      IQueryable<Icon> query = _context.Icons;
-
-      // Query for /icon?name=string
-      if (!string.IsNullOrEmpty(name))
-        query = query.Where(i => EF.Functions.Like(i.Name, $"%{name}%"));
-
-      // Query for /icon?style=string
-      if (!string.IsNullOrEmpty(style))
-        query = query.Where(i => EF.Functions.Like(i.Style, $"%{style}%"));
-
-      // Query for /icon?type=string
-      if (!string.IsNullOrEmpty(type))
-        query = query.Where(i => EF.Functions.Like(i.Type, $"%{type}%"));
-
-      // Query for /icon?category=string
-      if (!string.IsNullOrEmpty(category))
-        query = query.Where(i => EF.Functions.Like(i.Category, $"%{category}%"));
-
-      // Query for /icon?tags=string
-      if (!string.IsNullOrEmpty(tags))
-      {
-        // Convert "tags=1,2,3,4" -> [1,2,3,4]
-        var tagList = tags.Split(',').Select(t => t.Trim()).ToList();
-        // Filter in Tags where Icon_Tags contains a TagName found in the TagList
-        query = query.Where(i => i.Icon_Tags.Any(it => tagList.Contains(it.Tag.Name)));
-      } 
-
-      var results = await query // Final filter on icons
+      IQueryable<Icon> query = _context.Icons
         .Include(i => i.Icon_Tags)
-          .ThenInclude(it => it.Tag)
-        .Select(i => new 
-        {
-          i.Id,
-          i.Name,
-          i.Style,
-          i.Type,
-          i.Category,
-          i.Svg,
-          Tags = i.Icon_Tags.Select(it => new // List out all tags
-          {
-            it.Tag.Id,  // Tag ID
-            it.Tag.Name // Tag Name
-          }).ToList() // Convert to list/Array
-        })
-        .ToListAsync();
+            .ThenInclude(it => it.Tag);
 
-      if (!results.Any())
-        return NotFound();
+      // /icon?name=string
+      if (!string.IsNullOrWhiteSpace(name))
+      {
+        query = query.Where(i =>
+            EF.Functions.Like(i.Name, $"%{name}%"));
+      }
+
+      // /icon?style=string
+      if (!string.IsNullOrWhiteSpace(style))
+      {
+        query = query.Where(i =>
+            EF.Functions.Like(i.Style, $"%{style}%"));
+      }
+
+      // /icon?type=string
+      if (!string.IsNullOrWhiteSpace(type))
+      {
+        query = query.Where(i =>
+            EF.Functions.Like(i.Type, $"%{type}%"));
+      }
+
+      // /icon?category=string
+      if (!string.IsNullOrWhiteSpace(category))
+      {
+        query = query.Where(i =>
+            EF.Functions.Like(i.Category, $"%{category}%"));
+      }
+
+      // /icon?tags=ui,solid,arrow
+      if (!string.IsNullOrWhiteSpace(tags))
+      {
+        var tagList = tags
+            .Split(',', StringSplitOptions.RemoveEmptyEntries)
+            .Select(t => t.Trim())
+            .ToList();
+
+        query = query.Where(i =>
+            i.Icon_Tags.Any(it =>
+                tagList.Contains(it.Tag.Name)));
+      }
+
+      var results = await query
+          .Select(i => new
+          {
+            i.Id,
+            i.Name,
+            i.Style,
+            i.Type,
+            i.Category,
+            i.Svg,
+            Tags = i.Icon_Tags.Select(it => new
+            {
+              it.Tag.Id,
+              it.Tag.Name
+            }).ToList()
+          })
+          .ToListAsync();
+
+      if (results.Count == 0)
+        return NotFound("No icons could be found.");
 
       return Ok(results);
     }
@@ -202,7 +258,7 @@ namespace Backend.Controllers
         })
         .FirstOrDefaultAsync();
 
-      if (icon == null)
+      if (icon == null) 
         return NotFound($"Icon {id} does not exist");
 
       return Ok(icon);
@@ -213,104 +269,170 @@ namespace Backend.Controllers
     [HttpPut("{id}")]
     public async Task<ActionResult<Icon>> Put(int id, [FromBody] IconPutDto dto)
     {
-      var icon = await _context.Icons
+      using var transaction = await _context.Database.BeginTransactionAsync();
+
+      try
+      {
+        var icon = await _context.Icons
         .Include(i => i.Icon_Tags)
+        .ThenInclude(it => it.Tag)
         .FirstOrDefaultAsync(i => i.Id == id);
 
-      if (icon == null) return NotFound($"Icon {id} does not exist");
+        if (icon == null)
+        {
+          await transaction.RollbackAsync();
+          return NotFound($"Icon {id} does not exist");
+        }
 
-      // Tags must be included else, error
-      if (dto.TagIds == null) return BadRequest("TagIds must be provided.");
+        // Set icon props
+        icon.Name = dto.Name;
+        icon.Svg = dto.Svg;
+        icon.Style = dto.Style;
+        icon.Type = dto.Type;
+        icon.Category = dto.Category;
 
-      // Set icon props
-      icon.Name = dto.Name;
-      icon.Svg = dto.Svg;
-      icon.Style = dto.Style;
-      icon.Type = dto.Type;
-      icon.Category = dto.Category;
+        // Get all existing tags
+        var existingTags = icon.Icon_Tags
+          .Select(it => it.Tag.Name)
+          .ToList();
 
-      // Get all existing tags
-      var existingTagIds = icon.Icon_Tags
-        .Select(it => it.TagId)
-        .ToList();
 
-      // Get Incoming tags
-      var incomingTagIds = dto.TagIds.Distinct().ToList();
+        // Get Incoming tags (Remove duplicates)
+        var incomingTags = dto.Tags.Distinct().ToList();
 
-      // Compare Existing to Incoming
-      var toRemove = icon.Icon_Tags
-        .Where(it => !incomingTagIds.Contains(it.TagId))
-        .ToList();
+        // Remove tags that are no longer present
+        var toRemove = icon.Icon_Tags
+          .Where(it => !incomingTags.Contains(it.Tag.Name))
+          .ToList();
 
-      // If incoming doesn't include existing, remove it.
-      _context.Icon_Tags.RemoveRange(toRemove);
+        // If incoming doesn't include existing, remove it.
+        _context.Icon_Tags.RemoveRange(toRemove);
 
-      // Add incoming that isn't in existing 
-      var toAdd = incomingTagIds
-        .Where(id => !existingTagIds.Contains(id))
-        .Select(id => new Icon_Tag
+        // Add new tags
+        foreach (var tagName in incomingTags)
+        {
+          // Skip if the icon already has this tag
+          if (existingTags.Contains(tagName)) continue;
+
+          // Check if tag exists in Tags table
+          var tag = await _context.Tags.FirstOrDefaultAsync(t => t.Name == tagName);
+          if (tag == null)
+          {
+            tag = new Tag { Name = tagName };
+            _context.Tags.Add(tag);
+            await _context.SaveChangesAsync(); // Save so tag gets an ID
+          }
+
+          // Create Icon_Tag relationship
+          var iconTag = new Icon_Tag
           {
             IconId = icon.Id,
-            TagId = id
-          });
+            TagId = tag.Id
+          };
+          _context.Icon_Tags.Add(iconTag);
+        }
 
-      // Add new icons to context
-      await _context.Icon_Tags.AddRangeAsync(toAdd);
+        await _context.SaveChangesAsync();
+        await transaction.CommitAsync();
 
-      await _context.SaveChangesAsync();
-
-      return icon;
+        return Ok(new
+        {
+          message = "Icon Edited successfully.",
+          Icon = icon
+        });
+      }
+      catch
+      {
+        await transaction.RollbackAsync();
+        throw;
+      }
     }
 
 
     [HttpPatch("{id}")]
     public async Task<ActionResult<Icon>> Patch(int id, [FromBody] IconPatchDto dto)
     {
-      var icon = await _context.Icons
-          .Include(i => i.Icon_Tags)
-          .FirstOrDefaultAsync(i => i.Id == id);
+      using var transaction = await _context.Database.BeginTransactionAsync();
 
-      if (icon == null)
-        return NotFound($"Icon {id} does not exist");
-
-      // Update props ONLY when provided
-      if (dto.Name != null) icon.Name = dto.Name;
-      if (dto.Svg != null) icon.Svg = dto.Svg;
-      if (dto.Style != null) icon.Style = dto.Style;
-      if (dto.Type != null) icon.Type = dto.Type;
-      if (dto.Category != null) icon.Category = dto.Category;
-
-      // Update Tags if the user included them.
-      if (dto.TagIds != null)
+      try
       {
-        var existingTagIds = icon.Icon_Tags
-          .Select(it => it.TagId)
-          .ToList();
+        var icon = await _context.Icons
+            .Include(i => i.Icon_Tags)
+            .FirstOrDefaultAsync(i => i.Id == id);
 
-        var incomingTagIds = dto.TagIds
-          .Distinct()
-          .ToList();
+        if (icon == null)
+        {
+          await transaction.RollbackAsync();
+          return NotFound($"Icon {id} does not exist");
+        }
+          
 
-        var toRemove = icon.Icon_Tags
-          .Where(it => !incomingTagIds.Contains(it.TagId))
-          .ToList();
+        // Update props ONLY when provided
+        if (dto.Name != null) icon.Name = dto.Name;
+        if (dto.Svg != null) icon.Svg = dto.Svg;
+        if (dto.Style != null) icon.Style = dto.Style;
+        if (dto.Type != null) icon.Type = dto.Type;
+        if (dto.Category != null) icon.Category = dto.Category;
 
-        _context.Icon_Tags.RemoveRange(toRemove);
+        // Update Tags if the user included them.
+        if (dto.Tags != null)
+        {
+          // Get all existing tags
+          var existingTags = icon.Icon_Tags
+            .Select(it => it.Tag.Name)
+            .ToList();
 
-        var toAdd = incomingTagIds
-          .Where(id => !existingTagIds.Contains(id))
-          .Select(id => new Icon_Tag
+
+          // Get Incoming tags (Remove duplicates)
+          var incomingTags = dto.Tags.Distinct().ToList();
+
+          // Remove tags that are no longer present
+          var toRemove = icon.Icon_Tags
+            .Where(it => !incomingTags.Contains(it.Tag.Name))
+            .ToList();
+
+          // If incoming doesn't include existing, remove it.
+          _context.Icon_Tags.RemoveRange(toRemove);
+
+          // Add new tags
+          foreach (var tagName in incomingTags)
           {
-            IconId = icon.Id,
-            TagId = id
-          });
+            // Skip if the icon already has this tag
+            if (existingTags.Contains(tagName)) continue;
 
-        await _context.Icon_Tags.AddRangeAsync(toAdd);
+            // Check if tag exists in Tags table
+            var tag = await _context.Tags.FirstOrDefaultAsync(t => t.Name == tagName);
+            if (tag == null)
+            {
+              tag = new Tag { Name = tagName };
+              _context.Tags.Add(tag);
+              await _context.SaveChangesAsync(); // Save so tag gets an ID
+            }
+
+            // Create Icon_Tag relationship
+            var iconTag = new Icon_Tag
+            {
+              IconId = icon.Id,
+              TagId = tag.Id
+            };
+            _context.Icon_Tags.Add(iconTag);
+          }
+        }
+
+        await _context.SaveChangesAsync();
+        await transaction.CommitAsync();
+
+        return Ok(new
+        {
+          message = "Icon created successfully.",
+          Icon = icon
+        });
       }
-
-      await _context.SaveChangesAsync();
-
-      return icon;
+      catch
+      {
+        await transaction.RollbackAsync();
+        throw;
+      }
     }
 
 

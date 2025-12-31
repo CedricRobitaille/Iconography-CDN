@@ -32,7 +32,7 @@ namespace Backend.Controllers
     {
       var user = await _context.Users.FindAsync(id);
       if (user == null) return NotFound();
-      return user;
+      return Ok(user);
     }
 
 
@@ -41,16 +41,36 @@ namespace Backend.Controllers
     [HttpPut("{id}")]
     public async Task<ActionResult<User>> Put(int id, [FromBody] UserPutDto dto)
     {
-      var user = await _context.Users.FindAsync(id);
-      if (user == null) return NotFound();
+      using var transaction = await _context.Database.BeginTransactionAsync();
 
-      user.Name = dto.Name;
-      user.Email = dto.Email;
-      user.Password_Hash = HashPassword(dto.Password);
-      user.Role = (User.MemberRoles)dto.Role;
+      try
+      {
+        var user = await _context.Users.FindAsync(id);
+        if (user == null)
+        {
+          await transaction.RollbackAsync();
+          return NotFound($"User {id} does not exist");
+        }
 
-      await _context.SaveChangesAsync();
-      return user;
+        user.Name = dto.Name;
+        user.Email = dto.Email;
+        user.Password_Hash = HashPassword(dto.Password);
+        user.Role = (User.MemberRoles)dto.Role;
+
+        await _context.SaveChangesAsync();
+        await transaction.CommitAsync();
+        
+        return Ok(new
+        {
+          message = "Used Edited Successfully.",
+          User = user
+        });
+      }
+      catch
+      {
+        await transaction.RollbackAsync();
+        throw;
+      }
     }
     
 
@@ -59,27 +79,45 @@ namespace Backend.Controllers
     [HttpPatch("{id}")]
     public async Task<ActionResult<User>> Patch(int id, [FromBody] UserPatchDto dto)
     {
-      var user = await _context.Users.FindAsync(id);
-      if (user == null) return NotFound();
+      using var transaction = await _context.Database.BeginTransactionAsync();
 
-      // Only update fields that are provided
-      if (!string.IsNullOrWhiteSpace(dto.Name))
-        user.Name = dto.Name;
+      try
+      {
+        var user = await _context.Users.FindAsync(id);
+        if (user == null){
+          await transaction.RollbackAsync();
+          return NotFound($"User {id} does not exist");
+        }
 
-      if (!string.IsNullOrWhiteSpace(dto.Email))
-        user.Email = dto.Email;
+        // Only update fields that are provided
+        if (!string.IsNullOrWhiteSpace(dto.Name))
+          user.Name = dto.Name;
 
-      if (!string.IsNullOrWhiteSpace(dto.Password))
-        user.Password_Hash = HashPassword(dto.Password);
+        if (!string.IsNullOrWhiteSpace(dto.Email))
+          user.Email = dto.Email;
 
-      if (dto.Role.HasValue)
-        user.Role = (User.MemberRoles)dto.Role;
+        if (!string.IsNullOrWhiteSpace(dto.Password))
+          user.Password_Hash = HashPassword(dto.Password);
 
-      // Mark the entity as modified
-      _context.Users.Update(user);
-      await _context.SaveChangesAsync();
+        if (dto.Role.HasValue)
+          user.Role = (User.MemberRoles)dto.Role;
 
-      return user;
+        // Mark the entity as modified
+        _context.Users.Update(user);
+        await _context.SaveChangesAsync();
+        await transaction.CommitAsync();
+
+        return Ok(new
+        {
+          message = "Used Edited Successfully.",
+          User = user
+        });
+      }
+      catch
+      {
+        await transaction.RollbackAsync();
+        throw;
+      }
     }
 
 
@@ -89,6 +127,7 @@ namespace Backend.Controllers
     {
       var user = await _context.Users.FindAsync(id);
       if (user == null) return NotFound($"User {id} does not exist");
+      
       _context.Users.Remove(user);
       await _context.SaveChangesAsync();
       return NoContent();

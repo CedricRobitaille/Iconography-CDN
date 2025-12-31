@@ -22,12 +22,18 @@ namespace Backend.Controllers
     public async Task<ActionResult<Collection>> Create([FromBody] CollectionPostDto dto)
     {
 
+      // Data comes in as follows:
+      // {
+      //   "Name" : "Default",
+      //   "CompanyId": 3,
+      //   "IconId": 1 (Optional)
+      // }
 
+      // Start transaction
       using var transaction = await _context.Database.BeginTransactionAsync();
 
       try
       {
-
         // Confirm company exists
         var company = await _context.Companies.FindAsync(dto.CompanyId);
         if (company == null)
@@ -71,11 +77,11 @@ namespace Backend.Controllers
 
         await transaction.CommitAsync();
 
-        return Ok(new
-        {
-          Message = "Collection successfully created",
-          Collection = collection
-        });
+        return CreatedAtAction(
+          nameof(GetById),                  // Pointer to URL
+          new { id = collection.Id },       // URI
+          new { Collection = collection }   // Json Body Data
+        );
 
       }
       catch
@@ -103,7 +109,7 @@ namespace Backend.Controllers
     {
       var collection = await _context.Collections.FindAsync(id);
       if (collection == null) return NotFound($"User {id} does not exist");
-      return collection;
+      return Ok(collection);
     }
 
 
@@ -111,23 +117,44 @@ namespace Backend.Controllers
     [HttpPut("{id}")]
     public async Task<ActionResult<Collection>> Put(int id, [FromBody] CollectionPutDto dto)
     {
-      var collection = await _context.Collections.FindAsync(id);
-      if (collection == null) return NotFound($"Collection {id} does not exist");
 
-      collection.CompanyId = dto.CompanyId;
-      collection.Name = dto.Name;
-      collection.IconCount = dto.IconCount;
+      using var transaction = await _context.Database.BeginTransactionAsync();
 
-      if (dto.MonthlyUses.HasValue)
-        collection.MonthlyUses = dto.MonthlyUses.Value;
+      try
+      {
+        // Get queried collection
+        var collection = await _context.Collections.FindAsync(id);
+        if (collection == null)
+        {
+          await transaction.RollbackAsync();
+          return NotFound($"Collection {id} does not exist");
+        } 
 
-      collection.UpdatedAt = DateTime.UtcNow;
+        collection.CompanyId = dto.CompanyId;
+        collection.Name = dto.Name;
+        collection.IconCount = dto.IconCount;
 
-      // Mark the entity as modified
-      _context.Collections.Update(collection);
-      await _context.SaveChangesAsync();
+        // Optinal value to edit
+        if (dto.MonthlyUses.HasValue)
+          collection.MonthlyUses = dto.MonthlyUses.Value;
 
-      return collection;
+        collection.UpdatedAt = DateTime.UtcNow;
+
+        // Mark the entity as modified
+        _context.Collections.Update(collection);
+        await _context.SaveChangesAsync();
+        await transaction.CommitAsync();
+
+        return Ok(new{
+          message = "Collection Edited Successfully.",
+          Collection = collection
+        });
+      }
+      catch
+      {
+        await transaction.RollbackAsync();
+        throw;
+      }
     }
 
 
@@ -135,28 +162,46 @@ namespace Backend.Controllers
     [HttpPatch("{id}")]
     public async Task<ActionResult<Collection>> Patch(int id, [FromBody] CollectionPatchDto dto)
     {
-      var collection = await _context.Collections.FindAsync(id);
-      if (collection == null) return NotFound($"Collection {id} does not exist");
+      using var transaction = await _context.Database.BeginTransactionAsync();
 
-      if (dto.CompanyId.HasValue)
-        collection.CompanyId = dto.CompanyId.Value;
+      try
+      {
+        var collection = await _context.Collections.FindAsync(id);
+        if (collection == null)
+        {
+          await transaction.RollbackAsync();
+          return NotFound($"Collection {id} does not exist");
+        }
 
-      if (!string.IsNullOrWhiteSpace(dto.Name))
-        collection.Name = dto.Name;
+        if (dto.CompanyId.HasValue)
+          collection.CompanyId = dto.CompanyId.Value;
 
-      if (dto.IconCount.HasValue)
-        collection.IconCount = dto.IconCount.Value;
+        if (!string.IsNullOrWhiteSpace(dto.Name))
+          collection.Name = dto.Name;
 
-      if (dto.MonthlyUses.HasValue)
-        collection.MonthlyUses = dto.MonthlyUses.Value;
+        if (dto.IconCount.HasValue)
+          collection.IconCount = dto.IconCount.Value;
 
-      collection.UpdatedAt = DateTime.UtcNow;
+        if (dto.MonthlyUses.HasValue)
+          collection.MonthlyUses = dto.MonthlyUses.Value;
 
-      // Mark the entity as modified
-      _context.Collections.Update(collection);
-      await _context.SaveChangesAsync();
+        collection.UpdatedAt = DateTime.UtcNow;
 
-      return collection;
+        // Mark the entity as modified
+        _context.Collections.Update(collection);
+        await _context.SaveChangesAsync();
+
+        return Ok(new
+        {
+          message = "Collection Edited Successfully.",
+          Collection = collection
+        });
+      }
+      catch
+      {
+        await transaction.RollbackAsync();
+        throw;
+      }
     }
 
 

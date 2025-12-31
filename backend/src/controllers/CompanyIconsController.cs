@@ -33,7 +33,8 @@ namespace Backend.Controllers
         .ToListAsync();
 
       if (icons.Count == 0) return NotFound();
-      return icons;
+      
+      return Ok(icons);
     }
 
 
@@ -51,7 +52,8 @@ namespace Backend.Controllers
         .SingleOrDefaultAsync();
 
       if (icon == null) return NotFound();
-      return icon;
+
+      return Ok(icon);
     }
 
 

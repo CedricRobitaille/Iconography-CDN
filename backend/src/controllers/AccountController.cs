@@ -47,6 +47,7 @@ namespace Backend.Controllers
         // Distinct Emails Only
         if (await _context.Users.AnyAsync(user => user.Email == dto.User.Email))
         {
+          await transaction.RollbackAsync();
           return BadRequest("Email is already in use.");
         }
 
@@ -90,13 +91,12 @@ namespace Backend.Controllers
         // Once all have changes went through, commit the transaction.
         await transaction.CommitAsync();
 
-
-        return Ok(new // HTTP 200 status code
-        {
-          Message = "Account successfully created",
-          UserId = user.Id,
-          CompanyId = company.Id
-        });
+        return CreatedAtAction(
+          "GetById", 
+          "User",
+          new { id = user.Id }, 
+          new { User = user, Company = company}
+        );
       }
       catch
       {
@@ -104,8 +104,6 @@ namespace Backend.Controllers
         throw;
       }
     }
-
-
 
 
 
@@ -130,19 +128,22 @@ namespace Backend.Controllers
 
       try
       {
-
+        // Find company
         var company = await _context.Companies
           .Include(c => c.Employees)
           .FirstOrDefaultAsync(c => c.Id == dto.User.CompanyId);
 
+        // Confirm company exists
         if (company == null) 
         {
+          await transaction.RollbackAsync();
           return NotFound("Company not found");
         }
 
         // Distinct Emails Only
         if (await _context.Users.AnyAsync(user => user.Email == dto.User.Email))
         {
+          await transaction.RollbackAsync();
           return BadRequest("Email is already in use.");
         }
 
@@ -158,7 +159,7 @@ namespace Backend.Controllers
           CompanyId = dto.User.CompanyId,
           Role = (User.MemberRoles)dto.User.Role,
         };
-
+  
         company.Employees.Add(user);
 
         _context.Users.Add(user);
@@ -167,12 +168,12 @@ namespace Backend.Controllers
         // Once all have changes went through, commit the transaction.
         await transaction.CommitAsync();
 
-        return Ok(new // HTTP 200 status code
-        {
-          Message = "Account successfully created",
-          User = user,
-          CompanyId = user.CompanyId
-        });
+        return CreatedAtAction(
+          "GetById",
+          "User",
+          new { id = user.Id },
+          new { User = user, CompanyId = company.Id }
+        );
       }
       catch
       {

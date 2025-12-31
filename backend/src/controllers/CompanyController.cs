@@ -29,8 +29,8 @@ namespace Backend.Controllers
     public async Task<ActionResult<Company>> GetById(int id)
     {
       var company = await _context.Companies.FindAsync(id);
-      if (company == null) return NotFound();
-      return company;
+      if (company == null) return NotFound($"Company {id} does not exist");
+      return Ok(company);
     }
 
 
@@ -38,15 +38,31 @@ namespace Backend.Controllers
     [HttpPut("{id}")]
     public async Task<ActionResult<Company>> Patch(int id, [FromBody] CompanyPutDto dto)
     {
-      var company = await _context.Companies.FindAsync(id);
-      if (company == null) return NotFound();
+      using var transaction = await _context.Database.BeginTransactionAsync();
 
-      company.Name = dto.Name;
-      company.OwnerId = dto.OwnerId;
-      company.Type = (Company.CompanyTypes)dto.Type;
+      try
+      {
+        var company = await _context.Companies.FindAsync(id);
+        if (company == null) return NotFound();
 
-      await _context.SaveChangesAsync();
-      return company;
+        company.Name = dto.Name;
+        company.OwnerId = dto.OwnerId;
+        company.Type = (Company.CompanyTypes)dto.Type;
+
+        await _context.SaveChangesAsync();
+        await transaction.CommitAsync();
+
+        return Ok(new
+        {
+          message = "Company Edited Successfully.",
+          Company = company
+        });
+      }
+      catch
+      {
+        await transaction.RollbackAsync();
+        throw;
+      }
     }
 
 
@@ -54,24 +70,42 @@ namespace Backend.Controllers
     [HttpPatch("{id}")]
     public async Task<ActionResult<Company>> Put(int id, [FromBody] CompanyPatchDto dto)
     {
-      var company = await _context.Companies.FindAsync(id);
-      if (company == null) return NotFound();
+      using var transaction = await _context.Database.BeginTransactionAsync();
 
-      // Only update fields that are provided
-      if (!string.IsNullOrWhiteSpace(dto.Name))
-        company.Name = dto.Name;
+      try
+      {
+        var company = await _context.Companies.FindAsync(id);
+        if (company == null)
+        {
+          await transaction.RollbackAsync();
+          return NotFound();
+        } 
 
-      if (dto.OwnerId.HasValue)
-        company.OwnerId = dto.OwnerId;
+        // Only update fields that are provided
+        if (!string.IsNullOrWhiteSpace(dto.Name))
+          company.Name = dto.Name;
 
-      if (dto.Type.HasValue)
-        company.Type = (Company.CompanyTypes)dto.Type;
+        if (dto.OwnerId.HasValue)
+          company.OwnerId = dto.OwnerId;
 
-      // Mark the entity as modified
-      _context.Companies.Update(company);
-      await _context.SaveChangesAsync();
+        if (dto.Type.HasValue)
+          company.Type = (Company.CompanyTypes)dto.Type;
 
-      return company;
+        // Mark the entity as modified
+        _context.Companies.Update(company);
+        await _context.SaveChangesAsync();
+        await transaction.CommitAsync();
+
+        return Ok(new {
+          message = "Company Edited Successfully.",
+          Company = company
+        });
+      }
+      catch
+      {
+        await transaction.RollbackAsync();
+        throw;
+      }
     }
 
 

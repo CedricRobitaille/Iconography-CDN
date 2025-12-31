@@ -59,9 +59,9 @@ public class User
   // ------------------------
   public enum MemberRoles
   {
-    Owner,
-    Admin,
-    Designer,
-    Developer
+    Owner,    // 0
+    Admin,    // 1
+    Designer, // 2
+    Developer // 3
   }
 }

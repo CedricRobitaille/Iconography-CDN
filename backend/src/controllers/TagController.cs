@@ -26,7 +26,7 @@ namespace Backend.Controllers
     {
       var tag = await _context.Tags.FindAsync(id);
       if (tag == null) return NotFound($"Icon Tag RL {id} does not exist");
-      return tag;
+      return Ok(tag);
     }
   }
 }
