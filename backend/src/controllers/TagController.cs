@@ -21,6 +21,17 @@ namespace Backend.Controllers
     public async Task<ActionResult<IEnumerable<Tag>>> GetAll()
       => await _context.Tags.ToListAsync();
 
+    [HttpGet("filters")]
+    public async Task<ActionResult<IEnumerable<Tag>>> GetFilters()
+    {
+      // Get all tags where Type != "Custom"
+      var tags = await _context.Tags
+          .Where(t => t.Type != "Custom")
+          .ToListAsync();
+
+      return Ok(tags);
+    }
+
     [HttpGet("{id}")]
     public async Task<ActionResult<Tag>> GetById(int id)
     {

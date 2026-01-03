@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import { ref } from 'vue';
   import type { Ref } from 'vue';
+  import { getUserById } from '../../api/userApi';
 
   const {placeholder} = defineProps<{
     placeholder: string;
@@ -14,8 +15,12 @@
     search: "",
   })
 
-  const handleSearch = () => {
+  const handleSearch = async() => {
     console.log(formData.value.search)
+    console.log("API URL:", import.meta.env.VITE_API_PROXY_TARGET);
+    
+    const user = await getUserById(formData.value.search)
+    console.log(user);
   }
 </script>
 

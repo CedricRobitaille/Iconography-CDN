@@ -91,18 +91,58 @@ namespace Backend.Controllers
         _context.Company_Icons.Add(owner);
         await _context.SaveChangesAsync();
 
+        // Build list of tags (typed and custom)
+        // We need to do this since we need to track tags/theme counts in the tags table.
+        // This specific structure is needed since data comes in as follows:
+        // "Icon": {
+        //   "Name": "Mouse",
+        //   "Svg": "Mouse Illustration",
+        //   "Style": "Regular",    --- MUST TRACK QTY ---
+        //   "Type": "Line",        --- MUST TRACK QTY ---
+        //   "Category": "Animals", --- MUST TRACK QTY ---
+        //   "Tags": [              --- MUST TRACK QTY ---
+        //       "Mouse",
+        //       "Rat",
+        //       "Rodent",
+        //       "Cute"
+        //   ]
+        // }
+        // Since the tags are structured differently than the cat/type/style,
+        // we need to define typed tags as done below.
+
+        var typedTags = new List<(string Name, string Type)> {
+          (dto.Icon.Style, "Style"),
+          (dto.Icon.Type, "Type"),
+          (dto.Icon.Category, "Category")
+        };
+
+        // Add custom taged tags from the tags with the custom tags
+        typedTags.AddRange(dto.Icon.Tags.Select(t => (t, "Custom")));
+
         // Create every tag
-        foreach (string tagName in dto.Icon.Tags)
+        foreach (var (tagName, tagType) in typedTags)
         {
+          // Skip null or empty tags
+          if (string.IsNullOrWhiteSpace(tagName)) continue;
+
           // Check if the Tag already exists
-          var tag = await _context.Tags.FirstOrDefaultAsync(t => t.Name == tagName);
+          var tag = await _context.Tags
+            .FirstOrDefaultAsync(t => t.Name == tagName && t.Type == tagType);
 
           if (tag == null) // Create a new tag ONLY if it doesn't already exist
           {
-            tag = new Tag { Name = tagName }; // Create the Tag
+            tag = new Tag // Create the tag
+            {
+              Name = tagName,
+              Type = tagType, // Set to type defined in typedTags above.
+              IconCount = 0
+            };
             _context.Tags.Add(tag); // Add the Tag into context
-            await _context.SaveChangesAsync();  // Save the tag into the DB
+            await _context.SaveChangesAsync(); // Save the tag into the DB
           }
+
+          // Increment iconCount
+          tag.IconCount++;
 
           // Create the Icon/Tag Relationship
           var iconTag = new Icon_Tag
@@ -249,37 +289,56 @@ namespace Backend.Controllers
         icon.Type = dto.Type;
         icon.Category = dto.Category;
 
+        // Build list of tags (typed and custom)
+        var incomingTags = new List<(string Name, string Type)>
+        {
+            (dto.Style, "Style"),
+            (dto.Type, "Type"),
+            (dto.Category, "Category")
+        };
+
+        incomingTags.AddRange(dto.Tags.Distinct().Select(t => (t, "Custom")));
+
         // Get all existing tags
         var existingTags = icon.Icon_Tags
-          .Select(it => it.Tag.Name)
+          .Select(it => (it.Tag.Name, it.Tag.Type))
           .ToList();
 
-
-        // Get Incoming tags (Remove duplicates)
-        var incomingTags = dto.Tags.Distinct().ToList();
 
         // Remove tags that are no longer present
         var toRemove = icon.Icon_Tags
-          .Where(it => !incomingTags.Contains(it.Tag.Name))
+          .Where(it => !incomingTags.Contains((it.Tag.Name, it.Tag.Type)))
           .ToList();
 
-        // If incoming doesn't include existing, remove it.
-        _context.Icon_Tags.RemoveRange(toRemove);
+        foreach (var iconTag in toRemove)
+        {
+          iconTag.Tag.IconCount = Math.Max(0, iconTag.Tag.IconCount - 1);
+          _context.Icon_Tags.Remove(iconTag);
+        }
 
         // Add new tags
-        foreach (var tagName in incomingTags)
+        foreach (var (tagName, tagType) in incomingTags)
         {
           // Skip if the icon already has this tag
-          if (existingTags.Contains(tagName)) continue;
+          if (existingTags.Contains((tagName, tagType))) continue;
 
           // Check if tag exists in Tags table
-          var tag = await _context.Tags.FirstOrDefaultAsync(t => t.Name == tagName);
+          var tag = await _context.Tags
+            .FirstOrDefaultAsync(t => t.Name == tagName && t.Type == tagType);
+
           if (tag == null)
           {
-            tag = new Tag { Name = tagName };
+            tag = new Tag
+            {
+              Name = tagName,
+              Type = tagType,
+              IconCount = 0
+            };
             _context.Tags.Add(tag);
-            await _context.SaveChangesAsync(); // Save so tag gets an ID
+            await _context.SaveChangesAsync();
           }
+
+          tag.IconCount++;
 
           // Create Icon_Tag relationship
           var iconTag = new Icon_Tag
@@ -332,48 +391,69 @@ namespace Backend.Controllers
         if (dto.Type != null) icon.Type = dto.Type;
         if (dto.Category != null) icon.Category = dto.Category;
 
-        // Update Tags if the user included them.
-        if (dto.Tags != null)
+        // Update typed tags + custom tags if the user included them.
+        if (dto.Tags != null || dto.Style != null || dto.Type != null || dto.Category != null)
         {
-          // Get all existing tags
+          // Build full list of incoming tags
+          var incomingTags = new List<(string Name, string Type)>();
+
+          if (dto.Style != null) 
+            incomingTags.Add((dto.Style, "Style"));
+          else incomingTags.Add((icon.Style, "Style")); // keep current style
+
+          if (dto.Type != null) incomingTags.Add((dto.Type, "Type"));
+          else incomingTags.Add((icon.Type, "Type")); // keep current type
+
+          if (dto.Category != null) incomingTags.Add((dto.Category, "Category"));
+          else incomingTags.Add((icon.Category, "Category")); // keey current category
+
+          if (dto.Tags != null)
+            incomingTags.AddRange(dto.Tags.Distinct().Select(t => (t, "Custom")));
+
+          // Get existing tags (Name + Type)
           var existingTags = icon.Icon_Tags
-            .Select(it => it.Tag.Name)
-            .ToList();
+              .Select(it => (it.Tag.Name, it.Tag.Type))
+              .ToList();
 
-
-          // Get Incoming tags (Remove duplicates)
-          var incomingTags = dto.Tags.Distinct().ToList();
-
-          // Remove tags that are no longer present
+          // Remove non-persisting tags
           var toRemove = icon.Icon_Tags
-            .Where(it => !incomingTags.Contains(it.Tag.Name))
-            .ToList();
+              .Where(it => !incomingTags.Contains((it.Tag.Name, it.Tag.Type)))
+              .ToList();
 
-          // If incoming doesn't include existing, remove it.
-          _context.Icon_Tags.RemoveRange(toRemove);
-
-          // Add new tags
-          foreach (var tagName in incomingTags)
+          foreach (var iconTag in toRemove)
           {
-            // Skip if the icon already has this tag
-            if (existingTags.Contains(tagName)) continue;
+            iconTag.Tag.IconCount = Math.Max(0, iconTag.Tag.IconCount - 1);
+            _context.Icon_Tags.Remove(iconTag);
+          }
 
-            // Check if tag exists in Tags table
-            var tag = await _context.Tags.FirstOrDefaultAsync(t => t.Name == tagName);
+          // Create new tags
+          foreach (var (tagName, tagType) in incomingTags)
+          {
+            if (existingTags.Contains((tagName, tagType))) continue; // already contains
+
+            var tag = await _context.Tags
+                .FirstOrDefaultAsync(t => t.Name == tagName && t.Type == tagType);
+
             if (tag == null)
             {
-              tag = new Tag { Name = tagName };
+              tag = new Tag // Create a new tag
+              {
+                Name = tagName,
+                Type = tagType,
+                IconCount = 0
+              };
               _context.Tags.Add(tag);
-              await _context.SaveChangesAsync(); // Save so tag gets an ID
+              await _context.SaveChangesAsync();
             }
 
-            // Create Icon_Tag relationship
-            var iconTag = new Icon_Tag
+            // increment icon count
+            tag.IconCount++;
+
+            _context.Icon_Tags.Add(new Icon_Tag
             {
               IconId = icon.Id,
               TagId = tag.Id
-            };
-            _context.Icon_Tags.Add(iconTag);
+            });
           }
         }
 
@@ -398,12 +478,39 @@ namespace Backend.Controllers
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-      var icon = await _context.Icons.FindAsync(id);
-      if (icon == null) return NotFound($"Icon {id} does not exist");
+      using var transaction = await _context.Database.BeginTransactionAsync();
 
-      _context.Icons.Remove(icon);
-      await _context.SaveChangesAsync();
-      return NoContent();
+      try
+      {
+        var icon = await _context.Icons
+            .Include(i => i.Icon_Tags)
+            .ThenInclude(it => it.Tag)
+            .FirstOrDefaultAsync(i => i.Id == id);
+
+        if (icon == null) return NotFound($"Icon {id} does not exist");
+
+        // Decrement IconCount for all associated tags
+        foreach (var iconTag in icon.Icon_Tags)
+        {
+          iconTag.Tag.IconCount = Math.Max(0, iconTag.Tag.IconCount - 1);
+        }
+
+        // Remove icon-tag relationships
+        _context.Icon_Tags.RemoveRange(icon.Icon_Tags);
+
+        // Remove the icon
+        _context.Icons.Remove(icon);
+
+        await _context.SaveChangesAsync();
+        await transaction.CommitAsync();
+
+        return NoContent();
+      }
+      catch
+      {
+        await transaction.RollbackAsync();
+        throw;
+      }
     }
   }
 }

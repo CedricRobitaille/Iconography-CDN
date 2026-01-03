@@ -27,6 +27,17 @@ builder.Services.AddDbContext<MyDbContext>(options => // Enables UserController 
 builder.Services.AddControllers(); // MVC Controller Support
 builder.Services.AddEndpointsApiExplorer(); // Metadata for API endpoints for swagger
 builder.Services.AddSwaggerGen(); // Generates the swagger json
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("ViteDev", policy =>
+    {
+        policy
+            .WithOrigins("https://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+    });
+});
 
 
 var app = builder.Build();  // Builds the application
@@ -41,6 +52,7 @@ using (var scope = app.Services.CreateScope())
 // Swagger middleware to give the API a frontend.
 app.UseSwagger();
 app.UseSwaggerUI();
+app.UseCors("ViteDev");
 app.MapControllers();
 
 app.Run(); // Starts the web server
