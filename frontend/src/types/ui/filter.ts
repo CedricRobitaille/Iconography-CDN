@@ -1,10 +1,6 @@
-export interface FilterItem {
-  icon: string;
+export interface Filter {
+  id: number;
   name: string;
-  qty: number;
-}
-
-export interface FilterGroup {
-  theme: string;
-  items: FilterItem[]
+  type: string;
+  iconCount: number;
 }

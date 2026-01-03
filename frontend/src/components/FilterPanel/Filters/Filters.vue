@@ -1,11 +1,11 @@
 <script setup lang="ts">
   import { ref } from 'vue';
-  import type { FilterItem } from '../../../types';
+  import type { Filter } from '../../../types';
 
   const activeFilters = ref<string[]>([])
 
-  const {items} = defineProps<{
-    items: FilterItem[]
+  const props = defineProps<{
+    items: Filter[]
   }>()
 
   const toggleFilter = (name: string): void => {
@@ -22,14 +22,14 @@
   <ul class="filter-collection">
     <li 
       class="filter" 
-      v-for="item in items"
-      :key="item.name"
-      :class="activeFilters.includes(item.name) ? 'active' : ''" 
-      @click="toggleFilter(item.name)"
+      v-for="filter in props.items"
+      :key="filter.name"
+      :class="activeFilters.includes(filter.name) ? 'active' : ''" 
+      @click="toggleFilter(filter.name)"
     >
-      <img :src="item.icon" alt="">
-      <p class="filter-name">{{ item.name }}</p>
-      <p class="filter-qty">{{ item.qty }}</p>
+      <img :src="filter.type" alt="">
+      <p class="filter-name">{{ filter.name }}</p>
+      <p class="filter-qty">{{ filter.iconCount }}</p>
     </li>
   </ul>
 </template>
