@@ -8,12 +8,12 @@ export const useFilterStore = defineStore("filters", () => {
   const loading = ref(false);
 
   const fetchFilters = async () => {
-    if (filters.value.length) return; // Already fetched, no need to refetch
+    if (filters.value.length || loading.value === true) return; // Already fetched, no need to refetch
     loading.value = true;
 
     try {
       filters.value = await getFilters();
-      console.log(await getFilters())
+      console.log(filters.value)
     } catch (err) {
       console.log("Failed to fetch filters:", err);
     } finally {

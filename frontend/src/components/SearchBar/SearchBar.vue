@@ -1,7 +1,10 @@
 <script setup lang="ts">
   import { ref } from 'vue';
   import type { Ref } from 'vue';
-  import { getUserById } from '../../api/userApi';
+  import { searchIcon } from '../../api/iconApi';
+  import { useLibraryResultsStore } from '../../stores/libraryResults';
+
+  const libraryResults = useLibraryResultsStore();
 
   const {placeholder} = defineProps<{
     placeholder: string;
@@ -19,8 +22,9 @@
     console.log(formData.value.search)
     console.log("API URL:", import.meta.env.VITE_API_PROXY_TARGET);
     
-    const user = await getUserById(formData.value.search)
-    console.log(user);
+    const results = await searchIcon(formData.value.search)
+    console.log(results);
+    libraryResults.libraryResults = results;
   }
 </script>
 
@@ -29,7 +33,7 @@
 <template>
   <form @submit.prevent="handleSearch">
     <div class="search">
-      <input type="search" v-model="formData.search" :placeholder="placeholder" required>
+      <input type="search" v-model="formData.search" :placeholder="placeholder">
     </div>
   </form>
 </template>

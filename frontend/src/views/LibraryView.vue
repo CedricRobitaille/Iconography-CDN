@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import FilterPanel from '../components/FilterPanel/FilterPanel.vue';
+import LibraryPanel from '../components/libraryPanel/LibraryPanel.vue';
 
 
 </script>
@@ -11,7 +12,7 @@ import FilterPanel from '../components/FilterPanel/FilterPanel.vue';
     <FilterPanel />
 
     <section>
-      <p>Library</p>
+      <LibraryPanel />
     </section>
   </main>
 
