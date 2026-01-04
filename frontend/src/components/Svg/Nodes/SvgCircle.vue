@@ -10,6 +10,10 @@
   const circle = computed<Circle>(() => {
     return props.node.properties as Circle
   })
+
+  const fill = computed(() => props.node.style.fill);
+  const stroke = computed(() => props.node.style.stroke);
+
 </script>
 
 <template>
@@ -18,8 +22,8 @@
     :cx="circle.cx"
     :cy="circle.cy"
     :r="circle.r"
-    :fill="node.style.fill"
-    :stroke="node.style.stroke"
+    :fill="fill"
+    :stroke="stroke"
   />
 
 </template>
