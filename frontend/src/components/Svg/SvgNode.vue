@@ -17,26 +17,22 @@
     node: treeNode;
   }>();
 
-  const isVisible = computed(() => props.node.visible)
 </script>
 
 <template>
-  <!-- Only display node if node is visible -->
-  <template v-if="isVisible">
 
-    <!-- Folder / Group -->
-    <SvgGroup v-if="node.type === 'folder'" :node="node" />
+  <!-- Folder / Group -->
+  <SvgGroup v-if="node.type === 'folder'" :node="node" />
 
-    <!-- Shapes -->
-    <SvgCircle v-if="node.type === 'circle'" :node="node" />
-    <SvgEllipse v-if="node.type === 'ellipse'" :node="node" />
-    <SvgLine v-if="node.type === 'line'" :node="node" />
-    <SvgPath v-if="node.type === 'path'" :node="node" />
-    <SvgPolygon v-if="node.type === 'polygon'" :node="node" />
-    <SvgPolyline v-if="node.type === 'polyline'" :node="node" />
-    <SvgRect v-if="node.type === 'rect'" :node="node" />
+  <!-- Shapes -->
+  <SvgCircle v-if="node.type === 'circle'" :node="node" />
+  <SvgEllipse v-if="node.type === 'ellipse'" :node="node" />
+  <SvgLine v-if="node.type === 'line'" :node="node" />
+  <SvgPath v-if="node.type === 'path'" :node="node" />
+  <SvgPolygon v-if="node.type === 'polygon'" :node="node" />
+  <SvgPolyline v-if="node.type === 'polyline'" :node="node" />
+  <SvgRect v-if="node.type === 'rect'" :node="node" />
 
-  </template>
 </template>
 
 <style scoped>

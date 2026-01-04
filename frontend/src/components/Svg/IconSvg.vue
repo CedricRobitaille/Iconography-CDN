@@ -5,10 +5,14 @@
   import type { treeNode } from '../../types'; 
   import SvgNode from './SvgNode.vue';
 
-  defineProps<{
+  const props = defineProps<{
     nodes: treeNode[];
     viewBox?: string;
   }>();
+
+  // Only render visible nodes.
+  // Rather than creating the node, than checking for visibility, we catch it before even attempting to render.
+  const visibleNodes = computed(() => props.nodes.filter(n => n.visible));
 
 </script>
 
@@ -19,7 +23,7 @@
     class="rootSVG"
   >
     <SvgNode 
-      v-for="node in nodes"
+      v-for="node in visibleNodes"
       :key="node.id"
       :node="node"
     />
