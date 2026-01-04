@@ -1,8 +1,7 @@
 <script setup lang="ts">
 
-
+import EditorCanvas from '../components/Editor/EditorCanvas.vue';
 import ProjectPanel from '../components/ProjectPanel/ProjectPanel.vue';
-
 
 </script>
 
@@ -14,7 +13,7 @@ import ProjectPanel from '../components/ProjectPanel/ProjectPanel.vue';
     <ProjectPanel />
     <!-- Main Artboard -->
     <section id="artboard">
-
+    <EditorCanvas />
     </section>
 
     <!-- Right Modal -->
