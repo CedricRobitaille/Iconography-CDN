@@ -1,5 +1,9 @@
 import type { Rectangle, Polygon, Polyline, Path, Line, Ellipse, Circle } from "../";
 
+type style = {
+  color: string,
+  stroke: string,
+}
 
 /**
  * w = Width
@@ -12,12 +16,19 @@ import type { Rectangle, Polygon, Polyline, Path, Line, Ellipse, Circle } from "
 export interface treeNode {
   id: number;
   name: number;
-  type: "circle" | "ellipse" | "line" | "path" | "polygon" | "polyline" | "rectangle" | "folder";
+  type: "circle" | "ellipse" | "line" | "path" | "polygon" | "polyline" | "rect" | "folder";
   locked: boolean;
   visible: boolean;
   properties: Rectangle | Polygon | Polyline | Path | Line | Ellipse | Circle;
   expanded: boolean;
-  children: treeNode[]
+  children: treeNode[];
+  style: style
 }
 
 
+
+export interface svgDescriptor {
+  tag: "circle" | "ellipse" | "line" | "path" | "polygon" | "polyline" | "rect" | "g";
+  attrs: Record<string, string| number>
+  children?: svgDescriptor[]
+}
