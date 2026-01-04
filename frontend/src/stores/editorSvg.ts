@@ -7,7 +7,8 @@ import type {
   DragPositionCircle,
   DragPositionEllipse,
   DragPositionLine,
-  DragPositionPath
+  DragPositionPath,
+  EditablePoint
 } from "../types"
 import type { SvgCanvasState } from "../types/ui/svgCanvasState";
 
@@ -223,7 +224,7 @@ export const useEditorStore = defineStore("svgCanvas", {
             const path = initial as DragPositionPath;
             // simple translate: add delta to all coordinates in path
             props.d = path.d.map(action => {
-              const newAction = { ...action, d: { ...action.d } };
+              const newAction: any = { ...action, d: { ...action.d } };
               // Only translate coordinates if they exist
               if ('x' in newAction.d) newAction.d.x += deltaX;
               if ('y' in newAction.d) newAction.d.y += deltaY;
@@ -238,11 +239,56 @@ export const useEditorStore = defineStore("svgCanvas", {
       });
     },
 
-
     // End the drag
     endDrag() {
       this.isDragging = false;
       this.dragInitialPositions = {};
+    },
+
+    // Get the editable points from a node
+    getEditablePoints(node: treeNode): EditablePoint[] {
+      const props = node.properties as any;
+      switch(node.type) {
+        case "rectangle":
+          return [
+            { x: props.x, y: props.y, type: "corner", nodeId: node.id }, // top-left
+            { x: props.x + props.w, y: props.y, type: "corner", nodeId: node.id }, // top-right
+            { x: props.x, y: props.y + props.h, type: "corner", nodeId: node.id }, // bottom-left
+            { x: props.x + props.w, y: props.y + props.h, type: "corner", nodeId: node.id }, // bottom-right
+          ];
+        case "circle":
+          return [
+            { x: props.cx, y: props.cy, type: "center", nodeId: node.id }
+            // ! radius handle at cx+r, cy
+          ];
+        case "ellipse":
+          return [
+            { x: props.cx, y: props.cy, type: "center", nodeId: node.id }
+          ];
+        case "line":
+          return [
+            { x: props.x1, y: props.y1, type: "endpoint", nodeId: node.id },
+            { x: props.x2, y: props.y2, type: "endpoint", nodeId: node.id }
+          ];
+        case "polygon":
+        case "polyline":
+          return props.points.map((pt: any, i: number) => ({ x: pt.x, y: pt.y, type: "vertex", nodeId: node.id, index: i }));
+        case "path":
+          return props.d.flatMap((cmd: any) => {
+            const points: EditablePoint[] = [];
+            if ('x' in cmd.d && 'y' in cmd.d) {
+              points.push({ x: cmd.d.x, y: cmd.d.y, type: "vertex", nodeId: node.id, actionId: cmd.id });
+            }
+            if ('x1' in cmd.d && 'y1' in cmd.d) {
+              points.push({ x: cmd.d.x1, y: cmd.d.y1, type: "control", nodeId: node.id, actionId: cmd.id });
+            }
+            if ('x2' in cmd.d && 'y2' in cmd.d) {
+              points.push({ x: cmd.d.x2, y: cmd.d.y2, type: "control", nodeId: node.id, actionId: cmd.id });
+            }return points;
+          });
+        default:
+          return [];
+      }
     }
 
 

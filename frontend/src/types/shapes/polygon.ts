@@ -5,7 +5,7 @@
  * ie: [22,33, 55,66, 88,99]
  *     [ x,y    x,y    x,y ]
  */
-export interface Points {
+interface Points {
   x: number;
   y: number;
 }

@@ -2,6 +2,7 @@
 
 import EditorCanvas from '../components/Editor/EditorCanvas.vue';
 import ProjectPanel from '../components/ProjectPanel/ProjectPanel.vue';
+import PropertiesPanel from '../components/PropertiesPanel/PropertiesPanel.vue';
 
 </script>
 
@@ -9,17 +10,18 @@ import ProjectPanel from '../components/ProjectPanel/ProjectPanel.vue';
 
 <template>
   <main>
-    
+
+    <!-- Left Modal -->
     <ProjectPanel />
+
     <!-- Main Artboard -->
     <section id="artboard">
     <EditorCanvas />
     </section>
 
     <!-- Right Modal -->
-    <section id="properties">
+    <PropertiesPanel />
 
-    </section>
   </main>
 
 </template>

@@ -44,3 +44,12 @@ export type DragInitialPositions = Record<
   | DragPositionEllipse
   | DragPositionPath
 >;
+
+export interface EditablePoint {
+  x: number;
+  y: number;
+  type: "corner" | "center" | "endpoint" | "vertex" | "control";
+  nodeId: number;
+  index?: number;
+  actionId?: number;
+}

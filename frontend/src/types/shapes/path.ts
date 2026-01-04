@@ -114,7 +114,7 @@ type A = {
  */
 type Z = {}
 
-type PathAction =
+export type PathAction =
   | { type: 'M'; d: M }
   | { type: 'L'; d: L }
   | { type: 'H'; d: H }
