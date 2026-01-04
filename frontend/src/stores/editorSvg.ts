@@ -1,5 +1,4 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
 import type { treeNode } from "../types"
 import type { SvgCanvasState } from "../types/ui/svgCanvasState";
 
