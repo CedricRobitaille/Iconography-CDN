@@ -35,8 +35,25 @@
 
 
   // Add to SelectedNodeIds arr.
-  const onNodeClick = (event: MouseEvent) => {
+  const onMouseDown = (event: MouseEvent) => {
+    event.stopPropagation; // prevent bubbling through continued mouse hold
     store.selectNode(props.node.id, event.shiftKey); // shift = boolean, true to multi-select
+    store.startDrag(event.clientX, event.clientY)
+  
+    const onMouseMove = (moveEvent: MouseEvent) => {
+      store.drag(moveEvent.clientX, moveEvent.clientY)
+    };
+
+    const onMouseUp = () => {
+      store.endDrag();
+      // Turn off event listeners
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseup", onMouseUp);
+    }
+    
+    // Turn on event listeners
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseup", onMouseUp);
   }
 
 </script>
@@ -47,7 +64,7 @@
       :is="tag"
       v-bind="props.node.properties"
       :class="isSelected ? 'selected' : 'default'"
-      @mousedown.stop="onNodeClick"
+      @mousedown.stop="onMouseDown"
     />
     <SvgNode 
       v-for="child in node.children"

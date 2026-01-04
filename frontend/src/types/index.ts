@@ -7,6 +7,7 @@ export * from './shapes/polygon'
 export * from './shapes/polyline'
 export * from './shapes/rectangle'
 export * from "./shapes/svgTree"
+export * from "./shapes/shapeDragState"
 
 
 // Model Types
