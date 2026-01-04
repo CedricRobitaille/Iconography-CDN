@@ -11,7 +11,7 @@ import LibraryPanel from '../components/libraryPanel/LibraryPanel.vue';
 
     <FilterPanel />
 
-    <section>
+    <section class="library">
       <LibraryPanel />
     </section>
   </main>
@@ -25,4 +25,17 @@ import LibraryPanel from '../components/libraryPanel/LibraryPanel.vue';
     height: 100%;
     overflow: hidden;
   }
+
+  .library {
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+    gap: 1rem;
+    height: 100%;
+    max-width: 75rem;
+    width: 100%;
+    padding: 2rem;
+    margin: 0 auto;
+    padding-bottom: 5rem;
+  }
+  
 </style>

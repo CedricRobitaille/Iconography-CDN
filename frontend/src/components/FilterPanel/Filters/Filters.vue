@@ -1,21 +1,15 @@
 <script setup lang="ts">
-  import { ref } from 'vue';
   import type { Filter } from '../../../types';
-
-  const activeFilters = ref<string[]>([])
+  import { useLibraryResultsStore } from '../../../stores/libraryResults';
+  
+  const libraryStore = useLibraryResultsStore();
 
   const props = defineProps<{
     items: Filter[]
   }>()
 
-  const toggleFilter = (name: string): void => {
-    if (activeFilters.value.includes(name)) {
-      const index = activeFilters.value.indexOf(name)
-      activeFilters.value.splice(index, 1)
-    } else {
-      activeFilters.value.push(name)
-    }
-  }
+  console.log(libraryStore)
+
 </script>
 
 <template>
@@ -24,8 +18,8 @@
       class="filter" 
       v-for="filter in props.items"
       :key="filter.name"
-      :class="activeFilters.includes(filter.name) ? 'active' : ''" 
-      @click="toggleFilter(filter.name)"
+      :class="libraryStore.activeFilters.includes(filter.name) ? 'active' : ''" 
+      @click="libraryStore.toggleFilter(filter.name)"
     >
       <img :src="filter.type" alt="">
       <p class="filter-name">{{ filter.name }}</p>

@@ -7,15 +7,25 @@ const { toggleTheme, globalTheme } = theme()
 
 <template>
   <nav>
-    <div>
-      <RouterLink id="home" to="/library" >
-        <svg viewBox="0 0 24 24" width="24" height="24">
-          <path d="M20 10v10h-5.68v-2.97c0-1.28-1.04-2.32-2.32-2.32s-2.32 1.04-2.32 2.32V20H4V10l8-6 8 6z"
-            class="cls-1" />
-        </svg>
-      </RouterLink>
-    </div>
-    <ul>
+    <ul class="navigation">
+      <li>
+        <RouterLink id="home" to="/library">
+          <svg viewBox="0 0 24 24" width="24" height="24">
+            <path d="M20 10v10h-5.68v-2.97c0-1.28-1.04-2.32-2.32-2.32s-2.32 1.04-2.32 2.32V20H4V10l8-6 8 6z"
+              class="cls-1" />
+          </svg>
+        </RouterLink>
+      </li>
+      <li>
+        <RouterLink id="editor" to="/editor">
+          <svg viewBox="0 0 24 24" width="24" height="24">
+            <line x1="4" y1="12" x2="20" y2="12" class="cls-1" />
+            <line x1="12" y1="4" x2="12" y2="20" class="cls-1" />
+          </svg>
+        </RouterLink>
+      </li>
+    </ul>
+    <ul class="settings">
       <li>
         <button @click="toggleTheme" class="mode-toggle">
           <svg v-if="!globalTheme" id="light-mode-icon" viewBox="0 0 24 24" width="20" height="20">
@@ -69,11 +79,19 @@ nav {
   border-bottom: 1px solid var(--border)
 }
 
-ul {
+.navigation {
+  align-items: center;
+}
+
+.settings {
   padding: 0px 1rem;
+  gap: .25rem;
+}
+
+ul {
   display: flex;
   flex-direction: row;
-  gap: .25rem;
+  align-items: center;
 }
 
 ul button {
@@ -94,7 +112,7 @@ button:hover .cls-2 {
   stroke: var(--text);
 }
 
-#home {
+#home, #editor {
   background-color: transparent;
   border-right: .5px solid var(--border);
   padding: .5rem;
@@ -103,7 +121,7 @@ button:hover .cls-2 {
   transition: .125s;
 }
 
-#home:hover {
+#home:hover, #editor:hover {
   background-color: var(--bg-40);
 }
 

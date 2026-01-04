@@ -44,7 +44,7 @@ html {
   background-color: var(--bg);
 }
 
-h1, h2, h3, h4, h5, h6, p, li, ul, span, label, fieldset, legend, a, button, input {
+h1, h2, h3, h4, h5, h6, p, li, ul, span, label, fieldset, legend, a, button, input, select {
   padding: 0;
   text-decoration: none;
   list-style: none;
@@ -71,9 +71,22 @@ input {
   color: var(--text);
 }
 
-input:focus {
-  outline: 1.5px solid var(--text-40);
+select {
+  background-color: transparent;
+  border: 1.5px solid var(--border);
+  color: var(--text-40);
+  border-radius: .75rem;
+  padding: .25rem;
 
+  /* Remove Default Arrow Styling */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+}
+
+input:focus, select:focus {
+  outline: 1.5px solid var(--text-40);
 }
 
 #app {
