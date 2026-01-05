@@ -9,6 +9,9 @@ export interface SvgCanvasState {
   offsetX: number;  // X Pan Offset
   offsetY: number;  // Y Pan Offset
 
+  activeTool: tools,
+  activeStyle: SvgStyle;
+
   // SVG State
   selectedNodeIds: number[];
 
@@ -18,6 +21,24 @@ export interface SvgCanvasState {
   // Flattened list of all nodes..
   // Instead of needing to dig for nested nodes each time
   flatNodes: treeNode[];
+}
 
-  activeTool: tools,
+export interface SvgStyle {
+  fill: fill,
+  stroke: stroke,
+}
+
+interface fill {
+  fill: string,
+  fillOpacity: number,
+}
+
+interface stroke {
+  stroke: string,
+  strokeDasharray: string,
+  strokeDashoffset: number,
+  strokeLinecap: string,
+  strokeLinejoin: string,
+  strokeOpacity: number,
+  strokeWidth: number,
 }

@@ -38,17 +38,5 @@ import PropertiesPanel from '../components/PropertiesPanel/PropertiesPanel.vue';
     height: 100%;
     overflow: hidden;
   }
-
-  #properties {
-    max-width: 18rem;
-    width: 100%;
-    background-color: var(--bg-20);
-    height: 100%;
-    overflow-y: hidden;
-    display: grid;
-    
-    border-left: .5px solid var(--border);
-    
-  }
   
 </style>

@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import type { treeNode } from "../types"
-import type { SvgCanvasState } from "../types/ui/svgCanvasState";
+import type { SvgCanvasState, SvgStyle } from "../types/ui/svgCanvasState";
 
 type FlatNode = Omit<treeNode, "depth"> & { depth: number };
 
@@ -13,8 +13,23 @@ export const useEditorStore = defineStore("svgCanvas", {
     width: 24,
     height: 24,
     zoom: .5,
-    offsetX: 0,
-    offsetY:0,
+    offsetX: 6,
+    offsetY: 2.5,
+    activeStyle: {
+      fill: {
+        fill: "none",
+        fillOpacity: 1,
+      },
+      stroke: {
+        stroke: "none",
+        strokeDasharray: "none",
+        strokeDashoffset: 0,
+        strokeLinecap: "butt",
+        strokeLinejoin: "miter",
+        strokeOpacity: 1,
+        strokeWidth: 1,
+      }
+    }
   }),
 
   // Functions to retreive... stuff
@@ -149,7 +164,7 @@ export const useEditorStore = defineStore("svgCanvas", {
     },
 
 
-
+    // Toggle Visibility of a node
     toggleNodeVisibility(node: treeNode) {
       this.$patch((state) => {
         node.visible = !node.visible;
@@ -157,16 +172,55 @@ export const useEditorStore = defineStore("svgCanvas", {
     },
 
 
-
+    // Locks a node
     toggleNodeLock(node: treeNode) {
       this.$patch((state) => {
         node.locked = !node.locked;
       });
     },
 
-
+    // Sets the active tool
     setTool(tool: typeof this.activeTool) {
       this.activeTool = tool;
+    },
+
+    // Sets default styling (stroke and fill)
+    setDefaultStyle () {
+      this.activeStyle = {
+        fill: {
+          fill: "none",
+          fillOpacity: 1,
+        },
+        stroke: {
+          stroke: "none",
+          strokeDasharray: "none",
+          strokeDashoffset: 0,
+          strokeLinecap: "butt",
+          strokeLinejoin: "miter",
+          strokeOpacity: 1,
+          strokeWidth: 1,
+        }
+      }
+    },
+
+    // Set fill properies
+    // Receive the KEY + Value
+    // Automatically interprit the key, and assigns the value.
+    setFill<Key extends keyof SvgStyle["fill"]> (
+      prop: Key, 
+      value: SvgStyle["fill"][Key] 
+    ) {
+      this.activeStyle.fill[prop] = value;
+    },
+
+    // Set Stroke properties
+    // Receive the Key + Value
+    // Automatically interprit the key and assign the value.
+    setStroke<Key extends keyof SvgStyle["stroke"]> (
+      prop: Key,
+      value: SvgStyle["stroke"][Key]
+    ) {
+      this.activeStyle.stroke[prop] = value;
     },
 
   },

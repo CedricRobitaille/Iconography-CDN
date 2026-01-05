@@ -44,7 +44,7 @@ html {
   background-color: var(--bg);
 }
 
-h1, h2, h3, h4, h5, h6, p, li, ul, span, label, fieldset, legend, a, button, input, select {
+h1, h2, h3, h4, h5, h6, p, li, ul, span, label, fieldset, legend, a, button, input, select, textarea {
   padding: 0;
   text-decoration: none;
   list-style: none;
@@ -62,13 +62,19 @@ button {
   background: transparent;
   cursor: pointer;
 }
-input {
+input, textarea {
   background-color: var(--bg-30);
   border: .5px solid var(--border);
   padding: .5rem .75rem;
   width: 100%;
   border-radius: .5rem;
   color: var(--text);
+}
+
+textarea {
+  resize: vertical;
+  max-height: 12rem;
+  min-height: 4.5ch;
 }
 
 select {
@@ -85,7 +91,7 @@ select {
   cursor: pointer;
 }
 
-input:focus, select:focus {
+input:focus, select:focus, textarea:focus {
   outline: 1.5px solid var(--text-40);
 }
 

@@ -14,7 +14,7 @@
   const toolManager = useToolManager();
 
   const props = defineProps<{
-    nodes?: treeNode[];
+    svg?: treeNode[];
     editorMode?: boolean;
     onNodeClick?: (node: treeNode) => void;
   }>();
@@ -23,8 +23,7 @@
   // Only render visible nodes.
   // Rather than creating the node, than checking for visibility, we catch it before even attempting to render.
   const visibleNodes = computed(() => {
-    console.log(props.nodes?.filter(n => n.visible) ?? [])
-    return props.nodes?.filter(n => n.visible) ?? []
+    return props.svg?.filter(n => n.visible) ?? []
   });
 
 
