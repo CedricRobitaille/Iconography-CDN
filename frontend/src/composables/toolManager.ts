@@ -1,11 +1,13 @@
 import { useEditorStore } from "../stores/editorSvg";
+import { usePenTool } from "./tools/PenTool";
 // IMPORT TOOL COMPOSABLE
 
 export const useToolManager = () => {
   const editor = useEditorStore();
 
   const tools: Record<string, any> = {
-    // pen: usePenTool()
+    pen: usePenTool(),
+    // Other tools
   };
 
   const handleMouseDown = (e: MouseEvent) => {
