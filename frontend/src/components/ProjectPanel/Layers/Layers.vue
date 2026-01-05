@@ -1,106 +1,33 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+  import { computed } from 'vue';
+  import { useEditorStore } from '../../../stores/editorSvg';
+  import type { treeNode } from '../../../types';
 
-type TreeNode = {
-  id: number;
-  name: string;
+  const icon = useEditorStore();
 
-  type: "shape" | "path" | "folder";
-  locked:  boolean;
-  visible: boolean;
-  properties?: {};
-  expanded?: boolean;
-  children?: TreeNode[];
-}
+  const flattenTree = (nodes: treeNode[] | treeNode, list: any[] = [], depth = 0) => {
+    if (!Array.isArray(nodes)) {
+      nodes = [nodes];
+    }
 
-const tree: TreeNode = {
-  id: 1,
-  name: "root",
-  type: "folder",
-  locked: false,
-  visible: true,
-  properties: {
-    x: 0,
-    y: 0,
-  },
-  expanded: true,
-  children: [
-    {
-      id: 2,
-      name: "src",
-      type: "folder",
-      locked: false,
-      visible: true,
-      properties: {
-        x: 0,
-        y: 0,
-      },
-      expanded: true,
-      children: [
-        { id: 3, name: "index.js", type: "path", locked: false,
-          visible: true, properties: {
-            x: 0,
-            y: 0,
-          }, },
-        {
-          id: 4,
-          name: "components",
-          type: "folder",
-          locked: false,
-          visible: true,
-          properties: {
-            x: 0,
-            y: 0,
-          },
-          expanded: true,
-          children: [
-            {
-              id: 5, name: "Button.js", type: "shape", locked: false,
-              visible: true, properties: {
-                x: 0,
-                y: 0,
-              },
-            },
-            {
-              id: 5, name: "Button.js", type: "shape", locked: false,
-              visible: true, properties: {
-                x: 0,
-                y: 0,
-              },
-            },
-            {
-              id: 5, name: "Button.js", type: "shape", locked: false,
-              visible: true, properties: {
-                x: 0,
-                y: 0,
-              },
-            }
-          ]
-        }
-      ]
-    },
-    { id: 6, name: "this_packager.json", type: "shape", locked: false,
-      visible: true, properties: {
-        x: 0,
-        y: 0,
-      }, }
-  ]
-};
+    nodes.forEach(node => {
+      list.push({ ...node, depth });
 
-function flattenTree(node: any, list = [], depth: number = 0) {
-  
-  list.push({ ...node, depth });
+      if (node.type === "folder" && node.expanded && node.children?.length) {
+        flattenTree(node.children, list, depth + 1);
+      }
+    });
 
-  if (node.type === "folder" && node.expanded) {
-    node.children?.forEach(child =>
-      flattenTree(child, list, depth + 1)
-    );
-  }
+    return list;
+  };
 
-  return list;
-}
-
-const projectTree = ref(flattenTree(tree))
+  const projectTree = computed(() => {
+    let tree = null;
+    if (icon.rootNode) {
+      tree = flattenTree(icon.rootNode)
+    }
+    return tree;
+  })
 </script>
 
 

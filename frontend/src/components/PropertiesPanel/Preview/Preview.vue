@@ -1,13 +1,16 @@
 <script setup lang="ts">
   import { ref } from 'vue';
   import { useSvgParser } from '../../../composables/svgTranslator';
+  import { useEditorStore } from '../../../stores/editorSvg';
+
+  const icon = useEditorStore();
 
   const { parse } = useSvgParser();
 
   const svg = ref("")
 
   const handleSubmit = () => {
-    console.log(parse(svg.value))
+    icon.rootNode = parse(svg.value);
   }
 
 </script>
