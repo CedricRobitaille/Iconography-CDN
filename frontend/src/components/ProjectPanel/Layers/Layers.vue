@@ -5,51 +5,55 @@
 
   const icon = useEditorStore();
 
-  const flattenTree = (nodes: treeNode[] | treeNode, list: any[] = [], depth = 0) => {
-    if (!Array.isArray(nodes)) {
-      nodes = [nodes];
-    }
-
-    nodes.forEach(node => {
-      list.push({ ...node, depth });
-
-      if (node.type === "folder" && node.expanded && node.children?.length) {
-        flattenTree(node.children, list, depth + 1);
-      }
-    });
-
-    return list;
-  };
-
   const projectTree = computed(() => {
-    let tree = null;
-    if (icon.rootNode) {
-      tree = flattenTree(icon.rootNode)
-    }
-    return tree;
+    if (!icon.rootNode) return [];
+    return icon.flattenTree(icon.rootNode);
   })
 </script>
 
 
 <template>
   <ul>
-    <li v-for="(value, index) in projectTree" :key="index" :class="{ [value.depth]: true }">
+    <li v-for="(node, id) in projectTree" :key="id" :class="{ [node.depth]: true }">
       <!-- Icon -->
-      <p v-if="value.type === 'folder'">Folder</p>
-      <p v-if="value.type === 'shape'">Shape</p>
-      <p v-if="value.type === 'path'">Path</p>
+      <svg id="rect" viewBox="0 0 24 24" width="1rem" height="1rem" class="icon">
 
+        <g v-if="node.type === 'rect'">
+          <rect width="14" height="14" x="4" y="4" class="cls-1" rx="2" ry="2" />
+        </g>
+
+        <g v-if="node.type === 'circle' || node.type === 'ellipse'">
+          <circle cx="12" cy="12" r="8" />
+        </g>
+
+        <g v-if="node.type === 'line'">
+          <line x1="4" x2="20" y1="20" y2="4" />
+        </g>
+
+        <g v-if="node.type === 'polygon'">
+          <polygon points="12 3.38 14.33 8.98 20.37 9.47 15.77 13.41 17.17 19.31 12 16.15 6.83 19.31 8.23 13.41 3.63 9.47 9.67 8.98 12 3.38"/>
+        </g>
+
+        <g v-if="node.type === 'path' || node.type === 'polyline'">
+          <line x1="21.54" x2="37.54" y1="32.94" y2="16.94" />
+          <path d="M4.49 5.56l3.22 11.8c.17.62.74 1.06 1.38 1.06h4.12l1.77 1.77c.36.36.95.36 1.31 0l3.89-3.89c.37-.37.36-.96 0-1.32l-1.77-1.75V9.1c.01-.65-.42-1.22-1.04-1.39L5.58 4.49A.877.877 0 0 0 4.5 5.57z"/>
+          <line x1="13.21" x2="18.4" y1="18.42" y2="13.22" />
+          <line x1="4.71" x2="12.45" y1="4.71" y2="12.45" />
+        </g>
+        
+      </svg>
+      
       <!-- Name -->
-      <p class="title">{{ value.name }}</p> 
+      <p class="title">{{ node.name }}</p> 
 
       <!-- Lock Button -->
       <button>
-        {{ value.locked }}
+        {{ node.locked }}
       </button>
 
       <!-- Visibility Button -->
-      <button>
-        {{ value.visible }}
+      <button @click="icon.toggleNodeVisibility(node)">
+        {{ node.visible }}
       </button>
     </li>
   </ul>
@@ -79,8 +83,17 @@
   }
 
   .title {
+
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+
+  .icon {
+    fill: none;
+    stroke: var(--text-30);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.5px
   }
 </style>

@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import type { treeNode} from "../types"
 import type { SvgCanvasState } from "../types/ui/svgCanvasState";
 
-
+type FlatNode = Omit<treeNode, "depth"> & { depth: number };
 
 export const useEditorStore = defineStore("svgCanvas", {
   state: (): SvgCanvasState => ({
@@ -10,7 +10,7 @@ export const useEditorStore = defineStore("svgCanvas", {
     flatNodes: [],
     selectedNodeIds: [],
     width: 800,
-    height: 600,
+    height: 800,
     zoom: 1,
     offsetX: 0,
     offsetY: 0,
@@ -28,16 +28,23 @@ export const useEditorStore = defineStore("svgCanvas", {
   },
 
   actions: {
-
+    
     // Flatten the tree from nested OBJ to flat Arr
-    flattenTree(node: treeNode | null = this.rootNode): treeNode[] {
-      if (!node) return [];
-      let nodes: treeNode[] = [node];
-      node.children.forEach(child => {
-        //  Recursively flatten children
-        nodes = nodes.concat(this.flattenTree(child));
+    flattenTree(node: treeNode | treeNode[] = this.rootNode, depth = 0): FlatNode[] {
+      // Force the node into an array
+      const nodesArray: treeNode[] = Array.isArray(node) ? node : [node];
+      let result: FlatNode[] = []; // Initialize the tree
+
+      nodesArray.forEach(node => {
+        // Keep the original node, just add depth
+        result.push(Object.assign(node, { depth }));
+
+        if (node.type === "folder" && node.expanded && node.children?.length) {
+          result = result.concat(this.flattenTree(node.children, depth + 1));
+        }
       });
-      return nodes;
+
+      return result;
     },
 
 
@@ -139,6 +146,15 @@ export const useEditorStore = defineStore("svgCanvas", {
       this.offsetX = offsetX;
       this.offsetY = offsetY;
     },
+
+
+
+    toggleNodeVisibility(node: treeNode) {
+      this.$patch((state) => {
+        node.visible = !node.visible;
+      });
+      console.log(node.visible)
+    }
 
 
 

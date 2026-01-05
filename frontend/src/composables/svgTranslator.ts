@@ -463,11 +463,13 @@ export const useSvgParser = () => {
     const svgEl = parseSvgString(svgText);
     if (!svgEl) return [];
 
-    console.log(svgEl)
-
-    return Array.from(svgEl.children)
+    const tree = Array.from(svgEl.children)
       .map(parseElement)
       .filter(Boolean) as treeNode[];
+
+    console.log(tree)
+
+    return tree
   }
 
   // called action from the useSvgParser function

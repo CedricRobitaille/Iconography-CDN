@@ -22,7 +22,8 @@ export interface treeNode {
   properties: Rectangle | Polygon | Polyline | Path | Line | Ellipse | Circle;
   expanded: boolean;
   children: treeNode[];
-  style: style
+  style: style;
+  depth?: number;
 }
 
 

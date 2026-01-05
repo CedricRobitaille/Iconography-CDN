@@ -13,6 +13,10 @@
   import SvgPolygon from './Nodes/SvgPolygon.vue';
   import SvgPolyline from './Nodes/SvgPolyline.vue';
 
+  import { useEditorStore } from '../../stores/editorSvg';
+
+  const canvas = useEditorStore();
+
   // Props
   const props = defineProps<{
     node: treeNode;
@@ -45,6 +49,11 @@
 
   // Log the mapped component.
   const component = computed(() => componentMap[props.node.type]);
+
+  const isSelected = computed(() => {
+    const state = props.editorMode && canvas.selectedNodeIds.includes(props.node.id)
+    return state
+  })
 
 </script>
 
