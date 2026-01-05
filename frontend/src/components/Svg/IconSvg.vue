@@ -15,6 +15,7 @@
   // Only render visible nodes.
   // Rather than creating the node, than checking for visibility, we catch it before even attempting to render.
   const visibleNodes = computed(() => {
+    console.log(props.nodes?.filter(n => n.visible) ?? [])
     return props.nodes?.filter(n => n.visible) ?? []
   });
 
@@ -23,7 +24,7 @@
 <template>
   <svg 
     xmlns="http://www.w3.org/2000/svg"
-    :viewBox="viewBox ?? '0 0 32 32'"
+    :viewBox="viewBox ?? '0 0 24 24'"
     class="rootSVG"
   >
     <SvgNode 

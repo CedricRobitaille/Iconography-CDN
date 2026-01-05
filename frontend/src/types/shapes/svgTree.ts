@@ -1,8 +1,11 @@
 import type { Rectangle, Polygon, Polyline, Path, Line, Ellipse, Circle } from "../";
 
 type style = {
-  fill: string,
-  stroke: string,
+  fill?: string,
+  stroke?: string,
+  strokeWidth?: number,
+  strokeLinecap?: string,
+  strokeLinejoin?: string,
 }
 
 /**

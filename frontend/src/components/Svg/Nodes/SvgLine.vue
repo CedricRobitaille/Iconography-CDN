@@ -8,17 +8,19 @@
 
   // ! Extract shape properties
   const line = computed<Line>(() => {
-    return props.node.properties as Line
+    return props.node.properties as Line;
   })
 
   // We are not including fills since lines don't really do that...
-  const stroke = computed(() => props.node.style.stroke);
+  const stroke = computed(() => props.node.style?.stroke ?? "var(--text)");
+
+  console.log(props.node)
 
 </script>
 
 <template>
 
-  <ellipse 
+  <line 
     :x1="line.x1"
     :y1="line.y1"
     :x2="line.x2"

@@ -14,7 +14,7 @@
 
 <template>
   <ul>
-    <li v-for="(node, id) in projectTree" :key="id" :class="{ [node.depth]: true }">
+    <li v-for="(node, id) in projectTree" :key="id" :class="'depth-' + node.depth">
       <!-- Icon -->
       <svg id="rect" viewBox="0 0 24 24" width="1rem" height="1rem" class="icon">
 
@@ -47,7 +47,7 @@
       <p class="title">{{ node.name }}</p> 
 
       <!-- Lock Button -->
-      <button>
+      <button @click="icon.toggleNodeLock(node)">
         {{ node.locked }}
       </button>
 
@@ -95,5 +95,25 @@
     stroke-linecap: round;
     stroke-linejoin: round;
     stroke-width: 1.5px
+  }
+  .depth-0 {
+    padding-left: 0;
+  }
+  .depth-1 {
+    padding-left: .5rem;
+  }
+  .depth-2 {
+    padding-left: 1rem;
+  }
+  .depth-3 {
+    padding-left: 1.5rem;
+  }
+  .depth-4
+  .depth-5
+  .depth-6
+  .depth-7
+  .depth-8
+  .depth-9 {
+    padding-left: 2rem;
   }
 </style>

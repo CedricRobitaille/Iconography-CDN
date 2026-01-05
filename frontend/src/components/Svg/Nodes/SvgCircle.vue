@@ -7,7 +7,7 @@
   }>();
 
   // ! Extract circle properties
-  const circle = computed<Circle>(() => {
+  const circle = computed(() => {
     return props.node.properties as Circle
   })
 

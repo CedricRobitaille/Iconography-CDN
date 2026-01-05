@@ -153,10 +153,12 @@ export const useEditorStore = defineStore("svgCanvas", {
       this.$patch((state) => {
         node.visible = !node.visible;
       });
-      console.log(node.visible)
-    }
+    },
 
-
-
+    toggleNodeLock(node: treeNode) {
+      this.$patch((state) => {
+        node.locked = !node.locked;
+      });
+    },
   },
 });

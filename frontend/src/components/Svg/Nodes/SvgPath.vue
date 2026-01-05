@@ -45,7 +45,7 @@
     // Points come in as an ActionObj like {type: H, action: d.x}
     // Depending on the type of action, we convert the action into a string
     // Then, we join all the actions together
-    path.value.d
+    return path.value.d
       .map(action => actionString(action))
       .join(" ")
   });
@@ -57,7 +57,7 @@
 
 <template>
 
-  <ellipse 
+  <path 
     :d="d"
     :fill="fill" 
     :stroke="stroke" 

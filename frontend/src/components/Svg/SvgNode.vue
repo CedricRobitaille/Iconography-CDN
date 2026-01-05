@@ -48,7 +48,10 @@
   } as const;
 
   // Log the mapped component.
-  const component = computed(() => componentMap[props.node.type]);
+  const component = computed(() =>{
+    console.log(componentMap[props.node.type])
+    return componentMap[props.node.type]
+  });
 
   const isSelected = computed(() => {
     const state = props.editorMode && canvas.selectedNodeIds.includes(props.node.id)

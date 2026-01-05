@@ -10,6 +10,7 @@ import type {
   PathAction
 } from "../types"
 
+// Converts SVG string to SVG code to be parsed by the svg parser
 const parseSvgString = (svgText: string): SVGElement | null => {
   // Accept valid HTML as string
   const parser = new DOMParser();
@@ -22,21 +23,79 @@ const parseSvgString = (svgText: string): SVGElement | null => {
     root.tagName.toLowerCase() === 'svg'
   ) {
 
-    return root as SVGElement;
+    return root as SVGSVGElement;
   }
 
   return null
 }
 
+// SVG Parser to convert svg code to the nodeTree[] structure
 export const useSvgParser = () => {
 
   let nodeIdCounter = 1;
 
+  // Generate a unique ID for each node
   const genId = ():number => {
     return nodeIdCounter++;
   }
 
+  // Parse out the css styles into treeNode.style format
+  const parseCssMap = (svgEl: SVGSVGElement): Record<string, Partial<treeNode["style"]>> => {
+    // Map out all the styles in treeNode.style
+    const cssMap: Record<string, Partial<treeNode["style"]>> = {}
 
+    // Get all the styles in the svg elem
+    const styleEls = svgEl.querySelectorAll("style");
+
+    styleEls.forEach(styleEl => {
+      const cssText = styleEl.textContent ?? "";
+      const regex = /\.(.+?)\s*\{([^}]+)\}/g;
+      let match: RegExpExecArray | null;
+
+      while ((match = regex.exec(cssText)) !== null) {
+        const className = match[1]?.trim() // eg: .cls-1
+        const rules = match[2]?.trim() // eg: border {}
+        const styleObj: Partial<treeNode["style"]> = {}
+
+        rules?.split(";").forEach(rule => {
+          // split the string from border: 20px -> [border], [20px]
+          const [prop, val] = rule.split(":").map(s => s.trim());
+          // Must have both the prop and the value
+          if (!prop || !val) return;
+
+          switch (prop) {
+            case "fill":
+              styleObj.fill = val;
+              break;
+
+            case "stroke":
+              styleObj.stroke = val;
+              break;
+
+            case "stroke-width":
+              styleObj.strokeWidth = parseFloat(val);
+              break;
+
+            case "stroke-linecap":
+              styleObj.strokeLinecap = val as "butt" | "round" | "square";
+              break;
+
+            case "stroke-linejoin":
+              styleObj.strokeLinecap = val as "miter" | "round" | "bevel";
+              break;
+          }
+        });
+
+        cssMap[className] = styleObj
+      }
+    });
+
+    return cssMap
+  }
+
+
+  // Parse from string ie: "12.23-234 23.1 23.24"
+  // to number [num, num, num, num]
   const parseNumbers = (str: string): number[] => {
     const nums: number[] = [];
     // Regex: match numbers including negative / decimal / etc
@@ -360,7 +419,7 @@ export const useSvgParser = () => {
 
 
   // Recursively convert SVG into treeNode
-  const parseElement = (el: Element): treeNode | null => {
+  const parseElement = (el: Element, cssMap: Record<string, Partial<treeNode["style"]>>): treeNode | null => {
     const tag = el.tagName.toLowerCase();
 
     // Only accept supported tags
@@ -368,10 +427,24 @@ export const useSvgParser = () => {
     if (!supportedTags.includes(tag)) return null;
 
     // Extract style
-    const style = {
+    const style: treeNode["style"] = {
       fill: el.getAttribute("fill") || "none",
       stroke: el.getAttribute("stroke") || "none",
+      strokeWidth: el.getAttribute("stroke-width") ? parseFloat(el.getAttribute("stroke-width")!) : undefined,
+      strokeLinecap: el.getAttribute("stroke-linecap") as any, // could be string or null
+      strokeLinejoin: el.getAttribute("stroke-linejoin") as any
     };
+
+    // Merge class styles
+    const classNames = (el.getAttribute("class") ?? "")
+      .split(/\s/)
+      .filter(Boolean);
+    
+    classNames.forEach(cls => {
+      if (cssMap[cls]) {
+        Object.assign(style, cssMap[cls]); // class overrides default inline
+      }
+    })
 
     // Form the selected node
     const node: treeNode = {
@@ -395,6 +468,7 @@ export const useSvgParser = () => {
           cy: Number(el.getAttribute('cy') ?? 0),
           r: Number(el.getAttribute('r') ?? 0),
         } as Circle;
+        break;
 
       case 'ellipse':
         node.properties = {
@@ -403,6 +477,7 @@ export const useSvgParser = () => {
           rx: Number(el.getAttribute('rx') ?? 0),
           ry: Number(el.getAttribute('ry') ?? 0),
         } as Ellipse;
+        break;
 
       case 'line':
         node.properties = {
@@ -411,6 +486,7 @@ export const useSvgParser = () => {
           x2: Number(el.getAttribute('x2') ?? 0),
           y2: Number(el.getAttribute('y2') ?? 0),
         } as Line;
+        break;
 
       case 'path':
         const d = el.getAttribute('d') ?? '';
@@ -432,6 +508,7 @@ export const useSvgParser = () => {
         node.properties = tag === "polygon" 
           ? { points: pointsArray } as Polygon
           : { points: pointsArray } as Polyline;
+        break;
 
       case 'rect':
         node.properties = {
@@ -442,6 +519,7 @@ export const useSvgParser = () => {
           rx: Number(el.getAttribute('rx') ?? 0),
           ry: Number(el.getAttribute('ry') ?? 0),
         } as Rectangle;
+        break;
     }
 
     // Recursively parse children if folder
@@ -456,6 +534,7 @@ export const useSvgParser = () => {
   // END PARSE_ELEMENT FUNCTION
 
 
+
   // Convert entire SVG string into treenode[]
   const parse = (svgText: string): treeNode[] => {
     nodeIdCounter = 0; // reset the id count
@@ -463,14 +542,17 @@ export const useSvgParser = () => {
     const svgEl = parseSvgString(svgText);
     if (!svgEl) return [];
 
+    const cssMap = parseCssMap(svgEl);
+
     const tree = Array.from(svgEl.children)
-      .map(parseElement)
+      .map(el => parseElement(el, cssMap))
       .filter(Boolean) as treeNode[];
 
     console.log(tree)
 
     return tree
   }
+
 
   // called action from the useSvgParser function
   return {
