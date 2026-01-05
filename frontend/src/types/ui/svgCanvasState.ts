@@ -1,4 +1,5 @@
 import type { treeNode } from "../shapes/svgTree";
+import type { tools } from "./tools";
 
 export interface SvgCanvasState {
   // Canvas Appearance
@@ -17,4 +18,6 @@ export interface SvgCanvasState {
   // Flattened list of all nodes..
   // Instead of needing to dig for nested nodes each time
   flatNodes: treeNode[];
+
+  activeTool: tools,
 }

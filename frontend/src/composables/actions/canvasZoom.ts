@@ -1,6 +1,5 @@
-import { ref } from "vue";
 import type { Ref } from "vue";
-import type { SvgCanvasState } from "../types/ui/svgCanvasState";
+import type { SvgCanvasState } from "../../types/ui/svgCanvasState";
 
 interface CanvasZoomOptions {
   minZoom?: number;
@@ -25,7 +24,6 @@ export const useCanvasZoom = (
   // Mouse Wheel Zoom
   const onWheel = (event:WheelEvent) => {
     if (!editorMode.value) return;
-    if (!event.ctrlKey && !event.altKey) return;
 
     event.preventDefault();
 

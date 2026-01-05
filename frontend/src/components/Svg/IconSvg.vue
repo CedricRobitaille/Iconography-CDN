@@ -5,27 +5,19 @@
   import type { treeNode } from '../../types'; 
   import SvgNode from './SvgNode.vue';
   import { useEditorStore } from '../../stores/editorSvg';
-  import { useCanvasPan } from '../../composables/canvasPan';
-  import { useCanvasZoom } from '../../composables/canvasZoom';
+  import { useDefaultCanvasInteractions } from '../../composables/defaultActions';
+  import { useToolManager } from '../../composables/toolManager';
 
   const canvas = useEditorStore();
   
+  const defaultAction = useDefaultCanvasInteractions(computed(() => props.editorMode));
+  const toolManager = useToolManager();
 
   const props = defineProps<{
     nodes?: treeNode[];
     editorMode?: boolean;
     onNodeClick?: (node: treeNode) => void;
   }>();
-
-  const {
-    onWheel
-  } = useCanvasZoom(canvas, computed (() => props.editorMode))
-
-  const {
-    onMouseDown,
-    onMouseMove,
-    onMouseUp
-  } = useCanvasPan(canvas, computed(() => props.editorMode))
 
 
   // Only render visible nodes.
@@ -52,19 +44,41 @@
     : {}
   );
 
+
+  const handleMouseDown = (e: MouseEvent) => {
+    defaultAction.onMouseDown(e); 
+    toolManager.handleMouseDown(e);
+  }
+
+  const handleMouseMove = (e: MouseEvent) => {
+    defaultAction.onMouseMove(e); 
+    toolManager.handleMouseMove(e);
+  }
+
+  const handleMouseUp = (e: MouseEvent) => {
+    defaultAction.onMouseUp(e); 
+    toolManager.handleMouseUp(e);
+  }
+
+  const handleWheel = (e: WheelEvent) => {
+    defaultAction.onWheel(e); 
+    toolManager.handleWheel(e);
+  }
+
 </script>
 
 <template>
   <svg 
+  tabindex="0"
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
     v-bind="svgSize"
     preserveAspectRatio="xMidYMid meet"
-    @mousedown="onMouseDown"
-    @mousemove="onMouseMove"
-    @mouseup="onMouseUp"
-    @mouseleave="onMouseUp"
-    @wheel="onWheel"
+    @mousedown="handleMouseDown"
+    @mousemove="handleMouseMove"
+    @mouseup="handleMouseUp"
+    @mouseleave="handleMouseUp"
+    @wheel.prevent="handleWheel"
   >
     <g id="camera" :transform="cameraTransform"  >
       <!-- Grid -->

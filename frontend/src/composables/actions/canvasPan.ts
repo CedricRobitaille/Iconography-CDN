@@ -1,12 +1,6 @@
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref } from "vue";
 import type { Ref } from "vue";
-import type { SvgCanvasState } from "../types/ui/svgCanvasState";
-
-
-
-
-
-
+import type { SvgCanvasState } from "../../types/ui/svgCanvasState";
 
 
 export const useCanvasPan = (canvas: SvgCanvasState, editorMode: Ref<boolean>) => {
@@ -16,29 +10,10 @@ export const useCanvasPan = (canvas: SvgCanvasState, editorMode: Ref<boolean>) =
     y: 0,
   })
 
-  const isSpacePressed = ref(false)
-
-  // KeyPress
-  const onKeyDown = (e: KeyboardEvent) => {
-    if (e.code === 'Space') {
-      isSpacePressed.value = true
-      e.preventDefault() // prevent page scrolling
-    }
-  }
-
-  // KeyPress
-  const onKeyUp = (e: KeyboardEvent) => {
-    if (e.code === 'Space') {
-      isSpacePressed.value = false
-    }
-  }
-
-
 
   // Mouse Down
   const onMouseDown = (event: MouseEvent) => {
     if (!editorMode.value) return
-    if (!isSpacePressed.value) return
 
     isPanning.value = true;
     start.value = { 
@@ -74,18 +49,6 @@ export const useCanvasPan = (canvas: SvgCanvasState, editorMode: Ref<boolean>) =
     isPanning.value = false;
   }
 
-
-
-
-  onMounted(() => {
-    window.addEventListener('keydown', onKeyDown)
-    window.addEventListener('keyup', onKeyUp)
-  })
-
-  onUnmounted(() => {
-    window.removeEventListener('keydown', onKeyDown)
-    window.removeEventListener("keyup", onKeyUp)
-  });
 
 
   return {

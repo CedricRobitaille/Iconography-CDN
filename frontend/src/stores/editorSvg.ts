@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import type { treeNode} from "../types"
+import type { treeNode } from "../types"
 import type { SvgCanvasState } from "../types/ui/svgCanvasState";
 
 type FlatNode = Omit<treeNode, "depth"> & { depth: number };
@@ -8,7 +8,8 @@ export const useEditorStore = defineStore("svgCanvas", {
   state: (): SvgCanvasState => ({
     rootNode: null,
     flatNodes: [],
-    selectedNodeIds: [],
+    selectedNodeIds: [] as number[],
+    activeTool: "select",
     width: 24,
     height: 24,
     zoom: .5,
@@ -156,11 +157,17 @@ export const useEditorStore = defineStore("svgCanvas", {
     },
 
 
-    
+
     toggleNodeLock(node: treeNode) {
       this.$patch((state) => {
         node.locked = !node.locked;
       });
     },
+
+
+    setTool(tool: typeof this.activeTool) {
+      this.activeTool = tool;
+    },
+
   },
 });
