@@ -9,11 +9,11 @@ export const useEditorStore = defineStore("svgCanvas", {
     rootNode: null,
     flatNodes: [],
     selectedNodeIds: [],
-    width: 800,
-    height: 800,
-    zoom: 1,
+    width: 24,
+    height: 24,
+    zoom: .5,
     offsetX: 0,
-    offsetY: 0,
+    offsetY:0,
   }),
 
   // Functions to retreive... stuff
@@ -155,6 +155,8 @@ export const useEditorStore = defineStore("svgCanvas", {
       });
     },
 
+
+    
     toggleNodeLock(node: treeNode) {
       this.$patch((state) => {
         node.locked = !node.locked;

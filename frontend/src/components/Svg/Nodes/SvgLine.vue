@@ -12,7 +12,10 @@
   })
 
   // We are not including fills since lines don't really do that...
-  const stroke = computed(() => props.node.style?.stroke ?? "var(--text)");
+  const stroke = computed(() => props.node.style.stroke);
+  const sWidth = computed(() => props.node.style.strokeWidth);
+  const sLinecap = computed(() => props.node.style.strokeLinecap);
+  const sLinejoin = computed(() => props.node.style.strokeLinejoin);
 
   console.log(props.node)
 
@@ -27,6 +30,9 @@
     :y2="line.y2"
     fill="none" 
     :stroke="stroke" 
+    :stroke-width="sWidth"
+    :stroke-linecap="sLinecap"
+    :stroke-linejoin="sLinejoin"
   />
 
 </template>
