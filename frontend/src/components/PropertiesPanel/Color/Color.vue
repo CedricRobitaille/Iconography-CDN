@@ -1,10 +1,18 @@
 <script setup lang="ts">
   import { computed, ref, toValue } from 'vue';
   import { useEditorStore } from '../../../stores/editorSvg';
+import { sanitizeHex, sanitizeOpacity } from '../../../composables/sanitizer';
   const canvas = useEditorStore();
 
+  // The style we're currently editing
   const currentStyle = ref("fill")
+  const setStyle = (style: string): void => {
+    currentStyle.value = style;
+  }
 
+
+
+  // User Input on input forms.
   const fillInput = computed({
     get: () => {
       if (currentStyle.value === "fill") {
@@ -13,22 +21,14 @@
         return canvas.activeStyle.stroke.stroke;
       }
     },
-    set: (val: string) => {
-      let formatted = val.toUpperCase();
+    set: (value: string) => {
+      let val = sanitizeHex(value);
 
-      // Remove non-hex-ready characters
-      // Only accept 0-9, A-Z, and start with "#"
-      formatted = "#" + formatted.replace(/[^0-9A-F]/g, "");
-
-      // Clamp to 7 chars
-      if (formatted.length > 7) {
-        formatted = formatted.slice(0,7);
-      }
-
+      // Set the canvas with the new values
       if (currentStyle.value === "fill") {
-        canvas.activeStyle.fill.fill = formatted;
+        canvas.activeStyle.fill.fill = val;
       } else {
-        canvas.activeStyle.stroke.stroke = formatted;
+        canvas.activeStyle.stroke.stroke = val;
       }
     }
   })
@@ -44,14 +44,7 @@
     },
     set: (value: number) => {
       // Clamp the value
-      let val = value;
-      if (val > 100) {
-        // Remove the last digit. 240 -> 24
-        val = Math.floor(val / 10)
-      }
-      if (val < 0) {
-        val = 0
-      }
+      let val = sanitizeOpacity(value)
 
       // Set the canvas with the new values
       if (currentStyle.value === "fill") {
@@ -62,32 +55,23 @@
     }
   });
 
-  const toggleStyle = (): void => {
-    if (currentStyle.value === "fill") {
-      currentStyle.value = "stroke";
-      return;
-    }
-    currentStyle.value = "fill";
-  }
 
-  const setStyle = (style: string): void => {
-    currentStyle.value = style;
-  }
+
+
 
 </script>
 
 <template>
 
   <div id="picker-container">
-    <div id="color-picker"></div>
+    <div id="color-picker">
+      <div id="picker-cursor"></div>
+    </div>
   </div>
 
   <div id="color-slider">
-    <button class="visibility"></button>
-    <div>
-      <div id="hue-slider"></div>
-      <div id="transparency-slider"></div>
-    </div>
+    <input type="range" min="0" max="360" id="hue-slider">
+    <input type="range" min="0" max="100" id="opacity-slider">
   </div>
 
   <div id="color-select">
@@ -121,9 +105,47 @@
 </template>
 
 <style scoped>
+
+  #picker-container {
+    padding: .75rem;
+    background-color: var(--bg-30);
+    border-radius: .5rem;
+  }
+
+  #color-picker {
+    position: relative;
+    width: 100%;
+    height: 9rem;
+    background: 
+      linear-gradient(to right, #fff, hsl(0, 100%, 50%));
+    cursor: crosshair;
+    border-radius: 4px;
+  }
+
+  #picker-cursor {
+    position: absolute;
+  }
+
+  #color-slider {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+  }
+
+  input[type="range"] {
+    padding: 0;
+    cursor: pointer;
+  }
+
+  input[type="range"]:focus {
+    outline: none;
+  } 
+
+
+
   #color-select {
     display: flex;
-    gap: .5rem;
+    gap: .75rem;
   }
 
   #style-toggle {
