@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import PanelContainer from '../PanelContainer/PanelContainer.vue';
 import Preview from './Preview/Preview.vue';
-import SvgCode from './SvgCode/SvgCode.vue';
+import Color from './Color/Color.vue';
+import Fill from './Fill/Fill.vue';
+import Stroke from './Stroke/Stroke.vue';
+import Document from './Document/Document.vue';
+import SvgCode from './CodeInput/CodeInput.vue';
+import Export from './Export/Export.vue';
 
 
 </script>
@@ -10,12 +15,12 @@ import SvgCode from './SvgCode/SvgCode.vue';
   <section id="properties">
 
     <PanelContainer :component="Preview" title="Preview"/>
-    <PanelContainer :component="SvgCode" title="Color" />
-    <PanelContainer :component="SvgCode" title="Fill" />
-    <PanelContainer :component="SvgCode" title="Stroke" />
-    <PanelContainer :component="SvgCode" title="Document" />
+    <PanelContainer :component="Color" title="Color" />
+    <PanelContainer :component="Fill" title="Fill" />
+    <PanelContainer :component="Stroke" title="Stroke" />
+    <PanelContainer :component="Document" title="Document" />
     <PanelContainer :component="SvgCode" title="Svg Code" />
-    <PanelContainer :component="SvgCode" title="Export" />
+    <PanelContainer :component="Export" title="Export" />
 
   </section>
 </template>

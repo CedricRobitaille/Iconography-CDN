@@ -6,8 +6,6 @@ import PropertiesPanel from '../components/PropertiesPanel/PropertiesPanel.vue';
 
 </script>
 
-
-
 <template>
   <main>
 
@@ -26,17 +24,11 @@ import PropertiesPanel from '../components/PropertiesPanel/PropertiesPanel.vue';
 
 </template>
 
-
-
-
-
 <style scoped>
-
   main {
     display: grid;
     grid-template-columns: minmax(100px, 18rem) 1fr minmax(100px, 18rem);
     height: 100%;
     overflow: hidden;
   }
-  
 </style>

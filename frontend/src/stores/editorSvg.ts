@@ -17,11 +17,11 @@ export const useEditorStore = defineStore("svgCanvas", {
     offsetY: 2.5,
     activeStyle: {
       fill: {
-        fill: "none",
+        fill: "#ffffff",
         fillOpacity: 1,
       },
       stroke: {
-        stroke: "none",
+        stroke: "#000000",
         strokeDasharray: "none",
         strokeDashoffset: 0,
         strokeLinecap: "butt",
@@ -188,11 +188,11 @@ export const useEditorStore = defineStore("svgCanvas", {
     setDefaultStyle () {
       this.activeStyle = {
         fill: {
-          fill: "none",
+          fill: "#ffffff",
           fillOpacity: 1,
         },
         stroke: {
-          stroke: "none",
+          stroke: "#ffffff",
           strokeDasharray: "none",
           strokeDashoffset: 0,
           strokeLinecap: "butt",
