@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { computed } from 'vue';
-  import SvgNode from './SvgNode/SvgNode.vue';
+  import IconSvg from '../Svg/IconSvg.vue';
   import { useEditorStore } from '../../stores/editorSvg';
   
   const canvas = useEditorStore();
@@ -13,30 +13,16 @@
     return `${-canvas.offsetX} ${-canvas.offsetY} ${w} ${h}`
   })
 
-  // MouseDown listener
-  const onCanvasMouseDown = (event: MouseEvent) => {
-    // If mousedown on BG, de-select all nodes
-    if ((event.target as SVGElement).tagName === "svg") {
-      canvas.clearSelection();
-    }
-  } 
-
 </script>
 
 <template>
   <div class="editor-canvas">
-    <svg
-      :width="canvas.width"
-      :height="canvas.height"
-      :view-box="viewBox"
-      @mousedown="onCanvasMouseDown"
-    >
-      <!-- Make a node featuring the rootNode (If Exists) -->
-      <SvgNode 
-        v-if="canvas.rootNode"
-          :node="canvas.rootNode"
-      />
-    </svg>
+    <IconSvg 
+      :nodes="canvas.rootNode"
+      :viewBox?="viewBox"
+      :editorMode="true"
+      :onNodeClick?:="canvas.selectNode"
+    />
   </div>
 </template>
 
@@ -45,9 +31,5 @@
     width: 100%;
     height: 100%;
     overflow: hidden;
-  }
-  
-  svg {
-    user-select: none;
   }
 </style>

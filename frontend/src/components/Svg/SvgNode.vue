@@ -13,25 +13,48 @@
   import SvgPolygon from './Nodes/SvgPolygon.vue';
   import SvgPolyline from './Nodes/SvgPolyline.vue';
 
+  // Props
   const props = defineProps<{
     node: treeNode;
+    editorMode?: boolean;
+    onNodeClick?: (node: treeNode) => void;
   }>();
+
+  // Click handler
+  const emitClick = (event: MouseEvent): void => {
+    // stop click bubbling
+    event.stopPropagation();
+
+    // Only run this function IF we're in edit mode.
+    if (props.onNodeClick) {
+      props.onNodeClick(props.node)
+    }
+  }
+
+  // Map the type to the Component.vue
+  const componentMap = {
+    circle: SvgCircle,
+    ellipse: SvgEllipse,
+    line: SvgLine,
+    path: SvgPath,
+    polygon: SvgPolygon,
+    polyline: SvgPolyline,
+    rect: SvgRect,
+    folder: SvgGroup,
+  } as const;
+
+  // Log the mapped component.
+  const component = computed(() => componentMap[props.node.type]);
 
 </script>
 
 <template>
-
-  <!-- Folder / Group -->
-  <SvgGroup v-if="node.type === 'folder'" :node="node" />
-
-  <!-- Shapes -->
-  <SvgCircle v-if="node.type === 'circle'" :node="node" />
-  <SvgEllipse v-if="node.type === 'ellipse'" :node="node" />
-  <SvgLine v-if="node.type === 'line'" :node="node" />
-  <SvgPath v-if="node.type === 'path'" :node="node" />
-  <SvgPolygon v-if="node.type === 'polygon'" :node="node" />
-  <SvgPolyline v-if="node.type === 'polyline'" :node="node" />
-  <SvgRect v-if="node.type === 'rect'" :node="node" />
+  <!-- Display the component linked to the type -->
+  <component 
+    :is="component" 
+    :node="node" 
+    @click.stop="emitClick"
+  />
 
 </template>
 

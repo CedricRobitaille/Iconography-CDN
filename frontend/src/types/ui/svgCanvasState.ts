@@ -17,10 +17,4 @@ export interface SvgCanvasState {
   // Flattened list of all nodes..
   // Instead of needing to dig for nested nodes each time
   flatNodes: treeNode[];
-
-  // Drag State
-  isDragging: boolean;
-  dragStartX: number;
-  dragStartY: number;
-  dragInitialPositions: Record<number, {x: number; y: number}>; // NodeId + Init Positions
 }

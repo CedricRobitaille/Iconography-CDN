@@ -1,5 +1,15 @@
 <script setup lang="ts">
-  
+  import { ref } from 'vue';
+  import { useSvgParser } from '../../../composables/svgTranslator';
+
+  const { parse } = useSvgParser();
+
+  const svg = ref("")
+
+  const handleSubmit = () => {
+    console.log(parse(svg.value))
+  }
+
 </script>
 
 <template>
@@ -7,13 +17,18 @@
     <svg class="preview">
 
     </svg>
+    <form @submit.prevent="handleSubmit">
+      <textarea name="" id="" v-model="svg"></textarea>
+      <button type="submit">convert</button>
+    </form>
+    
   </div>
 </template>
 
 <style scoped>
   .preview-container {
     width: 100%;
-    height: 10rem;
+    /* height: 10rem; */
     background-color: var(--bg-30);
     display: flex;
     padding: 1rem;

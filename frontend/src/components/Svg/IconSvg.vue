@@ -8,11 +8,15 @@
   const props = defineProps<{
     nodes: treeNode[];
     viewBox?: string;
+    editorMode?: boolean;
+    onNodeClick?: (node: treeNode) => void;
   }>();
 
   // Only render visible nodes.
   // Rather than creating the node, than checking for visibility, we catch it before even attempting to render.
-  const visibleNodes = computed(() => props.nodes.filter(n => n.visible));
+  const visibleNodes = computed(() => {
+    return props.nodes?.filter(n => n.visible) ?? []
+  });
 
 </script>
 
@@ -26,6 +30,8 @@
       v-for="node in visibleNodes"
       :key="node.id"
       :node="node"
+      :editorMode="props.editorMode"
+      :onNodeClick="props.onNodeClick"
     />
   </svg>
 </template>

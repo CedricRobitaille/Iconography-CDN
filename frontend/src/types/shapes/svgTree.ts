@@ -1,7 +1,7 @@
 import type { Rectangle, Polygon, Polyline, Path, Line, Ellipse, Circle } from "../";
 
 type style = {
-  color: string,
+  fill: string,
   stroke: string,
 }
 
@@ -15,7 +15,7 @@ type style = {
  */
 export interface treeNode {
   id: number;
-  name: number;
+  name: string;
   type: "circle" | "ellipse" | "line" | "path" | "polygon" | "polyline" | "rect" | "folder";
   locked: boolean;
   visible: boolean;
