@@ -6,8 +6,10 @@
   import SvgNode from './SvgNode.vue';
   import { useEditorStore } from '../../stores/editorSvg';
   import { useCanvasPan } from '../../composables/canvasPan';
+  import { useCanvasZoom } from '../../composables/canvasZoom';
 
   const canvas = useEditorStore();
+  
 
   const props = defineProps<{
     nodes?: treeNode[];
@@ -15,6 +17,9 @@
     onNodeClick?: (node: treeNode) => void;
   }>();
 
+  const {
+    onWheel
+  } = useCanvasZoom(canvas, computed (() => props.editorMode))
 
   const {
     onMouseDown,
@@ -59,6 +64,7 @@
     @mousemove="onMouseMove"
     @mouseup="onMouseUp"
     @mouseleave="onMouseUp"
+    @wheel="onWheel"
   >
     <g id="camera" :transform="cameraTransform"  >
       <!-- Grid -->
