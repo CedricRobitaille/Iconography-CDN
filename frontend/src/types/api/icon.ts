@@ -2,6 +2,7 @@ export interface Icon {
   id: number;
   name: string;
   svg: string;
+  style: string,
   type: string;
   category: string;
   tags: iconTag[];

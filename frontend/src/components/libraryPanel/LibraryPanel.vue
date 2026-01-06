@@ -1,12 +1,26 @@
 <script setup lang="ts">
-  import { onMounted } from 'vue';
+  import { computed, onMounted } from 'vue';
   import { useLibraryResultsStore } from '../../stores/library';
 
   const libraryStore = useLibraryResultsStore();
 
-  onMounted(() => { 
-    libraryStore.fetchLibrary();
-    console.log(libraryStore.libraryResults)
+  // Filter out icons that dont match the filters
+  const icons = computed(() => {
+    const filters = libraryStore.activeFilters;
+
+    // If no active filters, return everything
+    if (!filters || filters.length === 0) return libraryStore.libraryResults;
+
+    // Otherwise, filter
+    return libraryStore.libraryResults.filter(icon =>
+      filters.includes(icon.category) || filters.includes(icon.type) || filters.includes(icon.style)
+    );
+  })
+
+
+  onMounted(async () => { 
+    await libraryStore.fetchLibrary();
+    console.log("Library Results:",libraryStore.libraryResults)
   })
 
 </script>
@@ -14,7 +28,7 @@
 <template>
   <!-- Icon Count / Pages -->
    <header>
-    <h2 class="icon-count">{{ libraryStore.libraryResults.length }} Icons</h2>
+    <h2 class="icon-count">{{ icons.length }} Icon{{icons.length == 1 ? '' : 's'}} <span>{{ icons.length < libraryStore.libraryResults.length ? `out of ${libraryStore.libraryResults.length}` : '' }}</span></h2>
     <p class="page-count">Page {{ libraryStore.pageCount+1 }} of {{ Math.ceil(libraryStore.libraryResults.length / libraryStore.pageSize) }}</p>
    </header>
 
@@ -43,7 +57,7 @@
   <!-- Icon Pages -->
   <section class="library">
     <ul class="icon-list">
-      <li v-for="icon in libraryStore.libraryResults" :key="icon.id" class="icon-container">
+      <li v-for="icon in icons" :key="icon.id" class="icon-container">
         <div class="icon">
           <svg class="library-icon">
 
@@ -56,6 +70,13 @@
 </template>
 
 <style scoped>
+
+  span {
+    display: inline;
+    font-size: .85rem;
+    font-weight: 500;
+    color: var(--text-40)
+  }
 
   header {
     display: grid;
