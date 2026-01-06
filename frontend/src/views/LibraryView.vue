@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import FilterPanel from '../components/FilterPanel/FilterPanel.vue';
-import LibraryPanel from '../components/libraryPanel/LibraryPanel.vue';
-
-
+  import FilterPanel from '../components/FilterPanel/FilterPanel.vue';
+  import LibraryPanel from '../components/libraryPanel/LibraryPanel.vue';
+  import { ref } from 'vue';
+  
 </script>
 
 <template>
 
   <main>
 
-    <FilterPanel currentPage="allicons" />
+    <FilterPanel />
 
     <section class="library">
       <LibraryPanel />

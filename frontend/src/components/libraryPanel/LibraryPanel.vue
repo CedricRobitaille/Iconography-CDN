@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { onMounted } from 'vue';
-  import { useLibraryResultsStore } from '../../stores/libraryResults';
+  import { useLibraryResultsStore } from '../../stores/library';
 
   const libraryStore = useLibraryResultsStore();
 

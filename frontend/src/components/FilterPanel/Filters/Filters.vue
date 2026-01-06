@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import type { Filter } from '../../../types';
-  import { useLibraryResultsStore } from '../../../stores/libraryResults';
+  import { useLibraryResultsStore } from '../../../stores/library';
   
   const libraryStore = useLibraryResultsStore();
 

@@ -5,8 +5,13 @@ import type {
   Icon,
 } from "../types/api/icon";
 
-export const getIcons = async (): Promise<Icon[]> => {
+export const getAllIcons = async (): Promise<Icon[]> => {
   const response = await apiClient.get<Icon[]>("/icon");
+  return response.data;
+}
+
+export const getMyIcons = async (): Promise<Icon[]> => {
+  const response = await apiClient.get<Icon[]>(`/myicons/${1}`);
   return response.data;
 }
 

@@ -2,7 +2,7 @@
   import { ref } from 'vue';
   import type { Ref } from 'vue';
   import { searchIcon } from '../../api/iconApi';
-  import { useLibraryResultsStore } from '../../stores/libraryResults';
+  import { useLibraryResultsStore } from '../../stores/library';
 
   const libraryResults = useLibraryResultsStore();
 

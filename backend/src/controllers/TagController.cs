@@ -32,6 +32,22 @@ namespace Backend.Controllers
       return Ok(tags);
     }
 
+    [HttpGet("myfilters/{id}")]
+    public async Task<ActionResult<IEnumerable<Tag>>> GetMyFilters(int id)
+    {
+      // Get all tags where Type != "Custom"
+      var tags = await _context.Company_Icons
+        .Where(ci => ci.CompanyId == id)
+        .Select(ci => ci.Icon)
+        .SelectMany(i => i.Icon_Tags)
+        .Select(it => it.Tag)
+        .Where(t => t.Type != "Custom")
+        .Distinct()
+        .ToListAsync();
+
+      return Ok(tags);
+    }
+
     [HttpGet("{id}")]
     public async Task<ActionResult<Tag>> GetById(int id)
     {

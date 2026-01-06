@@ -1,8 +1,7 @@
 <script setup lang="ts">
-  const {currentPage} = defineProps<{
-    currentPage: string
-  }>();
+  import { useLibraryResultsStore } from '../../../stores/library';
 
+  const library = useLibraryResultsStore();
 
 </script>
 
@@ -10,12 +9,18 @@
 
 <template>
   <div class="paginator">
-    <RouterLink id="all-icons" to="/library">
-      <button :class="currentPage === 'allicons' ? 'active' : ''">All Icons</button>
-    </RouterLink>
-    <RouterLink id="my-icons" to="/library/myicons">
-      <button :class="currentPage === 'myicons' ? 'active' : ''">My Icons</button>
-    </RouterLink>
+    <button 
+      :class="library.libraryMode ? 'active' : ''"
+      @click="library.toggleLibaryMode(true)"
+    >
+      All Icons
+    </button>
+    <button 
+      :class="!library.libraryMode ? 'active' : ''"
+      @click="library.toggleLibaryMode(false)"
+    >
+      My Icons
+    </button>
   </div>
 </template>
 
@@ -28,16 +33,27 @@
     gap: .5rem;
   }
 
-  .active {
-    background-color: var(--bg-30);
-    border: 1px solid var(--border);
-    color: var(--text)
-  }
-
   button {
     padding: .5rem 1rem;
     border-radius: .5rem;
     border: 1px solid transparent;
+    transition: .125s;
+  }
+
+  button:hover {
+    background-color: var(--bg-40);
+    color: var(--text);
+  }
+
+  .active {
+    background-color: var(--bg-30);
+    border: 1px solid var(--border);
+    color: var(--text);
+    cursor: default;
+  }
+
+  .active:hover {
+    background-color: var(--bg-30);
   }
 
 </style>

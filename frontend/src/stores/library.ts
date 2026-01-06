@@ -1,21 +1,36 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import type { Icon } from "../types/api/icon";
-import { getIcons } from "../api/iconApi";
+import { getAllIcons, getMyIcons } from "../api/iconApi";
+import { useFilterStore } from "./tags";
+
+
 
 export const useLibraryResultsStore = defineStore("libraryResults", () => {
+  const filters = useFilterStore();
+
   const libraryResults = ref<Icon[]>([])
   const loading = ref(false)
   const pageCount = ref(0)
   const pageSize = ref<any>(50)
   const activeFilters = ref<string[]>(["Regular"])
+  const libraryMode = ref(true)
 
   const fetchLibrary = async () => {
     if (loading.value === true) return;
     loading.value = true;
 
     try {
-      libraryResults.value = await getIcons();
+      if (libraryMode.value) {
+        libraryResults.value = []
+        await filters.fetchFilters();
+        libraryResults.value = await getAllIcons();
+      } else {
+        libraryResults.value = []
+        await filters.fetchMyFilters();
+        libraryResults.value = await getMyIcons();
+      }
+      
       console.log(libraryResults.value)
     } catch (err) {
       console.log("Failed to fetch filters:", err)
@@ -48,16 +63,23 @@ export const useLibraryResultsStore = defineStore("libraryResults", () => {
     console.log(pageCount.value)
   }
 
+  const toggleLibaryMode = async (mode: boolean) => {
+    libraryMode.value = mode;
+    await fetchLibrary();
+  }
+
   return {
     libraryResults,
     loading,
     pageCount,
     pageSize,
     activeFilters,
+    libraryMode,
     fetchLibrary,
     toggleFilter,
     resetFilters,
     setPageSize,
     handlePageChange,
+    toggleLibaryMode
   }
 })
