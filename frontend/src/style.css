@@ -15,6 +15,7 @@
   --text: #fff;
 
   --accent: #56b3ff;
+  --accent-50: #2a7fc4;
 }
 
 :root.dark-mode {
@@ -62,6 +63,7 @@ button {
   background: transparent;
   cursor: pointer;
 }
+
 input, textarea {
   background-color: var(--bg-30);
   border: .5px solid var(--border);
@@ -93,6 +95,14 @@ select {
 
 input:focus, select:focus, textarea:focus {
   outline: 1.5px solid var(--text-40);
+}
+
+hr {
+  background-color: var(--border);
+  color: var(--border);
+  stroke: 1px solid var(--border);
+  border: none;
+  height: 1px;
 }
 
 #app {

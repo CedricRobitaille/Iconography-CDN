@@ -21,7 +21,7 @@
       :class="libraryStore.activeFilters.includes(filter.name) ? 'active' : ''" 
       @click="libraryStore.toggleFilter(filter.name)"
     >
-      <img :src="filter.type" alt="">
+      <!-- <img :src="filter.type" alt=""> -->
       <p class="filter-name">{{ filter.name }}</p>
       <p class="filter-qty">{{ filter.iconCount }}</p>
     </li>
@@ -37,7 +37,9 @@
 
   .filter {
     display: grid;
-    grid-template-columns: auto 1fr auto;
+    /* When icons are added */
+    /* grid-template-columns: auto 1fr auto; */
+    grid-template-columns: 1fr auto;
     gap: .75rem;
     padding: .25rem .75rem;
     border-radius: 4px;

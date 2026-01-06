@@ -66,6 +66,7 @@ export const useLibraryResultsStore = defineStore("libraryResults", () => {
 
   const toggleLibaryMode = async (mode: boolean) => {
     libraryMode.value = mode;
+    activeIcon.value = undefined;
     await fetchLibrary();
   }
 
