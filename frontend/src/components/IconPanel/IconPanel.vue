@@ -2,6 +2,8 @@
   import { useLibraryResultsStore } from '../../stores/library';
   import { useFilterStore } from '../../stores/tags';
   import { computed, ref } from 'vue';
+  import CollectionPopup from './CollectionPopup/CollectionPopup.vue';
+  
 
   const library = useLibraryResultsStore();
   const filters = useFilterStore();
@@ -45,10 +47,16 @@
       .map(tag => tag.name);
   });
 
+  // Toggle state for collection popup.
+  const isModalOpen = ref<boolean>(true)
+
 </script>
 
 
 <template>
+
+  <CollectionPopup v-if="isModalOpen" :icon="icon" />
+
   <section id="icon-page">
 
     <!-- primary Content -->
@@ -403,5 +411,6 @@
     display: flex;
     flex-direction: column;
     gap: 3rem;
+    position: relative;
   }
 </style>
