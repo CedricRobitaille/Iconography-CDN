@@ -15,6 +15,7 @@ export const useLibraryResultsStore = defineStore("libraryResults", () => {
   const pageSize = ref<any>(50)
   const activeFilters = ref<string[]>(["Regular"])
   const libraryMode = ref(true)
+  const activeIcon = ref<Number | undefined>(undefined)
 
   const fetchLibrary = async () => {
     if (loading.value === true) return;
@@ -68,6 +69,10 @@ export const useLibraryResultsStore = defineStore("libraryResults", () => {
     await fetchLibrary();
   }
 
+  const setActiveIcon = (iconId: Number | undefined) => {
+    activeIcon.value = iconId;
+  }
+
   return {
     libraryResults,
     loading,
@@ -75,11 +80,13 @@ export const useLibraryResultsStore = defineStore("libraryResults", () => {
     pageSize,
     activeFilters,
     libraryMode,
+    activeIcon,
     fetchLibrary,
     toggleFilter,
     resetFilters,
     setPageSize,
     handlePageChange,
-    toggleLibaryMode
+    toggleLibaryMode,
+    setActiveIcon
   }
 })

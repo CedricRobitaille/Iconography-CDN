@@ -57,7 +57,12 @@
   <!-- Icon Pages -->
   <section class="library">
     <ul class="icon-list">
-      <li v-for="icon in icons" :key="icon.id" class="icon-container">
+      <li 
+        v-for="icon in icons" 
+        :key="icon.id" 
+        @click="libraryStore.setActiveIcon(icon.id)"
+        class="icon-container"
+      >
         <div class="icon">
           <svg class="library-icon">
 

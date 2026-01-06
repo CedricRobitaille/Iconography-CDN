@@ -23,8 +23,8 @@
     console.log("API URL:", import.meta.env.VITE_API_PROXY_TARGET);
     
     const results = await searchIcon(formData.value.search)
-    console.log(results);
     libraryResults.libraryResults = results;
+    libraryResults.setActiveIcon(undefined)
   }
 </script>
 

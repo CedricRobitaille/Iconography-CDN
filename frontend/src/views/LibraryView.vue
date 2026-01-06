@@ -1,8 +1,9 @@
 <script setup lang="ts">
   import FilterPanel from '../components/FilterPanel/FilterPanel.vue';
   import LibraryPanel from '../components/libraryPanel/LibraryPanel.vue';
-  import { ref } from 'vue';
-  
+  import { useLibraryResultsStore } from '../stores/library';
+
+  const library = useLibraryResultsStore();
 </script>
 
 <template>
@@ -12,7 +13,8 @@
     <FilterPanel />
 
     <section class="library">
-      <LibraryPanel />
+      <LibraryPanel v-if="library.activeIcon === undefined" />
+      <LibraryPanel v-else/>
     </section>
   </main>
 
