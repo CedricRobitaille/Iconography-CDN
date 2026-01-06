@@ -8,6 +8,7 @@ export interface SvgCanvasState {
   zoom: number;     // 1 - 100
   offsetX: number;  // X Pan Offset
   offsetY: number;  // Y Pan Offset
+  canvasColor: string;
 
   activeTool: tools,
   activeStyle: SvgStyle;

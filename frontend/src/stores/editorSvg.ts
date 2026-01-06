@@ -15,6 +15,7 @@ export const useEditorStore = defineStore("svgCanvas", {
     zoom: .5,
     offsetX: 6,
     offsetY: 2.5,
+    canvasColor: "#292a2a",
     activeStyle: {
       fill: {
         fill: "#ffffff",
