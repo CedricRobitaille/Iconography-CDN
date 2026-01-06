@@ -26,6 +26,7 @@ export const useEditorStore = defineStore("svgCanvas", {
         strokeDashoffset: 0,
         strokeLinecap: "butt",
         strokeLinejoin: "miter",
+        strokeLineposition: "center",
         strokeOpacity: 1,
         strokeWidth: 1,
       }

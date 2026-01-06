@@ -39,6 +39,7 @@ interface stroke {
   strokeDashoffset: number,
   strokeLinecap: string,
   strokeLinejoin: string,
+  strokeLineposition: string,
   strokeOpacity: number,
   strokeWidth: number,
 }
