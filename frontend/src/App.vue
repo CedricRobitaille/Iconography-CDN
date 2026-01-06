@@ -1,7 +1,14 @@
 <script setup lang="ts">
-  import { ref } from 'vue';
+  import { onMounted, ref } from 'vue';
   import TopNav from './components/TopNav/TopNav.vue';
   import { RouterView } from 'vue-router';
+  import { useCollectionStore } from './stores/collections';
+
+  const collectionStore = useCollectionStore();
+
+  onMounted(() => {
+    collectionStore.fetchCollections();
+  })
 </script>
 
 <template>

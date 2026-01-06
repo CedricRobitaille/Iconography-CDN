@@ -48,14 +48,20 @@
   });
 
   // Toggle state for collection popup.
-  const isModalOpen = ref<boolean>(true)
+  const isModalOpen = ref<boolean>(false)
+
+  const toggleModal = () => {
+    isModalOpen.value = !isModalOpen.value
+  }
 
 </script>
 
 
 <template>
 
-  <CollectionPopup v-if="isModalOpen" :icon="icon" />
+  <div id="modal-filter" @click="toggleModal" :class="isModalOpen ? 'active' : ''"></div>
+
+  <CollectionPopup v-if="isModalOpen" :icon="icon" :toggleModal="toggleModal" />
 
   <section id="icon-page">
 
@@ -117,7 +123,7 @@
         </div>
 
         <div class="utilities">
-          <button class="collection">Add to Collection</button>
+          <button class="collection" @click="toggleModal">Add to Collection</button>
           <button>Edit</button>
         </div>
 
@@ -140,7 +146,7 @@
 
             </svg>
           </div>
-          <p class="icon-name">{{ icon.name }}</p>
+          <p class="icon-name">{{ icon?.name }}</p>
         </li>
       </ul>
     </section>
@@ -412,5 +418,22 @@
     flex-direction: column;
     gap: 3rem;
     position: relative;
+  }
+
+  .active {
+    pointer-events:all;
+    background-color: rgba(0, 0, 0, .5) !important;
+  }
+
+  #modal-filter {
+    background-color: rgba(0, 0, 0, 0);
+    position: absolute;
+    height: 100vh;
+    width: 100vw;
+    top: 0;
+    right: 0;
+    z-index: calc(10000 - 1);
+    pointer-events: none;
+    transition: .5s;
   }
 </style>

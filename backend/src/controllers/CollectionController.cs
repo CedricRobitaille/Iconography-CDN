@@ -49,33 +49,34 @@ namespace Backend.Controllers
           CompanyId = dto.CompanyId
         };
 
+        // Insert Collection
         _context.Collections.Add(collection);
         await _context.SaveChangesAsync();
 
-        // Search for Icon in DB
-        var icon = await _context.Icons.FindAsync(dto.IconId);
-        if (icon == null)
+        // Only process icon if IconId was provided
+        if (dto.IconId.HasValue)
         {
-          await transaction.RollbackAsync();
-          return NotFound($"Icon {dto.IconId} does not exist");
+          var icon = await _context.Icons.FindAsync(dto.IconId.Value);
+          if (icon == null)
+          {
+            await transaction.RollbackAsync();
+            return NotFound($"Icon {dto.IconId.Value} does not exist");
+          }
+
+          // Update tracked collection (NO Add)
+          collection.IconCount = 1;
+          await _context.SaveChangesAsync();
+
+          // Create join row
+          var collectionIcon = new Collection_Icon
+          {
+            IconId = icon.Id,
+            CollectionId = collection.Id
+          };
+
+          _context.Collection_Icons.Add(collectionIcon);
+          await _context.SaveChangesAsync();
         }
-
-        // Increment IconCount on collection
-        collection.IconCount = 1;
-
-        _context.Collections.Add(collection);
-        await _context.SaveChangesAsync();
-
-        // Connect the icon to the collection
-        var collection_icon = new Collection_Icon
-        {
-          IconId = icon.Id,
-          CollectionId = collection.Id
-        };
-
-        _context.Collection_Icons.Add(collection_icon);
-        await _context.SaveChangesAsync();
-        
 
         await transaction.CommitAsync();
 
@@ -107,7 +108,7 @@ namespace Backend.Controllers
     public async Task<ActionResult<Collection>> GetById(int id)
     {
       var collection = await _context.Collections.FindAsync(id);
-      if (collection == null) return NotFound($"User {id} does not exist");
+      if (collection == null) return NotFound($"Collection {id} does not exist");
       return Ok(collection);
     }
 

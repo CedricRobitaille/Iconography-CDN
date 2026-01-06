@@ -1,9 +1,59 @@
 <script setup lang="ts">
+  import { computed, ref } from 'vue';
+  import { useCollectionStore } from '../../../stores/collections';
+  import type { Collection } from '../../../types/api/collection';
+
+  const collectionStore = useCollectionStore();
+
   const props = defineProps<{
     icon: any
+    toggleModal: any
   }>();
 
-  console.log(props.icon)
+  // List of collections owned by company
+  const collections = computed(() => {
+    return collectionStore.collections;
+  })
+
+  // List of all checked collections
+  const checkedCollections = ref([])
+
+  // Actions relating to the "ADD NEW COLLECTION" section
+
+  // Expand/contract "New Collection" panel
+  const expanded = ref<boolean>(false);
+  const toggleExpand = () => {
+    expanded.value = !expanded.value
+  }
+
+  // User inputted new collection's name
+  const collectionName = ref("")
+
+  // Actions when user creates a new collection
+  const handleNewCollection = async () => {
+    // POST new collection with collection Name
+    const newCollection: null | Collection = await collectionStore.createCollection(collectionName.value)
+    if (newCollection) { // Actions when the post was successfull.
+      toggleExpand();
+      // By default, Check the collection when it's added.
+      checkedCollections.value.push(newCollection.id)
+    }
+  }
+
+  // ------------
+  // Save Actions
+  // ------------
+
+  const handleSave = async () => {
+    if (checkedCollections.value.length !== 0) {
+      const response: boolean = await collectionStore.addIcon(checkedCollections.value, props.icon.id);
+      if (response) {
+        props.toggleModal();
+      }
+    } else {
+      console.log("No collections were selected.")
+    }
+  }
 
 </script>
 
@@ -16,42 +66,80 @@
     </header>
 
     <ul>
-      <li>
-        <label for="collectionId" class="input-container">
+      <li v-if="collections.length < 1" class="warning-container">No Collections Found</li>
+      <li v-for="collection in collections">
+        <label :for="`${collection.id}`" class="input-container">
           <div>
-            <input type="checkbox" id="collectionId" value="collectionId">
-            <p>CollectionName</p>
+            <input 
+              type="checkbox" 
+              :id="`${collection.id}`" 
+              :value="`${collection.id}`"
+              v-model="checkedCollections"
+            >
+            <p>{{ collection.name }}</p>
           </div>
-          <p>123</p>
+          <p>{{ collection.iconCount }}</p>
         </label>
       </li>
 
       <li class="new-collection">
-        <div>
+        <div class="new-header" @click="toggleExpand">
           <span>+</span>
           <p>Create new Collection</p>
         </div>
         
-        <div class="new-expanded">
+        <form 
+          class="new-expanded" 
+          v-if="expanded" 
+          @submit.prevent="handleNewCollection"
+        >
           <label for="name">New Collection's Name</label>
           <div class="new-inputs">
-            <input type="text" id="collection-name" placeholder="Collection Name">
-            <button class="create">Create</button>
+            <input 
+              type="text" 
+              id="collection-name" 
+              placeholder="Collection Name" 
+              v-model="collectionName"
+              required
+            >
+            <button type="submit" class="create">Create</button>
           </div>
-        </div>
+        </form>
 
       </li>
     </ul>
 
     <footer>
-      <button id="save">Save</button>
-      <button id="cancel">Cancel</button>
+      <button id="save" @click="handleSave">Save</button>
+      <button id="cancel" @click="toggleModal()">Cancel</button>
     </footer>
   </div>
 </template>
 
 
 <style scoped>
+
+  .warning-container {
+    padding: 1.25rem;
+    text-align: center;
+  }
+
+  .new-header::after {
+    content: "";
+    height: 8px;
+    width: 8px;
+    border-bottom: 2px solid var(--text-40);
+    border-right: 2px solid var(--text-40);
+    position: absolute;
+    top: calc(50% - 4px);
+    right: 1rem;
+    transform: translateY(-50%) rotate(45deg);
+  }
+
+  .new-header {
+    position: relative;
+    cursor: pointer;
+  }
 
   #save:hover {
     background-color: var(--accent-50);
@@ -105,6 +193,11 @@
     gap: 1rem
   }
 
+  .new-collection span {
+    font-weight: 600;
+    font-size: .85rem;
+  }
+
   .new-expanded {
     display: flex;
     flex-direction: column;
@@ -115,7 +208,7 @@
     display: flex;
     flex-direction: column;
     padding: 1.25rem 1rem;
-    gap: 1rem;
+    gap: 1.5rem;
   }
 
   label p {
@@ -151,6 +244,8 @@
     display: flex;
     flex-direction: column;
     padding: 0 .75rem;
+    height: min(26rem, 90vh);
+    overflow-y: scroll;
   }
 
   header h3 {
