@@ -344,13 +344,6 @@
   .opacity-container {
     position: relative;
   }
-  .opacity-container::after {
-    position: absolute;
-    right: .5rem;
-    top: .5rem;
-    content: "%";
-    font-size: .85rem;
-    color: var(--text-30)
-  }
+
   
 </style>
