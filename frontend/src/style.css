@@ -119,7 +119,10 @@ label {
   font-weight: 600;
 }
 
-
+fieldset {
+  border: none;
+  padding: none;
+}
 
 
 

@@ -50,8 +50,6 @@
       } else {
         canvas.activeStyle.stroke.stroke = hex;
       }
-      // Update the HSB values
-      // hsb.value = HEXtoHSB(hex);
     }
   })
 

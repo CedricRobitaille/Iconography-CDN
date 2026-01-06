@@ -4,7 +4,7 @@
   import { useEditorStore } from '../../../stores/editorSvg';
 
   const canvas = useEditorStore();
-  const parse = useSvgParser();
+  const { parse } = useSvgParser();
   const svg = ref("")
 
   const handleSubmit = () => {
