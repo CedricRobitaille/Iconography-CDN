@@ -36,9 +36,6 @@
 
 
 
-
-
-
   const previewStyle = computed(() => ({
     backgroundColor: canvas.canvasColor
   }))

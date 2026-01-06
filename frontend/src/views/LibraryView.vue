@@ -9,7 +9,7 @@ import LibraryPanel from '../components/libraryPanel/LibraryPanel.vue';
 
   <main>
 
-    <FilterPanel />
+    <FilterPanel currentPage="allicons" />
 
     <section class="library">
       <LibraryPanel />

@@ -5,11 +5,16 @@
   import Filters from './Filters/Filters.vue';
   import { useFilterStore } from '../../stores/tags';
   import { computed, onMounted } from 'vue';
+import Paginator from './Paginator/Paginator.vue';
 
   const filterStore = useFilterStore();
 
   onMounted(() => {
     filterStore.fetchFilters();
+  })
+
+  const props = defineProps({
+    currentPage: String,
   })
 
   // Filters come in as 
@@ -37,6 +42,10 @@
   <section id="filter-panel">
     <PanelContainer 
       :component="ActiveUser" 
+    />
+    <PanelContainer
+      :component="Paginator"
+      :context="{ currentPage }"
     />
 
     <PanelContainer 

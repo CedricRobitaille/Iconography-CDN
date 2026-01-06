@@ -6,6 +6,7 @@ import CollectionsView from "../views/CollectionsView.vue";
 import LibraryView from "../views/LibraryView.vue";
 import User from "../views/UserView.vue"
 import NotFound from "../views/NotFound.vue";
+import PrivateLibraryView from "../views/PrivateLibraryView.vue";
 
 
 
@@ -24,6 +25,11 @@ const routes  = [
     path: "/library",
     name: "library",
     component: LibraryView,
+  },
+  {
+    path: "/library/myicons",
+    name: "privateLibrary",
+    component: PrivateLibraryView,
   },
   {
     path: "/user/:id",

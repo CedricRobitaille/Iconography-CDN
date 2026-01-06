@@ -174,6 +174,7 @@
     flex-direction: column;
     gap: .5rem;
     align-items: center;
+    cursor: pointer;
   }
 
   .icon {
@@ -182,8 +183,24 @@
     height: 7.5rem;
     width: 7.5rem;
     position: relative;
+    background-color: transparent;
+    transition: .25s;
   }
 
+  .icon-container:hover .icon {
+    background-color: var(--bg-10);
+    color: #fff;
+  }
+
+  .icon-name {
+    color: var(--text-40);
+    transition: .25s;
+  }
+
+  .icon-container:hover .icon-name {
+    color: var(--text);
+  }
+  
   .library-icon {
     position: absolute;
     left: 50%;

@@ -2,10 +2,11 @@
   import { ref } from 'vue';
   import { useSvgParser } from '../../../composables/svgTranslator';
   import { useEditorStore } from '../../../stores/editorSvg';
+  import type { treeNode } from '../../../types';
 
   const canvas = useEditorStore();
   const { parse } = useSvgParser();
-  const svg = ref("")
+  const svg = ref<treeNode | any>("")
 
   const handleSubmit = () => {
     canvas.rootNode = parse(svg.value);
