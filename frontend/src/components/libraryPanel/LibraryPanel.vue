@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import { computed, onMounted } from 'vue';
   import { useLibraryResultsStore } from '../../stores/library';
+import SvgToDom from '../Svg/SvgToDom.vue';
 
   const libraryStore = useLibraryResultsStore();
 
@@ -64,9 +65,7 @@
         class="icon-container"
       >
         <div class="icon">
-          <svg class="library-icon">
-
-          </svg>
+          <SvgToDom :svg="icon.svg" />
         </div>
         <p class="icon-name">{{ icon.name }}</p>
       </li>
@@ -211,6 +210,7 @@
     position: relative;
     background-color: transparent;
     transition: .25s;
+    padding: 1rem;
   }
 
   .icon-container:hover .icon {

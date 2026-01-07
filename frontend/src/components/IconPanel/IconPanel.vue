@@ -3,10 +3,15 @@
   import { useFilterStore } from '../../stores/tags';
   import { computed, ref } from 'vue';
   import CollectionPopup from './CollectionPopup/CollectionPopup.vue';
+  import SvgToDom from '../Svg/SvgToDom.vue';
+  import { useEditorStore } from '../../stores/editorSvg';
+  import { useRouter } from 'vue-router';
   
 
   const library = useLibraryResultsStore();
   const filters = useFilterStore();
+  const editor = useEditorStore()
+  const router = useRouter();
   
   // Current Icon
   const icon = computed(() => {
@@ -54,6 +59,11 @@
     isModalOpen.value = !isModalOpen.value
   }
 
+  const handleEdit = async () => {
+    const val = await editor.setEditFromLibrary(icon.value?.svg)
+    router.push("/editor")
+  }
+
 </script>
 
 
@@ -83,14 +93,13 @@
     <!-- Current Icon Details -->
     <section id="icon-details">
       <div class="icon-container">
-        <!-- <svg></svg> -->
+        <SvgToDom :svg="icon?.svg" width="100%" height="100%" />
       </div>
 
       <div class="panels">
 
         <div class="filters">
           <div class="category">
-            <!-- <svg></svg> -->
             <p>{{ icon?.category }}</p>
           </div>
 
@@ -124,7 +133,7 @@
 
         <div class="utilities">
           <button class="collection-btn" @click="toggleModal">Add to Collection</button>
-          <button>Edit</button>
+          <button @click="handleEdit">Edit</button>
         </div>
 
       </div>
@@ -142,9 +151,7 @@
           class="icon-elem"
         >
           <div class="icon-wrapper">
-            <svg class="icon-svg">
-
-            </svg>
+            <SvgToDom :svg="icon?.svg" />
           </div>
           <p class="icon-name">{{ icon?.name }}</p>
         </li>
@@ -174,6 +181,7 @@
     position: relative;
     background-color: transparent;
     transition: .25s;
+    padding: 1rem;
   }
 
   .icon-elem:hover .icon-wrapper {

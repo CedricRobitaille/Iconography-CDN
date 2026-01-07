@@ -2,6 +2,7 @@
 
   import { computed, onMounted } from 'vue';
   import { useCollectionStore } from '../../../stores/collections';
+import SvgToDom from '../../Svg/SvgToDom.vue';
 
   const collections = useCollectionStore()
 
@@ -41,9 +42,7 @@
       class="icon-container"
     >
       <div class="icon">
-        <svg class="library-icon">
-
-        </svg>
+        <SvgToDom :svg="icon.svg" />
       </div>
       <p class="icon-name">{{ icon.name }}</p>
     </li>
@@ -139,6 +138,7 @@
     position: relative;
     background-color: transparent;
     transition: .25s;
+    padding: 1rem;
   }
 
   .icon-container:hover .icon {

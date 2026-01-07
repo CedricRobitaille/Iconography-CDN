@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang='ts'>
 
   import { computed } from 'vue';
   import { useCollectionStore } from '../../../stores/collections';
@@ -67,7 +67,7 @@
       <!-- Collection Count -->
       <p>{{ collections.collections.length }} Collections</p>
       <!-- Icon Count -->
-      <p>{{ iconCount }} Icons</p>e
+      <p>{{ iconCount }} Icons</p>
     </div>
   </header>
 
@@ -281,3 +281,11 @@
   }
 
 </style>
+
+
+
+
+
+
+
+
