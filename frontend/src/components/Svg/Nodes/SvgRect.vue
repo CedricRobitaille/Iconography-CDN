@@ -4,6 +4,7 @@
 
   const props = defineProps<{
     node: treeNode;
+    editorMode?: boolean;
   }>();
 
   // ! Extract shape properties
@@ -16,6 +17,30 @@
   const sWidth = computed(() => props.node.style.strokeWidth);
   const sLinecap = computed(() => props.node.style.strokeLinecap);
   const sLinejoin = computed(() => props.node.style.strokeLinejoin);
+
+  const emitClick = (event: MouseEvent): void => {
+    
+    // stop click bubbling
+    event.stopPropagation();
+
+    // Only run this function IF we're in edit mode.
+    if (props.editorMode) {
+      console.log(props.node)
+    }
+  }
+
+  const pointerEvent = computed(() => {
+    let event = "none"
+    console.log(fill)
+    if (!(fill.value === "none" || fill.value === "" ) && !(stroke.value !== "none" || stroke.value === "")) {
+      event = "all"
+    } else if (stroke.value !== "none") {
+      event = "stroke"
+    }
+    console.log(event)
+    console.log("this")
+    return event
+  })
 
 </script>
 
@@ -33,8 +58,12 @@
     :stroke-width="sWidth"
     :stroke-linecap="sLinecap"
     :stroke-linejoin="sLinejoin"
+    :pointer-events="pointerEvent"
+    @click.stop="emitClick"
   />
 
 </template>
 
-<style scoped></style>
+<style scoped>
+
+</style>

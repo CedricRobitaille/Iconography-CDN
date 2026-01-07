@@ -15,6 +15,14 @@
 
   console.log(canvas.rootNode)
 
+  const onNodeClick = (node) => {
+    console.log(node)
+    canvas.selectNode
+    //! This action is not being tunneled down to the individual element
+    // To get it to work, See what was done in the rectangle shape.
+    // We need to add the @click.stop to all the shapes.
+  }
+
 </script>
 
 <template>
@@ -23,7 +31,7 @@
       :svg="canvas.rootNode"
       :viewBox?="viewBox"
       :editorMode="true"
-      :onNodeClick?:="canvas.selectNode"
+      :onNodeClick?:="onNodeClick"
     />
   </div>
 </template>

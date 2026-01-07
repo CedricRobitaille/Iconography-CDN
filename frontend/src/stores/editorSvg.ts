@@ -125,6 +125,7 @@ export const useEditorStore = defineStore("svgCanvas", {
     // Selects the current node.
     // Optionally append other selected nodes.
     selectNode(nodeId: number, append: boolean = false) {
+      console.log("THIS")
       if (append) {
         if (!this.selectedNodeIds.includes(nodeId)) {
           this.selectedNodeIds.push(nodeId);

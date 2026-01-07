@@ -151,3 +151,12 @@ fieldset {
   font-size: .85rem;
   color: var(--text-30)
 }
+
+
+
+
+
+
+/* circle, rect, ellipse, path, line, polyline, polygon,g {
+  pointer-events: all !important;
+} */

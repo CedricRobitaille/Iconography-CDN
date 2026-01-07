@@ -4,12 +4,26 @@
 
   const props = defineProps<{
     node: treeNode;
+    editorMode?: boolean;
   }>();
+
+  const emitClick = (event: MouseEvent): void => {
+    
+    // stop click bubbling
+    event.stopPropagation();
+
+    // Only run this function IF we're in edit mode.
+    if (props.editorMode) {
+      console.log(props.node)
+    }
+  }
 
 </script>
 
 <template>
-  <g>
+  <g
+    @click.stop="emitClick"
+  >
     <SvgNode
       v-for="child in node.children"
       :key = child.id

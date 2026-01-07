@@ -4,6 +4,7 @@
 
   const props = defineProps<{
     node: treeNode;
+    editorMode?: boolean;
   }>();
 
   // ! Extract circle properties
@@ -17,21 +18,43 @@
   const sLinecap = computed(() => props.node.style.strokeLinecap);
   const sLinejoin = computed(() => props.node.style.strokeLinejoin);
 
+
+    // Click handler
+  const emitClick = (event: MouseEvent): void => {
+    console.log("this")
+    // stop click bubbling
+    event.stopPropagation();
+
+    // Only run this function IF we're in edit mode.
+    if (props.editorMode) {
+      console.log(props.node)
+    }
+  }
+
 </script>
 
 <template>
+  
+  <g>
+    <circle 
+      :cx="circle.cx"
+      :cy="circle.cy"
+      :r="circle.r"
+      :fill="fill"
+      :stroke="stroke"
+      :stroke-width="sWidth"
+      :stroke-linecap="sLinecap"
+      :stroke-linejoin="sLinejoin"
+      @click.stop="emitClick"
+    />
+  </g>
 
-  <circle 
-    :cx="circle.cx"
-    :cy="circle.cy"
-    :r="circle.r"
-    :fill="fill"
-    :stroke="stroke"
-    :stroke-width="sWidth"
-    :stroke-linecap="sLinecap"
-    :stroke-linejoin="sLinejoin"
-  />
+  
 
 </template>
 
-<style scoped></style>
+<style scoped>
+  circle {
+    pointer-events: all;
+  }
+</style>

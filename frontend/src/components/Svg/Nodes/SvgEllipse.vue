@@ -4,6 +4,7 @@
 
   const props = defineProps<{
     node: treeNode;
+    editorMode?: boolean;
   }>();
 
   // ! Extract shape properties
@@ -16,6 +17,17 @@
   const sWidth = computed(() => props.node.style.strokeWidth);
   const sLinecap = computed(() => props.node.style.strokeLinecap);
   const sLinejoin = computed(() => props.node.style.strokeLinejoin);
+
+  const emitClick = (event: MouseEvent): void => {
+    
+    // stop click bubbling
+    event.stopPropagation();
+
+    // Only run this function IF we're in edit mode.
+    if (props.editorMode) {
+      console.log(props.node)
+    }
+  }
 
 </script>
 
@@ -31,6 +43,7 @@
     :stroke-width="sWidth"
     :stroke-linecap="sLinecap"
     :stroke-linejoin="sLinejoin"
+    @click.stop="emitClick"
   />
 
 </template>

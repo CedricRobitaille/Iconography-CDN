@@ -21,19 +21,7 @@
   const props = defineProps<{
     node: treeNode;
     editorMode?: boolean;
-    onNodeClick?: (node: treeNode) => void;
   }>();
-
-  // Click handler
-  const emitClick = (event: MouseEvent): void => {
-    // stop click bubbling
-    event.stopPropagation();
-
-    // Only run this function IF we're in edit mode.
-    if (props.onNodeClick) {
-      props.onNodeClick(props.node)
-    }
-  }
 
   // Map the type to the Component.vue
   const componentMap = {
@@ -65,7 +53,7 @@
   <component 
     :is="component" 
     :node="node" 
-    @click.stop="emitClick"
+    :editorMode="editorMode"
   />
 
 </template>

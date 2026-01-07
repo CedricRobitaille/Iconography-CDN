@@ -9,12 +9,19 @@
     if (!icon.rootNode) return [];
     return icon.flattenTree(icon.rootNode);
   })
+
+  console.log(projectTree.value)
 </script>
 
 
 <template>
   <ul>
-    <li v-for="(node, id) in projectTree" :key="id" :class="'depth-' + node.depth">
+    <li 
+      v-for="(node, id) in projectTree" 
+      :key="id" 
+      :class="'depth-' + node.depth"
+      @click=""
+    >
       <!-- Icon -->
       <svg id="rect" viewBox="0 0 24 24" width="1rem" height="1rem" class="icon">
 
