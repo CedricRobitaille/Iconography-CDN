@@ -28,7 +28,7 @@ import PropertiesPanel from '../components/PropertiesPanel/PropertiesPanel.vue';
   main {
     display: grid;
     grid-template-columns: minmax(100px, 18rem) 1fr minmax(100px, 18rem);
-    height: 100%;
+    height: calc(100vh - 1.5rem);
     overflow: hidden;
   }
 </style>

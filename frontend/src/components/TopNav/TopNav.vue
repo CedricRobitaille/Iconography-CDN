@@ -3,6 +3,7 @@ import { RouterLink } from "vue-router";
 
 import { theme } from "../../composables/toggleTheme";
 const { toggleTheme, globalTheme } = theme()
+
 </script>
 
 <template>
@@ -17,11 +18,28 @@ const { toggleTheme, globalTheme } = theme()
         </RouterLink>
       </li>
       <li>
+        <RouterLink id="library" to="/library">
+          <div class="text-link">
+            <p>Library</p>
+          </div>
+        </RouterLink>
+      </li>
+      <li>
+        <RouterLink id="collections" to="/collections">
+          <div class="text-link">
+            <p>My Collections</p>
+          </div>
+        </RouterLink>
+      </li>
+      <li>
         <RouterLink id="editor" to="/editor">
-          <svg viewBox="0 0 24 24" width="24" height="24">
-            <line x1="4" y1="12" x2="20" y2="12" class="cls-1" />
-            <line x1="12" y1="4" x2="12" y2="20" class="cls-1" />
-          </svg>
+          <div>
+            <p>New Icon</p>
+            <svg viewBox="0 0 24 24" width="24" height="24">
+              <line x1="4" y1="12" x2="20" y2="12" class="cls-1" />
+              <line x1="12" y1="4" x2="12" y2="20" class="cls-1" />
+            </svg>
+          </div>
         </RouterLink>
       </li>
     </ul>
@@ -88,6 +106,29 @@ nav {
   gap: .25rem;
 }
 
+li:hover div p {
+  color: var(--text-10);
+}
+
+li div p {
+  color: var(--text-30);
+  font-size: .85rem;
+  transition: .125s;
+}
+
+.text-link {
+  padding: 0 .5rem;
+}
+
+li div {
+  height: 1.75rem;
+  display: flex;
+  flex-direction: row;
+  gap: .75rem;
+  align-items: center;
+  padding-left: .5rem;
+}
+
 ul {
   display: flex;
   flex-direction: row;
@@ -112,7 +153,10 @@ button:hover .cls-2 {
   stroke: var(--text);
 }
 
-#home, #editor {
+#home, 
+#editor, 
+#collections, 
+#library {
   background-color: transparent;
   border-right: .5px solid var(--border);
   padding: .5rem;
@@ -121,7 +165,10 @@ button:hover .cls-2 {
   transition: .125s;
 }
 
-#home:hover, #editor:hover {
+#home:hover,
+#editor:hover,
+#collections:hover,
+#library:hover {
   background-color: var(--bg-40);
 }
 

@@ -12,7 +12,7 @@ export interface CollectionResponse {
   collection: Collection
 }
 
-export interface CollectionIcon {
+interface CollectionIcon {
   id: number,
   collectionId: number,
   collection: Collection,
@@ -21,6 +21,6 @@ export interface CollectionIcon {
   createdAt: Date,
 }
 
-interface CollectionIconResponse {
+export interface CollectionIconResponse {
   collection_Icon: CollectionIcon
 }

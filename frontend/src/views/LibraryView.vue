@@ -5,6 +5,7 @@
   import { useLibraryResultsStore } from '../stores/library';
 
   const library = useLibraryResultsStore();
+  
 </script>
 
 <template>

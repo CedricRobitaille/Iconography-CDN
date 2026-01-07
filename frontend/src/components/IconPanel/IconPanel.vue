@@ -123,7 +123,7 @@
         </div>
 
         <div class="utilities">
-          <button class="collection" @click="toggleModal">Add to Collection</button>
+          <button class="collection-btn" @click="toggleModal">Add to Collection</button>
           <button>Edit</button>
         </div>
 
@@ -214,11 +214,11 @@
     gap: 1.5rem;
   }
 
-  .collection:hover {
+  .collection-btn:hover {
     background-color: var(--accent-50) !important;
   }
 
-  .collection {
+  .collection-btn {
     background-color: var(--accent) !important;
     color: var(--bg);
     transition: .125s;
@@ -349,7 +349,7 @@
 
   .filters {
     display: grid;
-    grid-template-columns: 1fr auto auto;
+    grid-template-columns: 1fr auto;
     gap: 1.5rem;
     align-items: center;
   }

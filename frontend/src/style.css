@@ -107,7 +107,8 @@ hr {
 
 #app {
   height: 100vh;
-  overflow-y: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 ::-webkit-scrollbar-track {

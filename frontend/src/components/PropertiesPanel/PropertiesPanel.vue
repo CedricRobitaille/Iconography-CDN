@@ -30,7 +30,7 @@ import Export from './Export/Export.vue';
     max-width: 18rem;
     width: 100%;
     background-color: var(--bg-20);
-    height: 100%;
+    height: calc(100vh - 2.75rem);
     overflow-y: auto;
     display: flex;
     flex-direction: column;

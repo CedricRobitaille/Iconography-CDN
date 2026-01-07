@@ -6,6 +6,7 @@ import { getCollections, postCollection, postCollectionIcon } from "../api/colle
 export const useCollectionStore = defineStore("collections" ,() => {
   const collections = ref<Collection[]>([])
   const loading = ref(false)
+  const currentCollection = ref<Collection>()
 
   const fetchCollections = async () => {
     if (loading.value === true) return;
@@ -72,8 +73,9 @@ export const useCollectionStore = defineStore("collections" ,() => {
 
   return {
     collections,
+    currentCollection,
     fetchCollections,
     createCollection,
-    addIcon
+    addIcon,
   }
 })
