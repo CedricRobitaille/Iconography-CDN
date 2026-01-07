@@ -1,5 +1,6 @@
 import apiClient from "../services/apiClient";
 import type { Collection, CollectionIconResponse, CollectionResponse } from "../types/api/collection";
+import type { Icon } from "../types/api/icon";
 
 export const getCollections = async (): Promise<Collection[]> => {
   const response = await apiClient.get<Collection[]>(`/mycollections/${1}`);
@@ -22,4 +23,11 @@ export const postCollectionIcon = async (collectionId: number, iconId: number): 
 
   console.log("Collection Icon Post Response:", response)
   return response.data.collection_Icon.collection;
+}
+
+export const getCollectionIcons = async (collectionId: number): Promise<Icon[]> => {
+  console.log(collectionId)
+  const response = await apiClient.get<Icon[]>(`/collection/${collectionId}/icons`)
+
+  return response.data;
 }

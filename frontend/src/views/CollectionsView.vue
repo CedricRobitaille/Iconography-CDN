@@ -1,8 +1,13 @@
 <script setup lang="ts">
 
   import AllCollections from '../components/CollectionPage/AllCollections/AllCollections.vue';
-import CollectionOverview from '../components/CollectionPage/CollectionOverview/CollectionOverview.vue';
+  import CollectionOverview from '../components/CollectionPage/CollectionOverview/CollectionOverview.vue';
   import CollectionPanel from '../components/CollectionPage/CollectionPanel/CollectionPanel.vue';
+
+  import { useCollectionStore } from '../stores/collections';
+
+  const collections = useCollectionStore();
+
 
 </script>
 
@@ -13,8 +18,8 @@ import CollectionOverview from '../components/CollectionPage/CollectionOverview/
     <CollectionPanel />
 
     <section class="collection">
-      <AllCollections />
-      <CollectionOverview />
+      <AllCollections v-if="!collections.currentCollection" />
+      <CollectionOverview v-else />
     </section>
 
   </main>

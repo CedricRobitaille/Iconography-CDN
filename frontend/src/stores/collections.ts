@@ -1,12 +1,14 @@
 import { defineStore } from "pinia";
 import type { Collection } from "../types/api/collection";
 import { ref } from "vue";
-import { getCollections, postCollection, postCollectionIcon } from "../api/collectionApi";
+import { getCollectionIcons, getCollections, postCollection, postCollectionIcon } from "../api/collectionApi";
+import type { Icon } from "../types/api/icon";
 
 export const useCollectionStore = defineStore("collections" ,() => {
   const collections = ref<Collection[]>([])
   const loading = ref(false)
-  const currentCollection = ref<Collection>()
+  const currentCollection = ref<Collection | null>()
+  const currentIcons = ref<Icon[]>()
 
   const fetchCollections = async () => {
     if (loading.value === true) return;
@@ -69,13 +71,36 @@ export const useCollectionStore = defineStore("collections" ,() => {
   }
 
 
+  const toggleCurrentCollection = (collection?: Collection) => {
+    if (collection) {
+      currentCollection.value = collection;
+    } else {
+      currentCollection.value = null;
+    }
+  }
+
+
+  const getCurrentIcons = async () => {
+    // GET ICONS
+    if (currentCollection.value) {
+      const iconsArr = await getCollectionIcons(currentCollection.value.id)
+      currentIcons.value = iconsArr
+      console.log("Collection Icons: ",currentIcons.value)
+    }
+  }
+
+
+
 
 
   return {
     collections,
     currentCollection,
+    currentIcons,
     fetchCollections,
     createCollection,
     addIcon,
+    toggleCurrentCollection,
+    getCurrentIcons
   }
 })

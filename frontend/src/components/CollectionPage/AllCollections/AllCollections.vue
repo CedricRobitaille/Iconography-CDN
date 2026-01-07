@@ -67,14 +67,18 @@
       <!-- Collection Count -->
       <p>{{ collections.collections.length }} Collections</p>
       <!-- Icon Count -->
-      <p>{{ iconCount }} Icons</p>
+      <p>{{ iconCount }} Icons</p>e
     </div>
   </header>
 
   <section id="all-collections">
     
     <ul>
-      <li v-for="collection in collections.collections" class="collection-collection">
+      <li 
+        v-for="collection in collections.collections" 
+        @click="collections.toggleCurrentCollection(collection)"
+        class="collection-collection"
+      >
 
         <div class="icon-container">
           <svg id="collection-icon" fill="none" viewBox="0 0 48 48">
