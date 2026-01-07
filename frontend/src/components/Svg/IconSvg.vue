@@ -23,6 +23,7 @@
   // Only render visible nodes.
   // Rather than creating the node, than checking for visibility, we catch it before even attempting to render.
   const visibleNodes = computed(() => {
+    console.log(props.svg)
     return props.svg?.filter(n => n.visible) ?? []
   });
 
@@ -63,6 +64,8 @@
     defaultAction.onWheel(e); 
     toolManager.handleWheel(e);
   }
+
+  console.log(visibleNodes.value)
 
 </script>
 

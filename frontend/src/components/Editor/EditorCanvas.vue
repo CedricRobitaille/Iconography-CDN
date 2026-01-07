@@ -13,12 +13,14 @@
     return `${-canvas.offsetX} ${-canvas.offsetY} ${w} ${h}`
   })
 
+  console.log(canvas.rootNode)
+
 </script>
 
 <template>
   <div class="editor-canvas">
     <IconSvg 
-      :nodes="canvas.rootNode"
+      :svg="canvas.rootNode"
       :viewBox?="viewBox"
       :editorMode="true"
       :onNodeClick?:="canvas.selectNode"
