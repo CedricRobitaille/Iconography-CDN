@@ -10,7 +10,7 @@ export const useEditorStore = defineStore("svgCanvas", {
   state: (): SvgCanvasState => ({
     rootNode: null,
     flatNodes: [],
-    selectedNodeIds: [] as number[],
+    selectedNodeIds: [] as treeNode[],
     activeTool: "select",
     width: 24,
     height: 24,
@@ -124,14 +124,14 @@ export const useEditorStore = defineStore("svgCanvas", {
 
     // Selects the current node.
     // Optionally append other selected nodes.
-    selectNode(nodeId: number, append: boolean = false) {
+    selectNode(node: treeNode, append: boolean = false) {
       console.log("THIS")
       if (append) {
-        if (!this.selectedNodeIds.includes(nodeId)) {
-          this.selectedNodeIds.push(nodeId);
+        if (!this.selectedNodeIds.includes(node)) {
+          this.selectedNodeIds.push(node);
         }
       } else {
-        this.selectedNodeIds = [nodeId];
+        this.selectedNodeIds = [node];
       }
     },
 
@@ -234,7 +234,9 @@ export const useEditorStore = defineStore("svgCanvas", {
       this.rootNode = parse(svg)
 
       return true;
-    }
+    },
+
+
 
   },
 });

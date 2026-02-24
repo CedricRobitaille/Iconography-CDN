@@ -14,7 +14,7 @@ export interface SvgCanvasState {
   activeStyle: SvgStyle;
 
   // SVG State
-  selectedNodeIds: number[];
+  selectedNodeIds: treeNode[];
 
   // Root Node of tree
   rootNode: treeNode | null;

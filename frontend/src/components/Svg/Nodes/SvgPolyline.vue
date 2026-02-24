@@ -45,6 +45,20 @@
     }
   }
 
+  const pointerEvent = computed(() => {
+    let event = "none"
+    console.log(fill)
+    if (!(fill.value === "none" || fill.value === "" ) && !(stroke.value !== "none" || stroke.value === "")) {
+      event = "all"
+    } else if (stroke.value !== "none") {
+      event = "stroke"
+    }
+    console.log(event)
+    console.log("this")
+    return event
+  })
+
+
 </script>
 
 <template>
@@ -56,6 +70,7 @@
     :stroke-width="sWidth"
     :stroke-linecap="sLinecap"
     :stroke-linejoin="sLinejoin"
+    :pointer-events="pointerEvent"
     @click.stop="emitClick"
   />
 
