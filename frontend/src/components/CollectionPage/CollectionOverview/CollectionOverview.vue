@@ -2,11 +2,15 @@
 
   import { computed, onMounted } from 'vue';
   import { useCollectionStore } from '../../../stores/collections';
-import SvgToDom from '../../Svg/SvgToDom.vue';
+  import SvgToDom from '../../Svg/SvgToDom.vue';
 
   const collections = useCollectionStore()
 
+  /**
+   * Gets array of all icons
+   */
   const icons = computed(() => {
+    console.log(collections.currentIcons)
     return collections.currentIcons
   })
 
