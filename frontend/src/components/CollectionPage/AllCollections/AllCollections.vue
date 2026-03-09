@@ -3,29 +3,51 @@
   import { computed } from 'vue';
   import { useCollectionStore } from '../../../stores/collections';
 
+  /**
+   * Store for collections
+   */
   const collections = useCollectionStore();
 
+
+  /**
+   * Tallies all icons for header
+   * @returns {count}
+   */
   const iconCount = computed(() => {
     let count = 0;
 
+    // Sums iconCount for each collection
     collections.collections.forEach(collection => {
       count += collection.iconCount;
     })
     return count;
   })
 
+
+  /**
+   * Tallies the monthly uses from all collections
+   * @returns {count}
+   */ 
   const pageViews = computed(() => {
     let count = 0;
+
+    // sums monthlyUses for each collection
     collections.collections.forEach(collection => {
       count += collection.monthlyUses;
     })
     return count;
   })
 
+
+  /**
+   * Compares collections to find the most used collection
+   * @returns {topQty, collection}
+   */
   const mostAccessed = computed(() => {
     let topQty = 0
     let collection: string | undefined = undefined;
 
+    // Logs top collection with highest uses
     collections.collections.forEach(col => {
       if (col.monthlyUses >= topQty) {
         topQty = col.monthlyUses;
@@ -38,10 +60,16 @@
     };
   })
 
+
+  /**
+   * Compares collections to find the least used collection
+   * @returns {minQty, collection} 
+   */
   const leastAccessed = computed(() => {
     let minQty: undefined | number = collections.collections[0]?.monthlyUses;
     let collection: string | undefined = undefined;
 
+    // Logs top collection with least uses
     if (collections.collections.length) {
       collections.collections.forEach(col => {
         if (col.monthlyUses <= minQty) {
