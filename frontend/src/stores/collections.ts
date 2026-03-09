@@ -10,6 +10,11 @@ export const useCollectionStore = defineStore("collections" ,() => {
   const currentCollection = ref<Collection | null>()
   const currentIcons = ref<Icon[]>()
 
+
+  /**
+   * Fetches collections belonging to company
+   * @returns this.collection.value - array of collections
+   */
   const fetchCollections = async () => {
     if (loading.value === true) return;
     loading.value = true;
@@ -24,6 +29,13 @@ export const useCollectionStore = defineStore("collections" ,() => {
     }
   }
 
+
+  /**
+   * 
+   * @param name: string - Collection Name
+   * @param icon?: number - Optional Icon ID if created with icon.
+   * @returns {newCollection} - New collection
+   */
   const createCollection = async (name: string, icon?: number): Promise<Collection | null> => {
     let newCollection = await postCollection(name);
     if (newCollection) {
@@ -34,14 +46,22 @@ export const useCollectionStore = defineStore("collections" ,() => {
     return null
   }
 
+
+  /**
+   * Add an icon to collection(s)
+   * @param collectionIds: number[] - Array of CollectionIds: number
+   * @param iconId: number - Icon ID to add to collection(s)
+   * @returns {boolean} - True for success, False for fail
+   */
   const addIcon = async (collectionIds: number[], iconId: number): Promise<boolean> => {
     if (loading.value === true) return false;
     loading.value = true;
 
     try {
-      
       let updatedCollections = []
 
+      // For each collection in the array
+      // Attach the icon into the collection list
       for (let colId of collectionIds) {
         const updatedCollection = await postCollectionIcon(colId, iconId)
         updatedCollections.push(updatedCollection)
@@ -59,7 +79,6 @@ export const useCollectionStore = defineStore("collections" ,() => {
       });
 
       console.log("Revised Collections:", collections.value)
-
       return true;
 
     } catch (err) {
@@ -71,6 +90,10 @@ export const useCollectionStore = defineStore("collections" ,() => {
   }
 
 
+  /**
+   * Sets chosen collection as 'currentCollection'
+   * @param collection: Collection - The collection in question
+   */
   const toggleCurrentCollection = (collection?: Collection) => {
     if (collection) {
       currentCollection.value = collection;
@@ -80,11 +103,14 @@ export const useCollectionStore = defineStore("collections" ,() => {
   }
 
 
+  /**
+   * Get the icons currently in the collection
+   * Sets the data in currentIcons.value
+   */
   const getCurrentIcons = async () => {
-    // GET ICONS
-    if (currentCollection.value) {
-      const iconsArr = await getCollectionIcons(currentCollection.value.id)
-      currentIcons.value = iconsArr
+    if (currentCollection.value) { // If a collection is selected / active
+      const iconsArr = await getCollectionIcons(currentCollection.value.id) // Gets all icons belonging to current collection
+      currentIcons.value = iconsArr // Seys the current collection icons to the retrieved icons.
       console.log("Collection Icons: ",currentIcons.value)
     }
   }

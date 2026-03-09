@@ -4,7 +4,7 @@ import type { Icon } from "../types/api/icon";
 
 /**
  * Return Collections belonging to Company
- * @returns {response.data} 
+ * @returns {response.data} collection data
  */
 export const getCollections = async (): Promise<Collection[]> => {
   const response = await apiClient.get<Collection[]>(`/mycollections/${1}`);
@@ -16,7 +16,7 @@ export const getCollections = async (): Promise<Collection[]> => {
  * Create a new collection
  * Collection is added to company by companyId
  * @param name: string - Collection Name
- * @returns 
+ * @returns {response.data.collection} created collection json
  */
 export const postCollection = async (name: string): Promise<Collection> => {
   const response = await apiClient.post<CollectionResponse>(`/collection`, {
@@ -32,7 +32,7 @@ export const postCollection = async (name: string): Promise<Collection> => {
  * Adds an icon to a collection
  * @param collectionId: number - Collection ID number
  * @param iconId:number - Icon ID number
- * @returns {response.data.collection_Icon.collection}
+ * @returns {response.data.collection_Icon.collection} revised collection
  */
 export const postCollectionIcon = async (collectionId: number, iconId: number): Promise<Collection> => {
   const response = await apiClient.post<CollectionIconResponse>(`/collection/${collectionId}`, {
