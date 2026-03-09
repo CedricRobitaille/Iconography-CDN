@@ -17,16 +17,22 @@ export const useLibraryResultsStore = defineStore("libraryResults", () => {
   const libraryMode = ref(true)
   const activeIcon = ref<Number | undefined>(undefined)
 
+
+  /**
+   * Source Icons for library
+   * @returns libraryResults = [{}] - sets this.libraryResults.value to array of icon objs
+   */
   const fetchLibrary = async () => {
     if (loading.value === true) return;
     loading.value = true;
 
     try {
-      if (libraryMode.value) {
+      
+      if (libraryMode.value) { // If in `All Icons`
         libraryResults.value = []
         await filters.fetchFilters();
         libraryResults.value = await getAllIcons();
-      } else {
+      } else {  // In `My Icons`
         libraryResults.value = []
         await filters.fetchMyFilters();
         libraryResults.value = await getMyIcons();
@@ -40,7 +46,11 @@ export const useLibraryResultsStore = defineStore("libraryResults", () => {
     }
   }
 
-  // toggle the active filters
+
+  /**
+   * Toggle the active filters (on/off) 
+   * @param filter: string - filter name
+   */
   const toggleFilter = (filter: string): void => {
     if (activeFilters.value.includes(filter)) {
       const index = activeFilters.value.indexOf(filter)
@@ -50,26 +60,53 @@ export const useLibraryResultsStore = defineStore("libraryResults", () => {
     }
   }
 
+
+  /**
+   * Resets all filters
+   */
   const resetFilters = ():void => {
     activeFilters.value = [];
   }
 
+
+  /**
+   * Set page size, then loads elements
+   * @param e: Event - Select Dropdown
+   */
   const setPageSize = (e: Event):void => {
     pageSize.value = (e.target as HTMLSelectElement).value;
     console.log(pageSize.value)
   }
 
+
+  /**
+   * Load new library page
+   * @param pageNum: number - Page Number
+   */
   const handlePageChange = (pageNum: number): void => {
     pageCount.value = pageNum;
     console.log(pageCount.value)
   }
 
+
+  /**
+   * Set the mode (ownership) of the library page
+   * true = All Icons
+   * false = My Icons
+   * @param mode: boolean 
+   */
   const toggleLibaryMode = async (mode: boolean) => {
     libraryMode.value = mode;
     activeIcon.value = undefined;
+    console.log(libraryMode.value)
     await fetchLibrary();
   }
 
+
+  /**
+   * Set or disable icon currently in selection
+   * @param iconId: number | undefined - Icon ID to set (or undefined)
+   */
   const setActiveIcon = (iconId: Number | undefined) => {
     activeIcon.value = iconId;
   }
