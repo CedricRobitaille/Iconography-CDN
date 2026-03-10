@@ -94,6 +94,7 @@
           x="0" y="0"
           :width="canvas.width"
           :height="canvas.height"
+          @click="useEditorStore().clearSelection()"
           class="canvas"
         />
       </g>
@@ -111,17 +112,26 @@
 
       <!-- Overlays -->
       <g id="overlays">
-        <!-- Bounding box for selected Node -->
+        <!-- Bounding box encompasing all selected nodes -->
         <rect
-          v-for="node in visibleNodes.filter(n => props.editorMode && canvas.selectedNodeIds.includes(n.id))"
+          v-for="node in visibleNodes.filter(n => props.editorMode && canvas.selectedNodeIds.includes(n))"
           :key="'overlay-'+node.id"
           :x="node.properties.x ?? 0"
           :y="node.properties.y ?? 0"
           :width="node.properties.w ?? node.properties.r*2 ?? 0"
           :height="node.properties.h ?? node.properties.r*2 ?? 0"
           fill="none"
-          stroke="blue"
-          stroke-dasharray="4 2"
+          stroke-width=".5"
+          stroke="cyan"
+          vector-effect="non-scaling-stroke"
+        />
+
+        <!-- Key Line for selected Nodes -->
+        <SvgNode 
+          v-for="node in visibleNodes.filter(n => props.editorMode && canvas.selectedNodeIds.includes(n))"
+          :key="node.id"
+          :node="node"
+          :keyLine="true"
         />
       </g>
     </g>

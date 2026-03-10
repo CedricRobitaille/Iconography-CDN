@@ -21,6 +21,7 @@
   const props = defineProps<{
     node: treeNode;
     editorMode?: boolean;
+    keyLine?: boolean;
   }>();
 
   // Map the type to the Component.vue
@@ -54,6 +55,7 @@
     :is="component" 
     :node="node" 
     :editorMode="editorMode"
+    :keyLine="keyLine"
   />
 
 </template>

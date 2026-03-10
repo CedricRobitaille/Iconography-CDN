@@ -131,18 +131,17 @@ export const useEditorStore = defineStore("svgCanvas", {
      * @param append: boolean - Toggle from arr of selected nodes
      */
     selectNode(node: treeNode, append: boolean = false) {
-      if (append) {
-        console.log(append)
-        if (!this.selectedNodeIds.includes(node)) {
-          this.selectedNodeIds.push(node);
-        } else {
-          const index = this.selectedNodeIds.indexOf(node)
-          this.selectedNodeIds.splice(index,1)
+      if (append) { // When user is holding shift
+        if (!this.selectedNodeIds.includes(node)) { // Node doesn't exist on array
+          this.selectedNodeIds.push(node); // Add node to arr
+        } else { // Node exists on array
+          const index = this.selectedNodeIds.indexOf(node) // Find the index of the node
+          this.selectedNodeIds.splice(index,1) // Remove the node from array
         }
-      } else {
+      } else { // Otherwise, reset the node list
         this.selectedNodeIds = [node];
       }
-      console.log("Selected Node:", this.selectedNodeIds)
+      console.log("Select Node List:", this.selectedNodeIds)
     },
 
 

@@ -6,6 +6,7 @@
   const props = defineProps<{
     node: treeNode;
     editorMode?: boolean;
+    keyLine?: boolean;
   }>();
 
   // ! Extract shape properties
@@ -44,6 +45,8 @@
     return event
   })
 
+  console.log(props.keyLine)
+
 </script>
 
 <template>
@@ -56,11 +59,12 @@
     :rx="rect.rx"
     :ry="rect.ry" 
     :fill="fill" 
-    :stroke="stroke"
-    :stroke-width="sWidth"
+    :stroke="keyLine ? `cyan` : stroke"
+    :stroke-width="keyLine ? .5 : sWidth"
     :stroke-linecap="sLinecap"
     :stroke-linejoin="sLinejoin"
     :pointer-events="pointerEvent"
+    :vector-effect="keyLine ? 'non-scaling-stroke' : 'none'"
     @click.stop="emitClick"
   />
 
