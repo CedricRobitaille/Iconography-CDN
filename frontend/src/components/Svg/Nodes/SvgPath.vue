@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import { computed } from 'vue';
   import type { treeNode, Path, PathAction } from '../../../types';
+  import { useEditorStore } from '../../../stores/editorSvg';
 
   const props = defineProps<{
     node: treeNode;
@@ -65,7 +66,8 @@
 
     // Only run this function IF we're in edit mode.
     if (props.editorMode) {
-      console.log(props.node)
+      const append = event.shiftKey ? true : false;
+      useEditorStore().selectNode(props.node, append)
     }
   }
 

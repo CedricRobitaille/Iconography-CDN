@@ -15,7 +15,7 @@
 
   console.log(canvas.rootNode)
 
-  const onNodeClick = (node) => {
+  const onNodeClick = (node:any) => {
     console.log(node)
     canvas.selectNode
     //! This action is not being tunneled down to the individual element

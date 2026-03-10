@@ -35,7 +35,7 @@ const companyName = "General Assembly"
   font-size: .75rem;
   font-weight: 700;
   color: var(--bg);
-  padding: .34rem .75rem .3rem;
+  padding: .36rem .75rem .35rem;
   width: fit-content;
   background-color: var(--accent);
   border-radius: 1rem;

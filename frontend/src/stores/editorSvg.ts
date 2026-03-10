@@ -124,15 +124,25 @@ export const useEditorStore = defineStore("svgCanvas", {
 
     // Selects the current node.
     // Optionally append other selected nodes.
+    /**
+     * Select/Deselect the current node.
+     * Output: this.selectedNodeIds[] push/splice node
+     * @param node: treeNode - Chosen node
+     * @param append: boolean - Toggle from arr of selected nodes
+     */
     selectNode(node: treeNode, append: boolean = false) {
-      console.log("THIS")
       if (append) {
+        console.log(append)
         if (!this.selectedNodeIds.includes(node)) {
           this.selectedNodeIds.push(node);
+        } else {
+          const index = this.selectedNodeIds.indexOf(node)
+          this.selectedNodeIds.splice(index,1)
         }
       } else {
         this.selectedNodeIds = [node];
       }
+      console.log("Selected Node:", this.selectedNodeIds)
     },
 
 

@@ -7,13 +7,17 @@
   const collections = useCollectionStore()
 
   /**
-   * Gets array of all icons
+   * Gets array of all icons belonging to the current collection
+   * @returns collections.currentIcons
    */
   const icons = computed(() => {
     console.log(collections.currentIcons)
     return collections.currentIcons
   })
 
+  /**
+   * 
+   */
   onMounted(async () => {
     collections.getCurrentIcons();
   })

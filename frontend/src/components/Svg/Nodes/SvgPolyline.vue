@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import { computed } from 'vue';
   import type { treeNode, Polyline } from '../../../types';
+  import { useEditorStore } from '../../../stores/editorSvg';
 
   interface Points {
     x: number;
@@ -41,7 +42,8 @@
 
     // Only run this function IF we're in edit mode.
     if (props.editorMode) {
-      console.log(props.node)
+      const append = event.shiftKey ? true : false;
+      useEditorStore().selectNode(props.node, append)
     }
   }
 

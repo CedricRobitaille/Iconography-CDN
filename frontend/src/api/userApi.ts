@@ -7,11 +7,22 @@ import type {
   UpdatedUserPayload
 } from "../types/api/user";
 
+
+/**
+ * Gets all users in DB
+ * @returns 
+ */
 export const getUsers = () => {
   const response = apiClient.get<ApiResponse<User>>("/user");
   return response;
 }
 
+
+/**
+ * Gets user by ID
+ * @param id 
+ * @returns 
+ */
 export const getUserById = async (id: string | number) => {
   let userId = 0
   if (typeof(id) == "string") {
