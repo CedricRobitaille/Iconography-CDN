@@ -48,7 +48,7 @@
       :stroke-width="sWidth"
       :stroke-linecap="sLinecap"
       :stroke-linejoin="sLinejoin"
-      @click.stop="emitClick"
+      @click.stop="emitClick"                   
     />
   </g>
 
@@ -57,7 +57,5 @@
 </template>
 
 <style scoped>
-  circle {
-    pointer-events: all;
-  }
+
 </style>

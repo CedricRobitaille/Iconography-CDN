@@ -153,11 +153,14 @@ fieldset {
 }
 
 
-
-
-
-
-.editorShape {
+/* Enable clicking and interaction when spacebar is up */
+.editorShape :not(.space-down) {
   pointer-events: visiblePainted;
   cursor: pointer;
+}
+
+/* Disable clicking and interaction when spacebar is down */
+.space-down .editorShape ,
+.space-down g #artboard {
+  pointer-events: none;
 }

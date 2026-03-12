@@ -42,11 +42,6 @@
     return componentMap[props.node.type]
   });
 
-  const isSelected = computed(() => {
-    const state = props.editorMode && canvas.selectedNodeIds.includes(props.node.id)
-    return state
-  })
-
 </script>
 
 <template>

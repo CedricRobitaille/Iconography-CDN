@@ -32,23 +32,6 @@
     }
   }
 
-  /**
-   * ! SET POINTER EVENTS BASED ON FILL/STROKE STATE
-   * ! OBSOLETE IF VISIBLEPAINTED WORKS
-   */
-  // const pointerEvent = computed(() => {
-  //   let event = "none"
-  //   console.log(fill)
-  //   if (!(fill.value === "none" || fill.value === "" ) && !(stroke.value !== "none" || stroke.value === "")) {
-  //     event = "all"
-  //   } else if (stroke.value !== "none") {
-  //     event = "stroke"
-  //   }
-  //   console.log(event)
-  //   console.log("this")
-  //   return event
-  // })
-
   console.log(props.keyLine)
 
 </script>
