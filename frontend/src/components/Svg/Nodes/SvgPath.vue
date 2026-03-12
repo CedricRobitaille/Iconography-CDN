@@ -76,6 +76,7 @@
 <template>
 
   <path 
+    :class="{ 'editorShape': editorMode }"
     :d="d"
     :fill="fill" 
     :stroke="stroke" 

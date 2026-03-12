@@ -36,6 +36,7 @@
 <template>
 
   <line 
+    :class="{ 'editorShape': editorMode }"
     :x1="line.x1"
     :y1="line.y1"
     :x2="line.x2"

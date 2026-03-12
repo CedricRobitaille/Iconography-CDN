@@ -39,6 +39,7 @@
   
   <g>
     <circle 
+      :class="{ 'editorShape' : editorMode }"
       :cx="circle.cx"
       :cy="circle.cy"
       :r="circle.r"

@@ -157,6 +157,7 @@ fieldset {
 
 
 
-/* circle, rect, ellipse, path, line, polyline, polygon,g {
-  pointer-events: all !important;
-} */
+.editorShape {
+  pointer-events: visiblePainted;
+  cursor: pointer;
+}

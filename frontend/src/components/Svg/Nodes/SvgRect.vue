@@ -32,18 +32,22 @@
     }
   }
 
-  const pointerEvent = computed(() => {
-    let event = "none"
-    console.log(fill)
-    if (!(fill.value === "none" || fill.value === "" ) && !(stroke.value !== "none" || stroke.value === "")) {
-      event = "all"
-    } else if (stroke.value !== "none") {
-      event = "stroke"
-    }
-    console.log(event)
-    console.log("this")
-    return event
-  })
+  /**
+   * ! SET POINTER EVENTS BASED ON FILL/STROKE STATE
+   * ! OBSOLETE IF VISIBLEPAINTED WORKS
+   */
+  // const pointerEvent = computed(() => {
+  //   let event = "none"
+  //   console.log(fill)
+  //   if (!(fill.value === "none" || fill.value === "" ) && !(stroke.value !== "none" || stroke.value === "")) {
+  //     event = "all"
+  //   } else if (stroke.value !== "none") {
+  //     event = "stroke"
+  //   }
+  //   console.log(event)
+  //   console.log("this")
+  //   return event
+  // })
 
   console.log(props.keyLine)
 
@@ -52,6 +56,7 @@
 <template>
 
   <rect 
+    :class="{ 'editorShape': editorMode }"
     :x="rect.x"
     :y="rect.y"
     :width="rect.w"
@@ -63,7 +68,6 @@
     :stroke-width="keyLine ? .5 : sWidth"
     :stroke-linecap="sLinecap"
     :stroke-linejoin="sLinejoin"
-    :pointer-events="pointerEvent"
     :vector-effect="keyLine ? 'non-scaling-stroke' : 'none'"
     @click.stop="emitClick"
   />

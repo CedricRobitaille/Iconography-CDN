@@ -66,6 +66,7 @@
 <template>
 
   <polyline
+    :class="{ 'editorShape': editorMode }"
     :points="pointsString"
     :fill="fill" 
     :stroke="stroke" 

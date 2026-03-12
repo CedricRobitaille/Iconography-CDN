@@ -36,6 +36,7 @@
 <template>
 
   <ellipse 
+    :class="{ 'editorShape': editorMode }"
     :cx="ellipse.cx"
     :cy="ellipse.cy"
     :rx="ellipse.rx"

@@ -27,6 +27,29 @@
     return props.svg?.filter(n => n.visible) ?? []
   });
 
+  // ! IMPORTANT!!!!
+  // MUST CALCULATE THE BOUNDING BOX FOR ALLLL
+  /**
+   * Calulate values for overlay
+   */
+  const activeNodes = computed(() => {
+    const nodeList = canvas.selectedNodeIds;
+    const xPos = 0;
+    const yPos = 0;
+    const width = 0;
+    const height = 0;
+    const boundingBox = {
+      xPos,
+      yPos,
+      width,
+      height,
+    }
+    return {
+      nodeList,
+      boundingBox
+    }
+  })
+
 
   // Camera transform for Editor Mode
   const cameraTransform = computed(() => {
@@ -112,7 +135,22 @@
 
       <!-- Overlays -->
       <g id="overlays">
+
         <!-- Bounding box encompasing all selected nodes -->
+        <rect
+          v-if="activeNodes.nodeList.length > 0"
+          :x="activeNodes.boundingBox.xPos ?? 0"
+          :y="activeNodes.boundingBox.yPos ?? 0"
+          :width="activeNodes.boundingBox.width ?? 0"
+          :height="activeNodes.boundingBox.height ?? 0"
+          fill="none"
+          stroke-width=".5"
+          stroke="cyan"
+          vector-effect="non-scaling-stroke"
+        />
+
+        <!-- Corner Markers -->
+        <!-- Top Left -->
         <rect
           v-for="node in visibleNodes.filter(n => props.editorMode && canvas.selectedNodeIds.includes(n))"
           :key="'overlay-'+node.id"

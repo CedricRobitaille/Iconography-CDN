@@ -64,6 +64,7 @@
 <template>
 
   <polygon 
+    :class="{ 'editorShape': editorMode }"
     :points="pointsString"
     :fill="fill" 
     :stroke="stroke" 
