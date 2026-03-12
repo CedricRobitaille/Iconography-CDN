@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import { reactive, ref } from 'vue';
+import { reactive } from 'vue';
 import EditorCanvas from '../components/Editor/EditorCanvas.vue';
 import ProjectPanel from '../components/ProjectPanel/ProjectPanel.vue';
 import PropertiesPanel from '../components/PropertiesPanel/PropertiesPanel.vue';

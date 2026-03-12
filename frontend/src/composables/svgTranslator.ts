@@ -429,18 +429,27 @@ export const useSvgParser = () => {
   // Recursively convert SVG into treeNode
   const parseElement = (el: Element, cssMap: Record<string, Partial<treeNode["style"]>>): treeNode | null => {
     const tag = el.tagName.toLowerCase();
+    console.log("ELEMENT: ",el)
 
     // Only accept supported tags
     const supportedTags = ['circle', 'rect', 'ellipse', 'line', 'polygon', 'polyline', 'path', 'g'];
     if (!supportedTags.includes(tag)) return null;
 
     // Extract style
-    const style: treeNode["style"] = {
-      fill: el.getAttribute("fill") || "none",
-      stroke: el.getAttribute("stroke") || "none",
-      strokeWidth: el.getAttribute("stroke-width") ? parseFloat(el.getAttribute("stroke-width")!) : undefined,
-      strokeLinecap: el.getAttribute("stroke-linecap") as any, // could be string or null
-      strokeLinejoin: el.getAttribute("stroke-linejoin") as any
+    const style: style = {
+      fill: {
+        fill: el.getAttribute("fill") || "none",
+        fillOpacity: parseFloat(el.getAttribute("fill-opacity") ?? "1"),
+      },
+      stroke: {
+        stroke: el.getAttribute("stroke") || "none",
+        strokeOpacity: el.getAttribute("stroke-opacity") ? parseFloat(el.getAttribute("stroke-opacity")!) : 1,
+        strokeWidth: el.getAttribute("stroke-width") ? parseFloat(el.getAttribute("stroke-width")!) : 0,
+        strokeDasharray: el.getAttribute("stroke-dasharray") as any,
+        strokeDashoffset: el.getAttribute("stroke-dashoffset") as any,
+        strokeLinecap: el.getAttribute("stroke-linecap") as any,
+        strokeLinejoin: el.getAttribute("stroke-join") as any,
+      }
     };
 
     // Merge class styles
