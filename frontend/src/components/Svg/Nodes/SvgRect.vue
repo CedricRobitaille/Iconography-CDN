@@ -14,11 +14,17 @@
     return props.node.properties as Rectangle
   })
 
-  const fill = computed(() => props.node.style.fill);
-  const stroke = computed(() => props.node.style.stroke);
-  const sWidth = computed(() => props.node.style.strokeWidth);
-  const sLinecap = computed(() => props.node.style.strokeLinecap);
-  const sLinejoin = computed(() => props.node.style.strokeLinejoin);
+  const fill = computed(() => props.node.style.fill.fill);
+  const fillOpacity = computed(() => props.node.style.fill.fillOpacity);
+
+  const stroke = computed(() => props.node.style.stroke.stroke);
+  const strokeOpacity = computed(() => {props.node.style.stroke.strokeOpacity});
+  const strokeWidth = computed(() => props.node.style.stroke.strokeWidth);
+  const strokeDasharray = computed(() => props.node.style.stroke.strokeDasharray);
+  const strokeDashoffset = computed(() => props.node.style.stroke.strokeDashoffset)
+  const strokeLinecap = computed(() => props.node.style.stroke.strokeLinecap);
+  const strokeLinejoin = computed(() => props.node.style.stroke.strokeLinejoin);
+  const strokeLineposition = computed(() => props.node.style.stroke.strokeLineposition)
 
   const emitClick = (event: MouseEvent): void => {
     
@@ -47,10 +53,14 @@
     :rx="rect.rx"
     :ry="rect.ry" 
     :fill="fill" 
+    :fill-opacity="fillOpacity"
     :stroke="keyLine ? `cyan` : stroke"
-    :stroke-width="keyLine ? .5 : sWidth"
-    :stroke-linecap="sLinecap"
-    :stroke-linejoin="sLinejoin"
+    :stroke-opacity="strokeOpacity"
+    :stroke-width="keyLine ? .5 : strokeWidth"
+    :stroke-dasharray="strokeDasharray"
+    :stroke-dashoffset="strokeDashoffset"
+    :stroke-linecap="strokeLinecap"
+    :stroke-linejoin="strokeLinejoin"
     :vector-effect="keyLine ? 'non-scaling-stroke' : 'none'"
     @click.stop="emitClick"
   />

@@ -141,6 +141,32 @@ export const useEditorStore = defineStore("svgCanvas", {
       } else { // Otherwise, reset the node list
         this.selectedNodeIds = [node];
       }
+
+      // On 1 or more selected node, set the fill stroke / colours
+      if (this.selectedNodeIds.length >= 1) {
+        const style = {
+          fill: {
+            fill: this.selectedNodeIds[0]?.style.fill,
+            fillOpacity: this.selectedNodeIds[0]?.style,
+          },
+          stroke: {
+            stroke: "#000000",
+            strokeDasharray: "none",
+            strokeDashoffset: 0,
+            strokeLinecap: "butt",
+            strokeLinejoin: "miter",
+            strokeLineposition: "center",
+            strokeOpacity: 1,
+            strokeWidth: 1,
+          }
+        }
+        // ! Check if all the nodes have matching fill/stroke/whatevers
+
+        // ! if matching, set to matching value
+
+        // ! otherwise, set to undefined
+      }
+
       console.log("Select Node List:", this.selectedNodeIds)
     },
 
@@ -215,26 +241,6 @@ export const useEditorStore = defineStore("svgCanvas", {
           strokeWidth: 1,
         }
       }
-    },
-
-    // Set fill properies
-    // Receive the KEY + Value
-    // Automatically interprit the key, and assigns the value.
-    setFill<Key extends keyof SvgStyle["fill"]> (
-      prop: Key, 
-      value: SvgStyle["fill"][Key] 
-    ) {
-      this.activeStyle.fill[prop] = value;
-    },
-
-    // Set Stroke properties
-    // Receive the Key + Value
-    // Automatically interprit the key and assign the value.
-    setStroke<Key extends keyof SvgStyle["stroke"]> (
-      prop: Key,
-      value: SvgStyle["stroke"][Key]
-    ) {
-      this.activeStyle.stroke[prop] = value;
     },
 
 

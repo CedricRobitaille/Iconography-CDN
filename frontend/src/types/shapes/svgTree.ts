@@ -1,12 +1,27 @@
 import type { Rectangle, Polygon, Polyline, Path, Line, Ellipse, Circle } from "../";
 
-type style = {
+type styleFill = {
   fill?: string,
+  fillOpacity?: number,
+}
+
+type styleStroke = {
   stroke?: string,
+  strokeOpacity?: number,
   strokeWidth?: number,
+  strokeDasharray?: string,
+  strokeDashoffset?: number,
   strokeLinecap?: string,
   strokeLinejoin?: string,
+  strokeLineposition?: string,
 }
+
+export interface style {
+  fill: styleFill;
+  stroke: styleStroke;
+}
+
+
 
 /**
  * w = Width

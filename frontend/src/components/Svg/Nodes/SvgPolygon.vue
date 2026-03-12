@@ -11,6 +11,7 @@
   const props = defineProps<{
     node: treeNode;
     editorMode?: boolean;
+    keyLine?: boolean;
   }>();
 
   // ! Extract shape properties
@@ -28,11 +29,17 @@
       .join(' ')
   })
 
-  const fill = computed(() => props.node.style.fill);
-  const stroke = computed(() => props.node.style.stroke);
-  const sWidth = computed(() => props.node.style.strokeWidth);
-  const sLinecap = computed(() => props.node.style.strokeLinecap);
-  const sLinejoin = computed(() => props.node.style.strokeLinejoin);
+  const fill = computed(() => props.node.style.fill.fill);
+  const fillOpacity = computed(() => props.node.style.fill.fillOpacity);
+
+  const stroke = computed(() => props.node.style.stroke.stroke);
+  const strokeOpacity = computed(() => {props.node.style.stroke.strokeOpacity});
+  const strokeWidth = computed(() => props.node.style.stroke.strokeWidth);
+  const strokeDasharray = computed(() => props.node.style.stroke.strokeDasharray);
+  const strokeDashoffset = computed(() => props.node.style.stroke.strokeDashoffset)
+  const strokeLinecap = computed(() => props.node.style.stroke.strokeLinecap);
+  const strokeLinejoin = computed(() => props.node.style.stroke.strokeLinejoin);
+  const strokeLineposition = computed(() => props.node.style.stroke.strokeLineposition)
 
   const emitClick = (event: MouseEvent): void => {
     
@@ -46,19 +53,6 @@
     }
   }
 
-  const pointerEvent = computed(() => {
-    let event = "none"
-    console.log(fill)
-    if (!(fill.value === "none" || fill.value === "" ) && !(stroke.value !== "none" || stroke.value === "")) {
-      event = "all"
-    } else if (stroke.value !== "none") {
-      event = "stroke"
-    }
-    console.log(event)
-    console.log("this")
-    return event
-  })
-
 </script>
 
 <template>
@@ -67,11 +61,15 @@
     :class="{ 'editorShape': editorMode }"
     :points="pointsString"
     :fill="fill" 
-    :stroke="stroke" 
-    :stroke-width="sWidth"
-    :stroke-linecap="sLinecap"
-    :stroke-linejoin="sLinejoin"
-    :pointer-events="pointerEvent"
+    :fill-opacity="fillOpacity"
+    :stroke="keyLine ? `cyan` : stroke"
+    :stroke-opacity="strokeOpacity"
+    :stroke-width="keyLine ? .5 : strokeWidth"
+    :stroke-dasharray="strokeDasharray"
+    :stroke-dashoffset="strokeDashoffset"
+    :stroke-linecap="strokeLinecap"
+    :stroke-linejoin="strokeLinejoin"
+    :vector-effect="keyLine ? 'non-scaling-stroke' : 'none'"
     @click.stop="emitClick"
   />
 

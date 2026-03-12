@@ -7,7 +7,8 @@ import type {
   Polygon, 
   Polyline, 
   Path, 
-  PathAction
+  PathAction,
+  style
 } from "../types"
 
 // Converts SVG string to SVG code to be parsed by the svg parser
@@ -55,7 +56,10 @@ export const useSvgParser = () => {
       while ((match = regex.exec(cssText)) !== null) {
         const className = match[1]?.trim() // eg: .cls-1
         const rules = match[2]?.trim() // eg: border {}
-        const styleObj: Partial<treeNode["style"]> = {}
+        const styleObj: style = {
+          fill: {},
+          stroke: {},
+        }
 
         rules?.split(";").forEach(rule => {
           // split the string from border: 20px -> [border], [20px]
@@ -65,23 +69,27 @@ export const useSvgParser = () => {
 
           switch (prop) {
             case "fill":
-              styleObj.fill = val;
+              styleObj.fill!.fill = val;
+              break;
+
+            case "fill-opacity":
+              styleObj.fill!.fillOpacity = parseFloat(val);
               break;
 
             case "stroke":
-              styleObj.stroke = val;
+              styleObj.stroke!.stroke = val;
               break;
 
             case "stroke-width":
-              styleObj.strokeWidth = parseFloat(val);
+              styleObj.stroke!.strokeWidth = parseFloat(val);
               break;
 
             case "stroke-linecap":
-              styleObj.strokeLinecap = val as "butt" | "round" | "square";
+              styleObj.stroke!.strokeLinecap = val as "butt" | "round" | "square";
               break;
 
             case "stroke-linejoin":
-              styleObj.strokeLinecap = val as "miter" | "round" | "bevel";
+              styleObj.stroke!.strokeLinejoin = val as "miter" | "round" | "bevel";
               break;
           }
         });

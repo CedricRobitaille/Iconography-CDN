@@ -6,6 +6,7 @@
   const props = defineProps<{
     node: treeNode;
     editorMode?: boolean;
+    keyLine?: boolean;
   }>();
 
   const emitClick = (event: MouseEvent): void => {
@@ -30,6 +31,7 @@
       v-for="child in node.children"
       :key = child.id
       :node="child"
+      :keyLine="keyLine"
     />
   </g>
 </template>

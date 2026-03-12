@@ -9,9 +9,11 @@
   // User Input on input forms.
   const fillInput = computed({
     get: () => {
+      
       return canvas.activeStyle.fill.fill;
     },
     set: (value: string) => {
+      console.log("this")
       let hex = sanitizeHex(value)
       canvas.activeStyle.fill.fill = hex;
     }
