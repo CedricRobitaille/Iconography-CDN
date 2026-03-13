@@ -38,7 +38,7 @@
 
   // Log the mapped component.
   const component = computed(() =>{
-    console.log(componentMap[props.node.type])
+    // console.log("Mapped Component:", componentMap[props.node.type])
     return componentMap[props.node.type]
   });
 

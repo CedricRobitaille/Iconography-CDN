@@ -1,7 +1,8 @@
 import { defineStore } from "pinia";
 import type { treeNode } from "../types"
 import type { SvgCanvasState, SvgStyle } from "../types/ui/svgCanvasState";
-import { useSvgParser } from "../composables/svgTranslator";
+import { parseSvgToTreeNode } from "../composables/svg/parseSvgToNodeTree";
+
 
 type FlatNode = Omit<treeNode, "depth"> & { depth: number };
 
@@ -245,9 +246,7 @@ export const useEditorStore = defineStore("svgCanvas", {
 
 
     setEditFromLibrary (svg:string): boolean {
-      const { parse } = useSvgParser();
-      this.rootNode = parse(svg)
-
+      this.rootNode = parseSvgToTreeNode(svg)
       return true;
     },
 

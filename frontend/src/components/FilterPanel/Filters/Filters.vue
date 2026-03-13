@@ -8,8 +8,6 @@
     items: Filter[]
   }>()
 
-  console.log(libraryStore)
-
 </script>
 
 <template>

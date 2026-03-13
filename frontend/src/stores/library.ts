@@ -38,7 +38,7 @@ export const useLibraryResultsStore = defineStore("libraryResults", () => {
         libraryResults.value = await getMyIcons();
       }
       
-      console.log(libraryResults.value)
+      console.log("Fetched Library SVGS:", libraryResults.value)
     } catch (err) {
       console.log("Failed to fetch filters:", err)
     } finally {

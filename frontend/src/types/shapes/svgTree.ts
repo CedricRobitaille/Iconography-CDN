@@ -1,24 +1,7 @@
-import type { Rectangle, Polygon, Polyline, Path, Line, Ellipse, Circle } from "../";
+import type { Rectangle, Polygon, Polyline, Path, Line, Ellipse, Circle, StyleId, StyleRegistry, StyleDefinition } from "../";
 
-type styleFill = {
-  fill?: string,
-  fillOpacity?: number,
-}
-
-type styleStroke = {
-  stroke?: string,
-  strokeOpacity?: number,
-  strokeWidth?: number,
-  strokeDasharray?: string,
-  strokeDashoffset?: number,
-  strokeLinecap?: string,
-  strokeLinejoin?: string,
-  strokeLineposition?: string,
-}
-
-export interface style {
-  fill: styleFill;
-  stroke: styleStroke;
+export interface Transform {
+  matrix: [number, number, number, number, number, number]
 }
 
 
@@ -32,22 +15,38 @@ export interface style {
  * ry = Corner Radius Y
  */
 export interface treeNode {
-  id: number;
+  id: string | number;
   name: string;
   type: "circle" | "ellipse" | "line" | "path" | "polygon" | "polyline" | "rect" | "folder";
+  properties: Rectangle | Polygon | Polyline | Path | Line | Ellipse | Circle;
   locked: boolean;
   visible: boolean;
-  properties: Rectangle | Polygon | Polyline | Path | Line | Ellipse | Circle;
   expanded: boolean;
   children: treeNode[];
-  style: style;
+  styleId: StyleId;
+  style?: StyleDefinition; // Pointer to the registry style
+  transform?: Transform;
   depth?: number;
 }
 
+export interface SvgDocument {
+  nodes: treeNode[]
+  styles: StyleRegistry
+}
 
 
 export interface svgDescriptor {
   tag: "circle" | "ellipse" | "line" | "path" | "polygon" | "polyline" | "rect" | "g";
   attrs: Record<string, string| number>
   children?: svgDescriptor[]
+}
+
+
+export interface SceneNode {
+  id?: string | number;
+  tag: string;
+  attributes: Record<string, string | number>;
+  children: SceneNode[];
+  el?: Element;
+  styleId?: number;
 }

@@ -1,7 +1,6 @@
 <script setup lang="ts">
   import { computed } from 'vue';
   import { useEditorStore } from '../../../stores/editorSvg';
-  import type { treeNode } from '../../../types';
 
   const icon = useEditorStore();
 
@@ -10,7 +9,6 @@
     return icon.flattenTree(icon.rootNode);
   })
 
-  console.log(projectTree.value)
 </script>
 
 

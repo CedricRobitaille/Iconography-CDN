@@ -38,8 +38,6 @@
     }
   }
 
-  console.log(props.keyLine)
-
 </script>
 
 <template>

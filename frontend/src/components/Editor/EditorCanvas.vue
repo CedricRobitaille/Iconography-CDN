@@ -13,10 +13,10 @@
     return `${-canvas.offsetX} ${-canvas.offsetY} ${w} ${h}`
   })
 
-  console.log(canvas.rootNode)
+  console.log("Root Canvas Node:", canvas.rootNode)
 
   const onNodeClick = (node:any) => {
-    console.log(node)
+    console.log("Node clicked:", node)
     canvas.selectNode
     //! This action is not being tunneled down to the individual element
     // To get it to work, See what was done in the rectangle shape.

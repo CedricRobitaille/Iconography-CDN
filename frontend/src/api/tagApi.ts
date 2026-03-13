@@ -10,7 +10,6 @@ import type {
  */
 export const getFilters = async (): Promise<Filter[]> => {
   const response = await apiClient.get<Filter[]>("/tag/filters");
-  console.log(response.data)
   return response.data;
 }
 
